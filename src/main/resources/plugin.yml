@@ -1,0 +1,4 @@
+name: WerewolfGame
+version: @version@
+main: jp.hack.minecraft.werewolfgame.Main
+api-version: 1.16
