@@ -15,7 +15,7 @@ public class ChatManager implements Listener {
         Game game = Game.getInstance();
         WPlayer wp = game.getWPlayer(p.getUniqueId());
 
-        if (wp.getRoleType().isWolf()) return;
+        if (wp.getRole().isWolf()) return;
 
         e.setCancelled(true);
         p.sendMessage("You cannot send messages.");

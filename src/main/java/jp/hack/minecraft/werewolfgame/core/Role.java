@@ -1,6 +1,6 @@
 package jp.hack.minecraft.werewolfgame.core;
 
-public enum RoleType {
+public enum Role {
     UNSET(false),
     VILLAGER(false),
     SEER(false),
@@ -11,7 +11,7 @@ public enum RoleType {
 
     private Boolean isWolf;
 
-    RoleType(Boolean isWolf) {
+    Role(Boolean isWolf) {
         this.isWolf = isWolf;
     }
 

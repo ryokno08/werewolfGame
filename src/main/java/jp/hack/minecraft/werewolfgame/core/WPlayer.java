@@ -4,27 +4,28 @@ import java.util.UUID;
 
 public class WPlayer {
     private final UUID uuid;
-    private RoleType roleType;
+    private Role role;
+
 
     public WPlayer(UUID uuid) {
         this.uuid = uuid;
-        roleType = RoleType.UNSET;
+        role = Role.UNSET;
     }
 
-    public WPlayer(UUID uuid, RoleType roleType) {
+    public WPlayer(UUID uuid, Role role) {
         this.uuid = uuid;
-        this.roleType = roleType;
+        this.role = role;
     }
 
     public UUID getUuid() {
         return uuid;
     }
 
-    public RoleType getRoleType() {
-        return roleType;
+    public Role getRole() {
+        return role;
     }
 
-    public void setRoleType(RoleType roleType) {
-        this.roleType = roleType;
+    public void setRole(Role role) {
+        this.role = role;
     }
 }
