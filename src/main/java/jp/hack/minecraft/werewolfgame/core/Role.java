@@ -7,12 +7,25 @@ public enum Role {
     PSYCHIC(false),
     HUNTER(false),
     MADMAN(true),
-    WOLF(true);
+    WOLF(true, true);
 
+
+    private Boolean isWolfSide;
     private Boolean isWolf;
 
-    Role(Boolean isWolf) {
+
+
+    Role(Boolean isWolfSide) {
+        this(isWolfSide, false);
+    }
+
+    Role(Boolean isWolfSide, Boolean isWolf) {
+        this.isWolfSide = isWolfSide;
         this.isWolf = isWolf;
+    }
+
+    public Boolean isWolfSide() {
+        return isWolfSide;
     }
 
     public Boolean isWolf() {
