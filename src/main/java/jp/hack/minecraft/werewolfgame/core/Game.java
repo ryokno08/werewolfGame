@@ -35,11 +35,11 @@ public class Game {
         this.respawn = respawn;
     }
 
-    public Role getRole(UUID uuid) {
+    public Role getPlayerRole(UUID uuid) {
         return getWPlayer(uuid).getRole();
     }
 
-    public Boolean setRole(UUID uuid, Role role) {
+    public Boolean setPlayerRole(UUID uuid, Role role) {
         if (!getwPlayers().containsKey(uuid)) return false;
 
         getWPlayer(uuid).setRole(role);

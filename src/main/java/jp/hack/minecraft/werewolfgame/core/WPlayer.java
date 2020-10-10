@@ -8,8 +8,7 @@ public class WPlayer {
 
 
     public WPlayer(UUID uuid) {
-        this.uuid = uuid;
-        role = Role.UNSET;
+        this(uuid, Role.UNSET);
     }
 
     public WPlayer(UUID uuid, Role role) {
