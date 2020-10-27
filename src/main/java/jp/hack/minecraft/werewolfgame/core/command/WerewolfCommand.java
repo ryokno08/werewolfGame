@@ -7,7 +7,7 @@ import org.bukkit.command.CommandSender;
 public class WerewolfCommand extends CommandMaster {
     public WerewolfCommand(CommandManager manager) {
         super(manager);
-        addSubCommand(new HelpCommand()); // サブコマンドの追加 この場合 /werewolf help を追加したことになる
+        addSubCommand(new HelpCommand(this.manager)); // サブコマンドの追加 この場合 /werewolf help を追加したことになる
     }
 
     @Override

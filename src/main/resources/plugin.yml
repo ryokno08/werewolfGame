@@ -2,3 +2,13 @@ name: WerewolfGame
 version: @version@
 main: jp.hack.minecraft.werewolfgame.Main
 api-version: 1.16
+commands:
+  werewolf:
+    description: main command
+    usage: "Usage: /<command>"
+    permission: blockguard.admin
+    permission-message: You dont't have <permission>
+permissions:
+  blockguard.admin:
+    description: game master permission
+    default: op

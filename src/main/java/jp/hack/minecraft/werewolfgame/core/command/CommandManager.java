@@ -24,7 +24,7 @@ public class CommandManager implements TabExecutor {
             rootCommands.remove(command.getName());
         rootCommands.put(command.getName(), command);
         plugin.getCommand(command.getName()).setExecutor(this);
-        plugin.getCommand(command.getName()).setTabCompleter(this);
+        Objects.requireNonNull(plugin.getCommand(command.getName())).setTabCompleter(this);
     }
     /*
     public CommandManager() {

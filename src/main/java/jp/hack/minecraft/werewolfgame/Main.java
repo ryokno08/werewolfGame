@@ -14,7 +14,7 @@ public final class Main extends JavaPlugin {
         // Plugin startup logic
         getServer().getPluginManager().registerEvents(new ChatManager(), this);
         commandManager = new CommandManager(this);
-        commandManager.addRootCommand(new WerewolfCommand(commandManager));
+        commandManager.addRootCommand(new WerewolfCommand(commandManager)); // plugin.ymlへの登録を忘れずに
     }
 
     @Override
