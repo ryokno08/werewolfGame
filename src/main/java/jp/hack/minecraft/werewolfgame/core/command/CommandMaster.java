@@ -1,5 +1,6 @@
 package jp.hack.minecraft.werewolfgame.core.command;
 
+import com.sun.tools.javac.util.Assert;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 
@@ -12,6 +13,9 @@ public abstract class CommandMaster {
     protected CommandManager manager;
     public CommandMaster(CommandManager manager){
         this.manager = manager;
+
+        //Nameを実装していない場合はAssertを発生させる
+        assert getName() != null;
     }
     protected Map<String, CommandMaster> subCommands = new HashMap<>();
     public abstract String getName();
