@@ -14,6 +14,8 @@ public class Game {
     private Location respawn;
     private Boolean canTalk = true;
     private Boolean canCommunicate = false;
+    private final TaskBar taskBar = new TaskBar();
+    private float task = 0;
 
     public Map<UUID, WPlayer> getwPlayers() {
         return wPlayers;
@@ -61,4 +63,12 @@ public class Game {
     public void setCanCommunicate(Boolean canCommunicate) {
         this.canCommunicate = canCommunicate;
     }
+
+    public TaskBar getTaskBar() {
+        return taskBar;
+    }
+
+    public void start() {}
+
+    public void stop() {}
 }
