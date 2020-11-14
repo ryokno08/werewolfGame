@@ -1,6 +1,5 @@
 package jp.hack.minecraft.werewolfgame.core.command.werewolf;
 
-import jp.hack.minecraft.werewolfgame.Main;
 import jp.hack.minecraft.werewolfgame.core.command.CommandManager;
 import jp.hack.minecraft.werewolfgame.core.command.CommandMaster;
 import org.bukkit.command.Command;
@@ -25,6 +24,6 @@ public class HelpCommand extends CommandMaster {
         manager.plugin.getLogger().info("人狼プラグイン ヘルプメニュー");
         manager.plugin.getLogger().info("/werewolf help : このメニューを開く");
         manager.plugin.getLogger().info("/werewolf join : 人狼ゲームに参加");
-        return false;
+        return true;
     }
 }

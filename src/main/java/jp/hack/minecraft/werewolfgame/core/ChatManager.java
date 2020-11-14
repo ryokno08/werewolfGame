@@ -44,11 +44,4 @@ public class ChatManager implements Listener {
 
     }
 
-    @EventHandler
-    public void onPlayerJoin (PlayerJoinEvent e) {
-        Player p = e.getPlayer();
-        Game game = Game.getInstance();
-
-        game.putWPlayer(new WPlayer(p.getUniqueId()));
-    }
 }

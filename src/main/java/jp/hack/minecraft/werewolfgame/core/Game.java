@@ -1,5 +1,6 @@
 package jp.hack.minecraft.werewolfgame.core;
 
+import jp.hack.minecraft.werewolfgame.core.display.TaskBar;
 import org.bukkit.Location;
 
 import java.util.*;
@@ -15,7 +16,8 @@ public class Game {
     private Boolean canTalk = true;
     private Boolean canCommunicate = false;
     private final TaskBar taskBar = new TaskBar();
-    private float task = 0;
+    private int maxTask = 10;
+    private int task = 0;
 
     public Map<UUID, WPlayer> getwPlayers() {
         return wPlayers;
@@ -68,7 +70,20 @@ public class Game {
         return taskBar;
     }
 
+    public void taskCompleted() {
+
+        task++;
+
+        if (maxTask <= task) {
+            stop();
+        }
+
+        taskBar.setTask(maxTask / task);
+    }
+
     public void start() {}
 
-    public void stop() {}
+    public void stop() {
+        task = 0;
+    }
 }

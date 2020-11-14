@@ -1,7 +1,7 @@
 package jp.hack.minecraft.werewolfgame.core.command.werewolf;
 
 import jp.hack.minecraft.werewolfgame.core.Game;
-import jp.hack.minecraft.werewolfgame.core.TaskBar;
+import jp.hack.minecraft.werewolfgame.core.display.TaskBar;
 import jp.hack.minecraft.werewolfgame.core.command.CommandManager;
 import jp.hack.minecraft.werewolfgame.core.command.CommandMaster;
 import org.bukkit.command.Command;

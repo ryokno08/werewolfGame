@@ -9,6 +9,6 @@ commands:
     permission: blockguard.admin
     permission-message: You dont't have <permission>
 permissions:
-  blockguard.admin:
+    werewolf.admin:
     description: game master permission
     default: op

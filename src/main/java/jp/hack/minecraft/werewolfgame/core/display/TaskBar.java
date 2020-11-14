@@ -1,4 +1,4 @@
-package jp.hack.minecraft.werewolfgame.core;
+package jp.hack.minecraft.werewolfgame.core.display;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -33,5 +33,4 @@ public class TaskBar {
     public void setTask(float percent) {
         taskBar.setProgress(percent);
     }
-
 }

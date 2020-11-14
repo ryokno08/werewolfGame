@@ -9,8 +9,14 @@ public class JoinEvent implements Listener {
 
     @EventHandler
     public void onJoinEvent (PlayerJoinEvent e) {
-        Player player = e.getPlayer();
-        Game.getInstance().getTaskBar().addPlayer(player);
+        Player p = e.getPlayer();
+        Game game = Game.getInstance();
+
+        game.putWPlayer(new WPlayer(p.getUniqueId()));
+
+        Game.getInstance().getTaskBar().addPlayer(p);
+
+        game.getTaskBar().setTask(0);
     }
 
 }
