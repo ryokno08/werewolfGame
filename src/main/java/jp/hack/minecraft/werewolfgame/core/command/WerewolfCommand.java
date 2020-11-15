@@ -1,13 +1,19 @@
 package jp.hack.minecraft.werewolfgame.core.command;
 
 import jp.hack.minecraft.werewolfgame.core.command.werewolf.HelpCommand;
+import jp.hack.minecraft.werewolfgame.core.command.werewolf.SetLobbyCommand;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class WerewolfCommand extends CommandMaster {
     public WerewolfCommand(CommandManager manager) {
         super(manager);
         addSubCommand(new HelpCommand(this.manager)); // サブコマンドの追加 この場合 /werewolf help を追加したことになる
+        addSubCommand(new SetLobbyCommand(this.manager));
     }
 
     @Override
@@ -22,6 +28,13 @@ public class WerewolfCommand extends CommandMaster {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        return false;
+        if(args.length <= 1) return false;
+        return subCommands.get(args[1]).onCommand(sender, command, label, Arrays.copyOfRange(args, 1, args.length - 1));
+    }
+
+    @Override
+    public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
+        if(args.length <= 2) return new ArrayList<>(subCommands.keySet());
+        return subCommands.get(args[1]).onTabComplete(sender, command, alias, Arrays.copyOfRange(args, 1, args.length - 1) );
     }
 }

@@ -1,21 +1,25 @@
 package jp.hack.minecraft.werewolfgame.core.command.werewolf;
 
-import jp.hack.minecraft.werewolfgame.Main;
 import jp.hack.minecraft.werewolfgame.core.command.CommandManager;
 import jp.hack.minecraft.werewolfgame.core.command.CommandMaster;
+import jp.hack.minecraft.werewolfgame.logic.GameDirector;
+import jp.hack.minecraft.werewolfgame.logic.WerewolfLogic;
+import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class HelpCommand extends CommandMaster {
-    public HelpCommand(CommandManager manager) {
+public class SetLobbyCommand extends CommandMaster {
+    public SetLobbyCommand(CommandManager manager) {
         super(manager);
     }
+
     @Override
     public String getName() {
-        return "help";
+        return "setLobby";
     }
 
     @Override
@@ -25,9 +29,10 @@ public class HelpCommand extends CommandMaster {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        sender.sendMessage("人狼プラグイン ヘルプメニュー");
-        sender.sendMessage("/werewolf help : このメニューを開く");
-        sender.sendMessage("/werewolf join : 人狼ゲームに参加");
+        sender.sendMessage("SetLobbyコマンドが実行されました");
+        Player player = (Player) sender;
+        manager.plugin.getLogger().info(player.toString());
+        GameDirector.lobbyLocation = player.getLocation();
         return true;
     }
 

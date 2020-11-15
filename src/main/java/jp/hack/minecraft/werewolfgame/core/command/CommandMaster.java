@@ -1,6 +1,5 @@
 package jp.hack.minecraft.werewolfgame.core.command;
 
-import com.sun.tools.javac.util.Assert;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 
@@ -28,8 +27,7 @@ public abstract class CommandMaster {
 
     public abstract boolean onCommand(CommandSender sender, Command command, String label, String[] args);
 
-    public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
-        return new ArrayList<>(subCommands.keySet());
-        // return null;
-    }
+
+    public abstract List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args);
+    // return new ArrayList<>(subCommands.keySet());
 }
