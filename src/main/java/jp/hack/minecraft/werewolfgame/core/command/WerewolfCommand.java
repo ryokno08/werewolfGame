@@ -2,6 +2,9 @@ package jp.hack.minecraft.werewolfgame.core.command;
 
 import jp.hack.minecraft.werewolfgame.core.command.werewolf.HelpCommand;
 import jp.hack.minecraft.werewolfgame.core.command.werewolf.SetLobbyCommand;
+import jp.hack.minecraft.werewolfgame.core.command.werewolf.JoinCommand;
+import jp.hack.minecraft.werewolfgame.core.command.werewolf.TaskBarCommand;
+import jp.hack.minecraft.werewolfgame.core.command.werewolf.TaskCompletedCommand;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 
@@ -14,6 +17,10 @@ public class WerewolfCommand extends CommandMaster {
         super(manager);
         addSubCommand(new HelpCommand(this.manager)); // サブコマンドの追加 この場合 /werewolf help を追加したことになる
         addSubCommand(new SetLobbyCommand(this.manager));
+        addSubCommand(new JoinCommand(this.manager));
+        addSubCommand(new TaskBarCommand(this.manager));
+        addSubCommand(new TaskCompletedCommand(this.manager));
+
     }
 
     @Override

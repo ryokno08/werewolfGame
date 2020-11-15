@@ -1,20 +1,20 @@
 package jp.hack.minecraft.werewolfgame.core.command.werewolf;
 
+import jp.hack.minecraft.werewolfgame.core.Game;
 import jp.hack.minecraft.werewolfgame.core.command.CommandManager;
 import jp.hack.minecraft.werewolfgame.core.command.CommandMaster;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 
-import java.util.ArrayList;
-import java.util.List;
+public class TaskCompletedCommand extends CommandMaster {
 
-public class JoinCommand extends CommandMaster {
-    public JoinCommand(CommandManager manager) {
+    public TaskCompletedCommand(CommandManager manager) {
         super(manager);
     }
+
     @Override
     public String getName() {
-        return "join";
+        return "completed";
     }
 
     @Override
@@ -24,12 +24,11 @@ public class JoinCommand extends CommandMaster {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        manager.plugin.getLogger().info("joinコマンドが実行されました");
-        return true;
-    }
+        manager.plugin.getLogger().info("TaskCompletedコマンドが実行されました");
 
-    @Override
-    public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
-        return new ArrayList<>(subCommands.keySet());
+        Game game = Game.getInstance();
+
+        game.taskCompleted();
+        return true;
     }
 }
