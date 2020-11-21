@@ -20,7 +20,7 @@ public class ChatManager implements Listener {
         WPlayer spokePlayer = game.getWPlayer(p.getUniqueId());
         String message = e.getMessage();
 
-        if ( game.canTalk() ) return; //　現在喋ることが許されているか取得し判断する。許されていたらreturn
+        if ( game.canSpeak() ) return; //　現在喋ることが許されているか取得し判断する。許されていたらreturn
 
         Boolean canCommunicate = spokePlayer.getRole().isWolf() || ( spokePlayer.getRole().isWolfSide() && game.canCommunicate() );
         //　人狼かどうか判断＆オプションで狂人も人狼チャットにメッセージを送れる
