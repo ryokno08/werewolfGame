@@ -1,6 +1,8 @@
 package jp.hack.minecraft.werewolfgame.core;
 
+import jp.hack.minecraft.werewolfgame.core.display.DisplayManager;
 import jp.hack.minecraft.werewolfgame.core.display.TaskBar;
+import jp.hack.minecraft.werewolfgame.core.display.TaskManager;
 import org.bukkit.Location;
 
 import java.util.*;
@@ -11,13 +13,13 @@ public class Game {
         return game;
     }
 
+    private final DisplayManager displayManager = new DisplayManager();
+    private final TaskManager taskManager = new TaskManager();
+
     private Map<UUID, WPlayer> wPlayers = new HashMap<>();
     private Location respawn;
-    private Boolean canTalk = true;
     private Boolean canCommunicate = false;
-    private final TaskBar taskBar = new TaskBar();
-    private int maxTask = 10;
-    private int task = 0;
+
 
     public Map<UUID, WPlayer> getwPlayers() {
         return wPlayers;
@@ -50,14 +52,6 @@ public class Game {
         return true;
     }
 
-    public Boolean canTalk() {
-        return canTalk;
-    }
-
-    public void setCanTalk(Boolean canTalk) {
-        this.canTalk = canTalk;
-    }
-
     public Boolean canCommunicate() {
         return canCommunicate;
     }
@@ -66,24 +60,19 @@ public class Game {
         this.canCommunicate = canCommunicate;
     }
 
-    public TaskBar getTaskBar() {
-        return taskBar;
+    public DisplayManager getDisplayManager() {
+        return displayManager;
+    }
+
+    public TaskManager getTaskManager() {
+        return taskManager;
     }
 
     public void taskCompleted() {
-
-        task++;
-
-        if (maxTask <= task) {
-            stop();
-        }
-
-        taskBar.setTask(maxTask / task);
+        taskManager.taskFinished();
     }
 
     public void start() {}
 
-    public void stop() {
-        task = 0;
-    }
+    public void stop() {}
 }

@@ -1,7 +1,7 @@
 package jp.hack.minecraft.werewolfgame.core.command.werewolf;
 
 import jp.hack.minecraft.werewolfgame.core.Game;
-import jp.hack.minecraft.werewolfgame.core.display.TaskBar;
+import jp.hack.minecraft.werewolfgame.core.display.DisplayManager;
 import jp.hack.minecraft.werewolfgame.core.command.CommandManager;
 import jp.hack.minecraft.werewolfgame.core.command.CommandMaster;
 import org.bukkit.command.Command;
@@ -28,9 +28,9 @@ public class TaskBarCommand extends CommandMaster {
         manager.plugin.getLogger().info("TaskBarコマンドが実行されました");
 
         Game game = Game.getInstance();
-        TaskBar taskBar = game.getTaskBar();
+        DisplayManager displayManager = game.getDisplayManager();
 
-        taskBar.setVisible( !taskBar.isVisible() );
+        displayManager.setTaskBarVisible( !displayManager.isTaskBarVisible() );
         return true;
     }
 }
