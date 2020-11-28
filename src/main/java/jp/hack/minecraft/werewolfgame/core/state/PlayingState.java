@@ -1,5 +1,8 @@
 package jp.hack.minecraft.werewolfgame.core.state;
 
+import jp.hack.minecraft.werewolfgame.core.Game;
+import jp.hack.minecraft.werewolfgame.core.display.TaskManager;
+
 public class PlayingState implements GameState {
     private static final PlayingState singleton = new PlayingState();
     private PlayingState(){}
@@ -15,5 +18,11 @@ public class PlayingState implements GameState {
     @Override
     public boolean canMove() {
         return true;
+    }
+
+    public void update(){
+        TaskManager manager = Game.getInstance().getTaskManager();
+        manager.taskUpdate();
+
     }
 }

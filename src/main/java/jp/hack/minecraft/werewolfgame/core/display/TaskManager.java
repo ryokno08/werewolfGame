@@ -2,16 +2,32 @@ package jp.hack.minecraft.werewolfgame.core.display;
 
 import jp.hack.minecraft.werewolfgame.core.Game;
 
+import java.util.List;
+
 public class TaskManager extends TaskGenerator{
+
+    public static class Task {
+        int taskNo;
+        boolean finished = false;
+        public Task(int no){
+            this.taskNo = no;
+        }
+    }
+
+
     private int maxTask = 10;
     private int finishedTask = 0;
+    private List<Task> tasklist;
+
+    public TaskManager(){
+    }
 
     @Override
     public int getFinishedTask() {
         return finishedTask;
     }
 
-    public void taskUpdate(int finishedTask) {
+    public void taskUpdate() {
         this.finishedTask = finishedTask;
 
         DisplayManager manager = Game.getInstance().getDisplayManager();
@@ -19,10 +35,12 @@ public class TaskManager extends TaskGenerator{
     }
 
     public int getMaxTask() {
-        return maxTask;
+        return tasklist.size();
     }
 
-    public void setMaxTask(int maxTask) {
-        this.maxTask = maxTask;
+    public void setMaxTask(int no) {
+        for(int i=0; i<no; i++) {
+            this.tasklist.add(new Task(no));
+        }
     }
 }

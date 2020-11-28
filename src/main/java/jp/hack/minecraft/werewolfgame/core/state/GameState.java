@@ -4,4 +4,6 @@ public interface GameState {
     // チャットできるならtrue, できないならfalse
     boolean canSpeak();
     boolean canMove();
+
+    void update();
 }

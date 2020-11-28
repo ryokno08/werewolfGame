@@ -16,4 +16,9 @@ public class MeetingState implements GameState {
     public boolean canMove() {
         return false;
     }
+
+    @Override
+    public void update() {
+
+    }
 }
