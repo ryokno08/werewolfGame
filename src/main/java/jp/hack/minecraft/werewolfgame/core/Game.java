@@ -23,9 +23,6 @@ public class Game {
 
     // private Boolean canTalk = true;
 
-    private final TaskBar taskBar = new TaskBar();
-    private int maxTask = 10;
-    private int task = 0;
     private GameState currentState;
 
     public Map<UUID, WPlayer> getwPlayers() {
