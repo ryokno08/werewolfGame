@@ -11,4 +11,9 @@ public class LobbyState implements GameState {
     public boolean canSpeak() {
         return false;
     }
+
+    @Override
+    public boolean canMove() {
+        return true;
+    }
 }

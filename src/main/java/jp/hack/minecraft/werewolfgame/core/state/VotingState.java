@@ -11,4 +11,9 @@ public class VotingState implements GameState {
     public boolean canSpeak() {
         return true;
     }
+
+    @Override
+    public boolean canMove() {
+        return false;
+    }
 }
