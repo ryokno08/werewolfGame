@@ -4,10 +4,11 @@ import jp.hack.minecraft.werewolfgame.core.display.DisplayManager;
 import jp.hack.minecraft.werewolfgame.core.display.TaskManager;
 import jp.hack.minecraft.werewolfgame.core.state.*;
 import org.bukkit.Location;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.*;
 
-public class Game {
+public class Game extends BukkitRunnable {
     private final static Game game = new Game();
     public static synchronized Game getInstance() {
         return game;
@@ -20,9 +21,8 @@ public class Game {
     private Location respawn;
     private Boolean canCommunicate = false;
 
-    // private Boolean canTalk = true;
-
-    private GameState currentState;
+    //ゲームの初期状態はロビーでスタートします
+    private GameState currentState = LobbyState.getInstance();
 
     public Map<UUID, WPlayer> getwPlayers() {
         return wPlayers;
@@ -97,5 +97,12 @@ public class Game {
         currentState = VotingState.getInstance();
     }
 
-    public void stop() {}
+    public void stop() {
+        this.cancel();
+    }
+
+    @Override
+    public void run() {
+        System.out.println("更新処理");
+    }
 }
