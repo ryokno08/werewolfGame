@@ -4,7 +4,7 @@ import jp.hack.minecraft.werewolfgame.core.Game;
 
 import java.util.List;
 
-public class TaskManager extends TaskGenerator{
+public class TaskManager {
 
     public static class Task {
         int taskNo;
@@ -20,11 +20,6 @@ public class TaskManager extends TaskGenerator{
     private List<Task> tasklist;
 
     public TaskManager(){
-    }
-
-    @Override
-    public int getFinishedTask() {
-        return finishedTask;
     }
 
     public void taskUpdate() {
