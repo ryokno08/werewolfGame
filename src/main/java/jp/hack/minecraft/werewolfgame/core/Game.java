@@ -1,7 +1,6 @@
 package jp.hack.minecraft.werewolfgame.core;
 
 import jp.hack.minecraft.werewolfgame.core.display.DisplayManager;
-import jp.hack.minecraft.werewolfgame.core.display.TaskBar;
 import jp.hack.minecraft.werewolfgame.core.display.TaskManager;
 import jp.hack.minecraft.werewolfgame.core.state.*;
 import org.bukkit.Location;
@@ -81,7 +80,7 @@ public class Game {
     }
 
     public void taskCompleted() {
-        taskManager.taskFinished();
+        taskManager.notifyObservers();
     }
 
     // public void start() {}
