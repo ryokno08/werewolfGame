@@ -3,6 +3,7 @@ package jp.hack.minecraft.werewolfgame.core;
 import jp.hack.minecraft.werewolfgame.core.display.DisplayManager;
 import jp.hack.minecraft.werewolfgame.core.display.TaskBar;
 import jp.hack.minecraft.werewolfgame.core.display.TaskManager;
+import jp.hack.minecraft.werewolfgame.core.state.*;
 import org.bukkit.Location;
 
 import java.util.*;
@@ -20,6 +21,12 @@ public class Game {
     private Location respawn;
     private Boolean canCommunicate = false;
 
+    // private Boolean canTalk = true;
+
+    private final TaskBar taskBar = new TaskBar();
+    private int maxTask = 10;
+    private int task = 0;
+    private GameState currentState;
 
     public Map<UUID, WPlayer> getwPlayers() {
         return wPlayers;
@@ -52,6 +59,14 @@ public class Game {
         return true;
     }
 
+    public Boolean canSpeak() {
+        return currentState.canSpeak();
+    }
+    /*
+    public void setCanTalk(Boolean canTalk) {
+        this.canTalk = canTalk;
+    }
+    */
     public Boolean canCommunicate() {
         return canCommunicate;
     }
@@ -72,7 +87,19 @@ public class Game {
         taskManager.taskFinished();
     }
 
-    public void start() {}
+    // public void start() {}
+    public void hostStart() {
+        currentState = LobbyState.getInstance();
+    }
+    public void gameStart() {
+        currentState = PlayingState.getInstance();
+    }
+    public void meetingStart() {
+        currentState = MeetingState.getInstance();
+    }
+    public void voteStart() {
+        currentState = VotingState.getInstance();
+    }
 
     public void stop() {}
 }

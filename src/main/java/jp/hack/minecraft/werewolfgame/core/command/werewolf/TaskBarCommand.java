@@ -7,6 +7,9 @@ import jp.hack.minecraft.werewolfgame.core.command.CommandMaster;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class TaskBarCommand extends CommandMaster {
 
     public TaskBarCommand(CommandManager manager) {
@@ -32,5 +35,10 @@ public class TaskBarCommand extends CommandMaster {
 
         displayManager.setTaskBarVisible( !displayManager.isTaskBarVisible() );
         return true;
+    }
+
+    @Override
+    public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
+        return new ArrayList<>(subCommands.keySet());
     }
 }
