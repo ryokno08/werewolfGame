@@ -6,6 +6,9 @@ import jp.hack.minecraft.werewolfgame.core.command.CommandMaster;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class TaskCompletedCommand extends CommandMaster {
 
     public TaskCompletedCommand(CommandManager manager) {
@@ -30,5 +33,10 @@ public class TaskCompletedCommand extends CommandMaster {
 
         game.taskCompleted();
         return true;
+    }
+
+    @Override
+    public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
+        return new ArrayList<>(subCommands.keySet());
     }
 }
