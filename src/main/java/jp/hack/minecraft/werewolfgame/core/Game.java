@@ -3,10 +3,11 @@ package jp.hack.minecraft.werewolfgame.core;
 import jp.hack.minecraft.werewolfgame.core.display.TaskBar;
 import jp.hack.minecraft.werewolfgame.core.state.*;
 import org.bukkit.Location;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.*;
 
-public class Game {
+public class Game extends BukkitRunnable {
     private final static Game game = new Game();
     public static synchronized Game getInstance() {
         return game;
@@ -19,7 +20,9 @@ public class Game {
     private final TaskBar taskBar = new TaskBar();
     private int maxTask = 10;
     private int task = 0;
-    private GameState currentState;
+    
+    //ゲームの初期状態はロビーでスタートします
+    private GameState currentState = LobbyState.getInstance();
 
     public Map<UUID, WPlayer> getwPlayers() {
         return wPlayers;
@@ -99,5 +102,10 @@ public class Game {
 
     public void stop() {
         task = 0;
+    }
+
+    @Override
+    public void run() {
+        System.out.println("更新処理");
     }
 }
