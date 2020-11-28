@@ -1,5 +1,7 @@
 package jp.hack.minecraft.werewolfgame.core;
 
+import jp.hack.minecraft.werewolfgame.core.Game;
+import jp.hack.minecraft.werewolfgame.core.WPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;

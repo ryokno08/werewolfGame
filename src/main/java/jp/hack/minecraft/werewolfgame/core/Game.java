@@ -1,6 +1,8 @@
 package jp.hack.minecraft.werewolfgame.core;
 
+import jp.hack.minecraft.werewolfgame.core.display.DisplayManager;
 import jp.hack.minecraft.werewolfgame.core.display.TaskBar;
+import jp.hack.minecraft.werewolfgame.core.display.TaskManager;
 import jp.hack.minecraft.werewolfgame.core.state.*;
 import org.bukkit.Location;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -13,14 +15,13 @@ public class Game extends BukkitRunnable {
         return game;
     }
 
+    private final DisplayManager displayManager = new DisplayManager();
+    private final TaskManager taskManager = new TaskManager();
+
     private Map<UUID, WPlayer> wPlayers = new HashMap<>();
     private Location respawn;
-    // private Boolean canTalk = true;
-    private Boolean canCommunicate = false; // 設定用にOptionクラスみたいなの作ってそこに入れる?
-    private final TaskBar taskBar = new TaskBar();
-    private int maxTask = 10;
-    private int task = 0;
-    
+    private Boolean canCommunicate = false;
+
     //ゲームの初期状態はロビーでスタートします
     private GameState currentState = LobbyState.getInstance();
 
@@ -71,19 +72,16 @@ public class Game extends BukkitRunnable {
         this.canCommunicate = canCommunicate;
     }
 
-    public TaskBar getTaskBar() {
-        return taskBar;
+    public DisplayManager getDisplayManager() {
+        return displayManager;
+    }
+
+    public TaskManager getTaskManager() {
+        return taskManager;
     }
 
     public void taskCompleted() {
-
-        task++;
-
-        if (maxTask <= task) {
-            stop();
-        }
-
-        taskBar.setTask(maxTask / task);
+        taskManager.taskFinished();
     }
 
     // public void start() {}
@@ -101,7 +99,7 @@ public class Game extends BukkitRunnable {
     }
 
     public void stop() {
-        task = 0;
+        this.cancel();
     }
 
     @Override

@@ -14,9 +14,7 @@ public class JoinEvent implements Listener {
 
         game.putWPlayer(new WPlayer(p.getUniqueId()));
 
-        Game.getInstance().getTaskBar().addPlayer(p);
-
-        game.getTaskBar().setTask(0);
+        Game.getInstance().getDisplayManager().addTaskBar(p);
     }
 
 }
