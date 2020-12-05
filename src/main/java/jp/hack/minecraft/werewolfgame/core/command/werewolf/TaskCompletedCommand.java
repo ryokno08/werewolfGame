@@ -1,7 +1,7 @@
 package jp.hack.minecraft.werewolfgame.core.command.werewolf;
 
 import jp.hack.minecraft.werewolfgame.Game;
-import jp.hack.minecraft.werewolfgame.Main;
+import jp.hack.minecraft.werewolfgame.GameConfigurator;
 import jp.hack.minecraft.werewolfgame.core.command.CommandManager;
 import jp.hack.minecraft.werewolfgame.core.command.CommandMaster;
 import org.bukkit.command.Command;
@@ -42,7 +42,7 @@ public class TaskCompletedCommand extends CommandMaster {
             return false;
         }
 
-        Game game = Main.getGame();
+        Game game = ((GameConfigurator)manager.plugin).getGame();
 
         game.taskCompleted(num);
         return true;

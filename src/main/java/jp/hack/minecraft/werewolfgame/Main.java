@@ -7,7 +7,7 @@ import jp.hack.minecraft.werewolfgame.core.command.WerewolfCommand;
 import jp.hack.minecraft.werewolfgame.logic.GameEventManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
-public final class Main extends JavaPlugin {
+public final class Main extends JavaPlugin implements GameConfigurator{
 
     private CommandManager commandManager;
     private Game game;
@@ -29,6 +29,7 @@ public final class Main extends JavaPlugin {
         // Plugin shutdown logic
     }
 
+    @Override
     public Game getGame() {
         return game;
     }
