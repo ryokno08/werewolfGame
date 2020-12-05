@@ -5,6 +5,7 @@ import jp.hack.minecraft.werewolfgame.core.display.TaskManager;
 import org.bukkit.scheduler.BukkitRunnable;
 
 public class PlayingState extends BukkitRunnable implements GameState {
+<<<<<<< HEAD
     /*
     private static final PlayingState singleton = new PlayingState();
     private PlayingState(){}
@@ -13,6 +14,8 @@ public class PlayingState extends BukkitRunnable implements GameState {
     }
 
      */
+=======
+>>>>>>> cc10a1e70fdcf0d7262d0a4826e50d998bb07b11
     private Game currentGame;
     public PlayingState(Game game){
         currentGame = game;
@@ -34,7 +37,10 @@ public class PlayingState extends BukkitRunnable implements GameState {
 
     @Override
     public void run() {
+<<<<<<< HEAD
         
         // if();
+=======
+>>>>>>> cc10a1e70fdcf0d7262d0a4826e50d998bb07b11
     }
 }
