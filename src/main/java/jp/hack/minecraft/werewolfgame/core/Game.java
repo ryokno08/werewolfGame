@@ -22,7 +22,7 @@ public class Game extends BukkitRunnable {
     private Boolean canCommunicate = false;
 
     //ゲームの初期状態はロビーでスタートします
-    private GameState currentState = new LobbyState();
+    private GameState currentState = new LobbyState(this);
 
     public Map<UUID, WPlayer> getwPlayers() {
         return wPlayers;
@@ -80,21 +80,21 @@ public class Game extends BukkitRunnable {
     }
 
     public void taskCompleted() {
-        taskManager.notifyObservers();
+        /*taskManager.notifyObservers();*/
     }
 
     // public void start() {}
     public void hostStart() {
-        currentState = new LobbyState();
+        currentState = new LobbyState(this);
     }
     public void gameStart() {
-        currentState = new PlayingState();
+        currentState = new PlayingState(this);
     }
     public void meetingStart() {
-        currentState = new MeetingState();
+        currentState = new MeetingState(this);
     }
     public void voteStart() {
-        currentState = new VotingState();
+        currentState = new VotingState(this);
     }
 
     public void stop() {
