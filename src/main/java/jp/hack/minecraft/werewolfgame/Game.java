@@ -27,7 +27,7 @@ public class Game extends BukkitRunnable {
     //ゲームの初期状態はロビーでスタートします
     private GameState currentState = new LobbyState(this);
 
-    public static Game getGame() {
+    public Game getGame() {
         return this;
     }
 
@@ -95,18 +95,24 @@ public class Game extends BukkitRunnable {
     }
 
     // public void start() {}
+    /*
     public void hostStart() {
         currentState = new LobbyState(this);
     }
+     */
+
+    // gameStart、meetingStartはコマンドが来たとき呼び出してください
     public void gameStart() {
         currentState = new PlayingState(this);
     }
     public void meetingStart() {
-        currentState = new MeetingState(this);
+        currentState = new MeetingState(getPlugin(), this);
     }
     public void voteStart() {
-        currentState = new VotingState(this);
+        currentState = new VotingState(getPlugin(), this);
     }
+
+
 
     public void stop() {
         this.cancel();
