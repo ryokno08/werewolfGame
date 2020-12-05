@@ -1,14 +1,12 @@
 package jp.hack.minecraft.werewolfgame.core;
 
-import jp.hack.minecraft.werewolfgame.core.Game;
-import jp.hack.minecraft.werewolfgame.core.WPlayer;
+import jp.hack.minecraft.werewolfgame.Game;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
 
 public class ChatManager implements Listener {
     public ChatManager() {}

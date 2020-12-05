@@ -1,6 +1,6 @@
 package jp.hack.minecraft.werewolfgame.core.display;
 
-import jp.hack.minecraft.werewolfgame.core.Game;
+import jp.hack.minecraft.werewolfgame.Game;
 
 import java.util.List;
 
@@ -14,18 +14,19 @@ public class TaskManager {
         }
     }
 
-
+    private Game game;
     private int maxTask = 10;
     private int finishedTask = 0;
     private List<Task> tasklist;
 
-    public TaskManager(){
+    public TaskManager(Game game){
+        this.game = game;
     }
 
     public void taskUpdate() {
         this.finishedTask = finishedTask;
 
-        DisplayManager manager = Game.getInstance().getDisplayManager();
+        DisplayManager manager = game.getDisplayManager();
         manager.setTask(maxTask / finishedTask);
     }
 

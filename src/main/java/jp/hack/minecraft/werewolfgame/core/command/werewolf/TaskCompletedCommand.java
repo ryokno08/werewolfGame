@@ -1,6 +1,7 @@
 package jp.hack.minecraft.werewolfgame.core.command.werewolf;
 
-import jp.hack.minecraft.werewolfgame.core.Game;
+import jp.hack.minecraft.werewolfgame.Game;
+import jp.hack.minecraft.werewolfgame.Main;
 import jp.hack.minecraft.werewolfgame.core.command.CommandManager;
 import jp.hack.minecraft.werewolfgame.core.command.CommandMaster;
 import org.bukkit.command.Command;
@@ -29,9 +30,21 @@ public class TaskCompletedCommand extends CommandMaster {
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         manager.plugin.getLogger().info("TaskCompletedコマンドが実行されました");
 
-        Game game = Game.getInstance();
+        if (args.length < 2) {
+            return false;
+        }
 
-        game.taskCompleted();
+        int num = -1;
+        try {
+            num = Integer.parseInt(args[1]);
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+            return false;
+        }
+
+        Game game = Main.getGame();
+
+        game.taskCompleted(num);
         return true;
     }
 

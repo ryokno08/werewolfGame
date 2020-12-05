@@ -1,6 +1,6 @@
 package jp.hack.minecraft.werewolfgame.core.state;
 
-import jp.hack.minecraft.werewolfgame.core.Game;
+import jp.hack.minecraft.werewolfgame.Game;
 
 public class MeetingState implements GameState {
     /*

@@ -1,21 +1,24 @@
-package jp.hack.minecraft.werewolfgame.core;
+package jp.hack.minecraft.werewolfgame;
 
+import jp.hack.minecraft.werewolfgame.core.Role;
+import jp.hack.minecraft.werewolfgame.core.WPlayer;
 import jp.hack.minecraft.werewolfgame.core.display.DisplayManager;
 import jp.hack.minecraft.werewolfgame.core.display.TaskManager;
 import jp.hack.minecraft.werewolfgame.core.state.*;
 import org.bukkit.Location;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.*;
 
 public class Game extends BukkitRunnable {
-    private final static Game game = new Game();
-    public static synchronized Game getInstance() {
-        return game;
+    private JavaPlugin plugin;
+    Game(JavaPlugin plugin) {
+        this.plugin = plugin;
     }
 
     private final DisplayManager displayManager = new DisplayManager();
-    private final TaskManager taskManager = new TaskManager();
+    private final TaskManager taskManager = new TaskManager(this);
 
     private Map<UUID, WPlayer> wPlayers = new HashMap<>();
     private Location respawn;
@@ -23,6 +26,14 @@ public class Game extends BukkitRunnable {
 
     //ゲームの初期状態はロビーでスタートします
     private GameState currentState = new LobbyState(this);
+
+    public static Game getGame() {
+        return this;
+    }
+
+    public JavaPlugin getPlugin() {
+        return plugin;
+    }
 
     public Map<UUID, WPlayer> getwPlayers() {
         return wPlayers;
@@ -79,7 +90,7 @@ public class Game extends BukkitRunnable {
         return taskManager;
     }
 
-    public void taskCompleted() {
+    public void taskCompleted(int num) {
         /*taskManager.notifyObservers();*/
     }
 
