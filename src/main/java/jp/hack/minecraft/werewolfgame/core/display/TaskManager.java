@@ -19,7 +19,7 @@ public class TaskManager {
     private int finishedTask = 0;
     private List<Task> tasklist;
 
-    public TaskManager(){
+    public TaskManager() {
     }
 
     public void taskUpdate() {

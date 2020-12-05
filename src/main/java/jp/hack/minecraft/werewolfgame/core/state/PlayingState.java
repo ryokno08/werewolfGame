@@ -2,8 +2,9 @@ package jp.hack.minecraft.werewolfgame.core.state;
 
 import jp.hack.minecraft.werewolfgame.core.Game;
 import jp.hack.minecraft.werewolfgame.core.display.TaskManager;
+import org.bukkit.scheduler.BukkitRunnable;
 
-public class PlayingState implements GameState {
+public class PlayingState extends BukkitRunnable implements GameState {
     private static final PlayingState singleton = new PlayingState();
     private PlayingState(){}
     public static PlayingState getInstance() {
@@ -23,6 +24,10 @@ public class PlayingState implements GameState {
     public void update(){
         TaskManager manager = Game.getInstance().getTaskManager();
         manager.taskUpdate();
+    }
 
+    @Override
+    public void run() {
+        
     }
 }
