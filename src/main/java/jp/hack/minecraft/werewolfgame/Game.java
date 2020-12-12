@@ -112,6 +112,10 @@ public class Game extends BukkitRunnable {
         currentState = new VotingState(getPlugin(), this);
     }
 
+    public void endEvent(){
+        currentState = new PlayingState(this);
+    }
+
 
 
     public void stop() {
