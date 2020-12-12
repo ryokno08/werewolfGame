@@ -1,7 +1,8 @@
 package jp.hack.minecraft.werewolfgame.core.state;
 
 import jp.hack.minecraft.werewolfgame.Game;
-import jp.hack.minecraft.werewolfgame.core.display.TaskManager;
+import jp.hack.minecraft.werewolfgame.core.Task;
+import jp.hack.minecraft.werewolfgame.core.TaskManager;
 import org.bukkit.scheduler.BukkitRunnable;
 
 public class PlayingState implements GameState {
@@ -22,7 +23,13 @@ public class PlayingState implements GameState {
             @Override
             public void run() {
                 TaskManager taskManager = currentGame.getTaskManager();
-                //for (taskManager)
+                int count = 0;
+                for (Task task : taskManager.getTasklist()) {
+                    if(task.isFinished()) {
+                        count++;
+                    }
+                }
+                taskManager.taskUpdate(count);
             }
         }.runTaskLater(game.getPlugin(), 20);
     }
@@ -37,8 +44,5 @@ public class PlayingState implements GameState {
         return true;
     }
 
-    public void update(){
-        TaskManager manager = currentGame.getTaskManager();
-        manager.taskUpdate();
-    }
+    public void update(){}
 }

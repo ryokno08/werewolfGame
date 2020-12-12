@@ -3,7 +3,7 @@ package jp.hack.minecraft.werewolfgame;
 import jp.hack.minecraft.werewolfgame.core.Role;
 import jp.hack.minecraft.werewolfgame.core.WPlayer;
 import jp.hack.minecraft.werewolfgame.core.display.DisplayManager;
-import jp.hack.minecraft.werewolfgame.core.display.TaskManager;
+import jp.hack.minecraft.werewolfgame.core.TaskManager;
 import jp.hack.minecraft.werewolfgame.core.state.*;
 import org.bukkit.Location;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -91,8 +91,8 @@ public class Game extends BukkitRunnable {
         return taskManager;
     }
 
-    public void taskCompleted(int num) {
-        /*taskManager.notifyObservers();*/
+    public void taskCompleted(int no) {
+        taskManager.taskFinished(no);
     }
 
     // public void start() {}
