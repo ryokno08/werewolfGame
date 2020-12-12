@@ -12,7 +12,6 @@ public final class Main extends JavaPlugin implements GameConfigurator{
     @Override
     public void onEnable() {
         // Plugin startup logic
-        getServer().getPluginManager().registerEvents(new ChatManager(), this);
         getServer().getPluginManager().registerEvents(new GameEventManager(this), this); // イベントはここに統一
         commandManager = new CommandManager(this);
         commandManager.addRootCommand(new WerewolfCommand(commandManager)); // plugin.ymlへの登録を忘れずに
