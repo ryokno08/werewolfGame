@@ -27,10 +27,6 @@ public class Game extends BukkitRunnable {
     //ゲームの初期状態はロビーでスタートします
     private GameState currentState = new LobbyState(this);
 
-    public static Game getGame() {
-        return this;
-    }
-
     public JavaPlugin getPlugin() {
         return plugin;
     }
