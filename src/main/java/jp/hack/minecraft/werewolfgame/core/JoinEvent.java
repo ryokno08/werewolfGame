@@ -10,8 +10,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public class JoinEvent implements Listener {
 
-    JavaPlugin plugin = (JavaPlugin) Main;
-
     @EventHandler
     public void onJoinEvent (PlayerJoinEvent e) {
         Player p = e.getPlayer();
