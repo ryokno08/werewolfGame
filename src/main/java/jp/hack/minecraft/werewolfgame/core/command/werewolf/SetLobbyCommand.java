@@ -1,8 +1,11 @@
 package jp.hack.minecraft.werewolfgame.core.command.werewolf;
 
+import jp.hack.minecraft.werewolfgame.Game;
+import jp.hack.minecraft.werewolfgame.GameConfigurator;
 import jp.hack.minecraft.werewolfgame.core.command.CommandManager;
 import jp.hack.minecraft.werewolfgame.core.command.CommandMaster;
 import jp.hack.minecraft.werewolfgame.logic.GameDirector;
+import jp.hack.minecraft.werewolfgame.logic.GameEventManager;
 import jp.hack.minecraft.werewolfgame.logic.WerewolfLogic;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
@@ -32,7 +35,8 @@ public class SetLobbyCommand extends CommandMaster {
         sender.sendMessage("SetLobbyコマンドが実行されました");
         Player player = (Player) sender;
         manager.plugin.getLogger().info(player.toString());
-        GameDirector.lobbyLocation = player.getLocation();
+        Game game = ((GameConfigurator)manager).getGame();
+        game.setLobbyPos(player.getLocation());
         return true;
     }
 

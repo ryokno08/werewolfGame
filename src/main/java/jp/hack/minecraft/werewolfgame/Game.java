@@ -22,6 +22,7 @@ public class Game extends BukkitRunnable {
 
     private Map<UUID, WPlayer> wPlayers = new HashMap<>();
     private Location respawn;
+    private Location lobbyPos;
     private Boolean canCommunicate = false;
 
     //ゲームの初期状態はロビーでスタートします
@@ -54,6 +55,14 @@ public class Game extends BukkitRunnable {
 
     public void setRespawn(Location respawn) {
         this.respawn = respawn;
+    }
+
+    public Location getLobbyPos() {
+        return lobbyPos;
+    }
+
+    public void setLobbyPos(Location lobbyPos) {
+        this.lobbyPos = lobbyPos;
     }
 
     public Role getPlayerRole(UUID uuid) {
