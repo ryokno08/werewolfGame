@@ -12,7 +12,6 @@ public class PlayingState implements GameState {
         currentGame = game;
 
         new BukkitRunnable() {
-
             @Override
             public void run() {
                 TaskManager taskManager = currentGame.getTaskManager();

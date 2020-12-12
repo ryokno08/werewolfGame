@@ -1,6 +1,8 @@
 package jp.hack.minecraft.werewolfgame.core.state;
 
 import jp.hack.minecraft.werewolfgame.Game;
+import org.bukkit.Bukkit;
+import org.bukkit.scheduler.BukkitScheduler;
 
 public class LobbyState implements GameState {
     /*
@@ -29,5 +31,10 @@ public class LobbyState implements GameState {
     @Override
     public void update() {
 
+    }
+
+    public void gameStart() {
+        // 5秒ほどタイマー処理してそのあと下行を実行
+        currentGame.currentState = currentGame.playingState;
     }
 }

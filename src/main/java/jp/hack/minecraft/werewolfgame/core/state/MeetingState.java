@@ -15,9 +15,9 @@ public class MeetingState implements GameState {
 
      */
     private Game currentGame;
-    public MeetingState(JavaPlugin plugin, Game game){
+    public MeetingState(Game game){
         currentGame = game;
-        meetingLogic(plugin);
+        // meetingLogic(plugin);
     }
     @Override
     public boolean canSpeak() {
@@ -34,7 +34,7 @@ public class MeetingState implements GameState {
 
     }
 
-    private void meetingLogic(JavaPlugin plugin) {
+    public void meetingLogic(JavaPlugin plugin) {
         // 設定などからロードする、単位は秒
         final int meetingLength = 15;
 
