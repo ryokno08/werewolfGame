@@ -6,14 +6,7 @@ import jp.hack.minecraft.werewolfgame.core.TaskManager;
 import org.bukkit.scheduler.BukkitRunnable;
 
 public class PlayingState implements GameState {
-    /*
-    private static final PlayingState singleton = new PlayingState();
-    private PlayingState(){}
-    public static PlayingState getInstance() {
-        return singleton;
-    }
 
-     */
     private Game currentGame;
     public PlayingState(Game game){
         currentGame = game;
@@ -24,7 +17,7 @@ public class PlayingState implements GameState {
             public void run() {
                 TaskManager taskManager = currentGame.getTaskManager();
                 int count = 0;
-                for (Task task : taskManager.getTasklist()) {
+                for (Task task : taskManager.getTaskList()) {
                     if(task.isFinished()) {
                         count++;
                     }

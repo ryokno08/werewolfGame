@@ -11,14 +11,14 @@ public class TaskManager {
     private Game game;
     private int maxTask = 10;
     private int finishedTask = 0;
-    private List<Task> tasklist;
+    private List<Task> taskList;
 
     public TaskManager(Game game){
         this.game = game;
     }
 
     public void taskFinished(int no) {
-        tasklist.get(no).finished();
+        taskList.get(no).finished();
     }
 
     public void taskUpdate(int count) {
@@ -28,20 +28,16 @@ public class TaskManager {
         manager.setTask(maxTask / finishedTask);
     }
 
-    public List<Task> getTasklist() {
-        return tasklist;
+    public List<Task> getTaskList() {
+        return taskList;
     }
 
-    public int getMaxTask() {
-        return tasklist.size();
-    }
-
-    public void setMaxTask(int no) {
+    public void setTaskList(int no) {
         maxTask = no;
 
-        tasklist = new ArrayList<>();
+        taskList = new ArrayList<>();
         for(int i=0; i<no; i++) {
-            this.tasklist.add(new Task(no));
+            this.taskList.add(new Task(no));
         }
     }
 }
