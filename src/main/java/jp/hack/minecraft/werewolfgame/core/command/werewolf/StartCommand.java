@@ -1,24 +1,23 @@
 package jp.hack.minecraft.werewolfgame.core.command.werewolf;
 
-import jp.hack.minecraft.werewolfgame.Game;
 import jp.hack.minecraft.werewolfgame.GameConfigurator;
+import jp.hack.minecraft.werewolfgame.Main;
 import jp.hack.minecraft.werewolfgame.core.command.CommandManager;
 import jp.hack.minecraft.werewolfgame.core.command.CommandMaster;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class SetLobbyCommand extends CommandMaster {
-    public SetLobbyCommand(CommandManager manager) {
+public class StartCommand  extends CommandMaster {
+    public StartCommand(CommandManager manager) {
         super(manager);
     }
 
     @Override
     public String getName() {
-        return "setLobby";
+        return "start";
     }
 
     @Override
@@ -28,12 +27,9 @@ public class SetLobbyCommand extends CommandMaster {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        sender.sendMessage("SetLobbyコマンドが実行されました");
-        Player player = (Player) sender;
-        manager.plugin.getLogger().info(player.toString());
-        Game game = ((GameConfigurator)manager).getGame();
-        game.setLobbyPos(player.getLocation());
-        return true;
+        manager.plugin.getLogger().info("startコマンドが実行されました");
+        ((GameConfigurator)manager.plugin).getGame().gameStart();
+        return false;
     }
 
     @Override

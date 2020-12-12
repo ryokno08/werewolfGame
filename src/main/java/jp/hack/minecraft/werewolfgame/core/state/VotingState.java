@@ -15,9 +15,9 @@ public class VotingState implements GameState {
 
      */
     private Game currentGame;
-    public VotingState(JavaPlugin plugin, Game game){
+    public VotingState(Game game){
         currentGame = game;
-        votingLogic(plugin);
+        // votingLogic(plugin);
     }
     @Override
     public boolean canSpeak() {
@@ -34,7 +34,7 @@ public class VotingState implements GameState {
         
     }
 
-    private void votingLogic(JavaPlugin plugin) {
+    public void votingLogic(JavaPlugin plugin) {
         // 設定などからロードする、単位は秒
         final int voteLength = 120;
 

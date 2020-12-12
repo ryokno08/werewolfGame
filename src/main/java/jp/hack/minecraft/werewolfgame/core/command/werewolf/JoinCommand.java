@@ -7,6 +7,7 @@ import org.bukkit.command.CommandSender;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class JoinCommand extends CommandMaster {
     public JoinCommand(CommandManager manager) {
@@ -30,6 +31,7 @@ public class JoinCommand extends CommandMaster {
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
-        return new ArrayList<>(subCommands.keySet());
+        // return subCommands.keySet().stream().filter(s -> s.startsWith(args[0])).collect(Collectors.toList());
+        return new ArrayList<>();
     }
 }

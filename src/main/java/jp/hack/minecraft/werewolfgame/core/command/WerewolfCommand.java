@@ -1,16 +1,14 @@
 package jp.hack.minecraft.werewolfgame.core.command;
 
-import jp.hack.minecraft.werewolfgame.core.command.werewolf.HelpCommand;
-import jp.hack.minecraft.werewolfgame.core.command.werewolf.SetLobbyCommand;
-import jp.hack.minecraft.werewolfgame.core.command.werewolf.JoinCommand;
-import jp.hack.minecraft.werewolfgame.core.command.werewolf.TaskBarCommand;
-import jp.hack.minecraft.werewolfgame.core.command.werewolf.TaskCompletedCommand;
+import jp.hack.minecraft.werewolfgame.core.command.werewolf.*;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class WerewolfCommand extends CommandMaster {
     public WerewolfCommand(CommandManager manager) {
@@ -20,7 +18,7 @@ public class WerewolfCommand extends CommandMaster {
         addSubCommand(new JoinCommand(this.manager));
         addSubCommand(new TaskBarCommand(this.manager));
         addSubCommand(new TaskCompletedCommand(this.manager));
-
+        addSubCommand(new StartCommand(this.manager));
     }
 
     @Override
@@ -42,7 +40,8 @@ public class WerewolfCommand extends CommandMaster {
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
-        if(args.length <= 2) return new ArrayList<>(subCommands.keySet());
-        return subCommands.get(args[1]).onTabComplete(sender, command, alias, Arrays.copyOfRange(args, 1, args.length - 1) );
+        if(args.length <= 1) return Stream.of(getName()).filter(s -> s.startsWith(args[0])).collect(Collectors.toList()); // "werewolf"の途中 "wer"など (ここには来ない?)
+        if(args.length <= 2) return subCommands.keySet().stream().filter(s -> s.startsWith(args[1])).collect(Collectors.toList()); // "werewolf aaa"の途中 "werewolf a"など
+        return subCommands.get(args[1]).onTabComplete(sender, command, alias, Arrays.copyOfRange(args, 1, args.length - 1) ); // "werewolf aaa bbb"の途中 "werewolf aaa b"など それぞれのコマンドに任せる
     }
 }
