@@ -35,7 +35,8 @@ public class WerewolfCommand extends CommandMaster {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if(args.length <= 1) return false;
+        System.out.println("aaa"+":"+args.length);
+        if(args.length < 2) return false;
         return subCommands.get(args[1]).onCommand(sender, command, label, Arrays.copyOfRange(args, 1, args.length - 1));
     }
 
