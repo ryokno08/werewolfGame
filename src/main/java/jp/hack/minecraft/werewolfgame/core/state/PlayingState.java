@@ -8,23 +8,9 @@ import org.bukkit.scheduler.BukkitRunnable;
 public class PlayingState implements GameState {
 
     private Game currentGame;
-    public PlayingState(Game game){
-        currentGame = game;
+    private BukkitRunnable bukkitRunnable;
 
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                TaskManager taskManager = currentGame.getTaskManager();
-                int count = 0;
-                for (Task task : taskManager.getTaskList()) {
-                    if(task.isFinished()) {
-                        count++;
-                    }
-                }
-                taskManager.taskUpdate(count);
-            }
-        }.runTaskLater(game.getPlugin(), 20);
-    }
+    public PlayingState(){}
 
     @Override
     public boolean canSpeak() {
@@ -37,4 +23,24 @@ public class PlayingState implements GameState {
     }
 
     public void update(){}
+
+    @Override
+    public void init(Game game) {
+        if(bukkitRunnable == null) {
+            bukkitRunnable = new BukkitRunnable() {
+                @Override
+                public void run() {
+                    TaskManager taskManager = currentGame.getTaskManager();
+                    int count = 0;
+                    for (Task task : taskManager.getTaskList()) {
+                        if(task.isFinished()) {
+                            count++;
+                        }
+                    }
+                    taskManager.taskUpdate(count);
+                }
+            };
+            bukkitRunnable.runTaskLater(game.getPlugin(), 20);
+        }
+    }
 }

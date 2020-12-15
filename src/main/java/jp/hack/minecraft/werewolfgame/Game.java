@@ -26,11 +26,11 @@ public class Game extends BukkitRunnable {
     private Boolean canCommunicate = false;
 
     //ゲームの初期状態はロビーでスタート
-    private final LobbyState lobbyState = new LobbyState(this);
-    private final MeetingState meetingState = new MeetingState(this);
-    public final PlayingState playingState = new PlayingState(this);
-    private final VotingState votingState = new VotingState(this);
-    public GameState currentState = lobbyState;
+    private final LobbyState lobbyState = new LobbyState();
+    private final MeetingState meetingState = new MeetingState();
+    public final PlayingState playingState = new PlayingState();
+    private final VotingState votingState = new VotingState();
+    private GameState currentState = lobbyState;
 
 
     public Game getGame() {
@@ -122,14 +122,16 @@ public class Game extends BukkitRunnable {
     public void meetingStart() {
         meetingState.meetingLogic(plugin);
         currentState = meetingState;
+        currentState.init(this);
     }
     public void voteStart() {
-        votingState.votingLogic(plugin);
         currentState = votingState;
+        currentState.init(this);
     }
 
     public void endEvent(){
         currentState = playingState;
+        currentState.init(this);
     }
 
 

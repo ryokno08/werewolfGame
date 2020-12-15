@@ -13,10 +13,7 @@ public class LobbyState implements GameState {
     }
 
      */
-    private Game currentGame;
-    public LobbyState(Game game){
-        currentGame = game;
-    }
+    public LobbyState(){}
 
     @Override
     public boolean canSpeak() {
@@ -33,8 +30,13 @@ public class LobbyState implements GameState {
 
     }
 
+    @Override
+    public void init(Game game) {
+
+    }
+
     public void gameStart() {
         // 5秒ほどタイマー処理してそのあと下行を実行
-        currentGame.currentState = currentGame.playingState;
+        //currentGame.currentState = currentGame.playingState;
     }
 }

@@ -14,11 +14,9 @@ public class VotingState implements GameState {
     }
 
      */
-    private Game currentGame;
-    public VotingState(Game game){
-        currentGame = game;
-        // votingLogic(plugin);
+    public VotingState(){
     }
+
     @Override
     public boolean canSpeak() {
         return true;
@@ -34,7 +32,8 @@ public class VotingState implements GameState {
         
     }
 
-    public void votingLogic(JavaPlugin plugin) {
+    @Override
+    public void init(Game game) {
         // 設定などからロードする、単位は秒
         final int voteLength = 120;
 
@@ -44,8 +43,8 @@ public class VotingState implements GameState {
         Bukkit.broadcastMessage("投票開始");
         for (int i = 0; i < voteLength; i++) {
             int finalI = i;
-            scheduler.scheduleSyncDelayedTask(plugin, () -> Bukkit.broadcastMessage("投票終了まで"+ (voteLength - finalI) +"秒"), 20 * i);
+            scheduler.scheduleSyncDelayedTask(game.getPlugin(), () -> Bukkit.broadcastMessage("投票終了まで"+ (voteLength - finalI) +"秒"), 20 * i);
         }
-        scheduler.scheduleSyncDelayedTask(plugin, () -> currentGame.endEvent(), 20 * voteLength);
+        scheduler.scheduleSyncDelayedTask(game.getPlugin(), game::endEvent, 20 * voteLength);
     }
 }
