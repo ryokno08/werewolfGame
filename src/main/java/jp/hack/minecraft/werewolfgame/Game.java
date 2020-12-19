@@ -120,7 +120,7 @@ public class Game extends BukkitRunnable {
         lobbyState.gameStart();
     }
     public void meetingStart() {
-        meetingState.meetingLogic(plugin);
+        // meetingState.meetingLogic(plugin);
         currentState = meetingState;
         currentState.init(this);
     }
@@ -132,6 +132,12 @@ public class Game extends BukkitRunnable {
     public void endEvent(){
         currentState = playingState;
         currentState.init(this);
+    }
+
+    public void nextState(){
+        if(currentState == meetingState){
+            voteStart();
+        }
     }
 
 
