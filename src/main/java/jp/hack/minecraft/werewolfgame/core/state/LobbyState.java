@@ -34,9 +34,24 @@ public class LobbyState implements GameState {
         Bukkit.broadcastMessage("LobbyStateに切り替わりました");
     }
 
+    @Override
+    public void active() {
+
+    }
+
+    @Override
+    public void inactive() {
+
+    }
+
+    @Override
+    public void end() {
+
+    }
+
     public void gameStart() {
         // 5秒ほどタイマー処理してそのあと下行を実行
-        Game game = ((GameConfigurator)plugin).getGame();
-        game.currentState = game.playingState;
+        // Game game = ((GameConfigurator)plugin).getGame();
+        // game.currentState = game.playingState;
     }
 }

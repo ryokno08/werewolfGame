@@ -25,9 +25,10 @@ public class Game extends BukkitRunnable {
     //ゲームの初期状態はロビーでスタート
     private final LobbyState lobbyState;
     private final MeetingState meetingState;
-    public final PlayingState playingState;
+    private final PlayingState playingState;
     private final VotingState votingState;
-    public GameState currentState;
+    private ArrayDeque<GameState> nextStates;
+    private GameState currentState;
 
     Game(JavaPlugin plugin) {
         this.plugin = plugin;
@@ -37,6 +38,7 @@ public class Game extends BukkitRunnable {
         meetingState = new MeetingState(plugin);
         playingState = new PlayingState(plugin);
         votingState = new VotingState(plugin);
+        nextStates = new ArrayDeque<>(Arrays.asList(playingState));
         currentState = lobbyState;
     }
 
@@ -124,29 +126,38 @@ public class Game extends BukkitRunnable {
 
     // gameStart、meetingStartはコマンドが来たとき呼び出す
     public void gameStart() {
-        lobbyState.gameStart();
+        currentState.inactive();
+        currentState = playingState;
+        currentState.active();
+
         runTaskTimer(plugin, 10, 20);
         displayManager.setTaskBarVisible(true);
     }
     public void meetingStart() {
-        // meetingState.meetingLogic(plugin);
+        currentState.inactive();
         currentState = meetingState;
         currentState.init(this);
+        currentState.active();
+        nextStates.add(votingState);
     }
     public void voteStart() {
+        currentState.inactive();
         currentState = votingState;
         currentState.init(this);
+        currentState.active();
+        nextStates.add(playingState);
     }
-
+/*
     public void endEvent(){
+        currentState.inactive();
         currentState = playingState;
         currentState.init(this);
+        currentState.active();
     }
+ */
 
     public void nextState(){
-        if(currentState == meetingState){
-            voteStart();
-        }
+        currentState = nextStates.removeFirst();
     }
 
 

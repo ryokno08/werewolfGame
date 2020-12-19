@@ -42,6 +42,21 @@ public class VotingState implements GameState {
             int finalI = i;
             scheduler.scheduleSyncDelayedTask(game.getPlugin(), () -> Bukkit.broadcastMessage("投票終了まで"+ (voteLength - finalI) +"秒"), 20 * i);
         }
-        scheduler.scheduleSyncDelayedTask(game.getPlugin(), game::endEvent, 20 * voteLength);
+        scheduler.scheduleSyncDelayedTask(game.getPlugin(), () -> game.nextState(), 20 * voteLength);
+    }
+
+    @Override
+    public void active() {
+
+    }
+
+    @Override
+    public void inactive() {
+
+    }
+
+    @Override
+    public void end() {
+
     }
 }

@@ -44,4 +44,19 @@ public class MeetingState implements GameState {
         }
         scheduler.scheduleSyncDelayedTask(game.getPlugin(), () -> game.nextState(), 20 * meetingLength);
     }
+
+    @Override
+    public void active() {
+
+    }
+
+    @Override
+    public void inactive() {
+
+    }
+
+    @Override
+    public void end() {
+
+    }
 }

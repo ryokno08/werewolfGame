@@ -12,4 +12,7 @@ public interface GameState {
 
     void init(Game game);
 
+    void active();
+    void inactive();
+    void end();
 }

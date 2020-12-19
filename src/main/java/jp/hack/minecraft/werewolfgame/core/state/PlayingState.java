@@ -48,4 +48,19 @@ public class PlayingState implements GameState {
             bukkitRunnable.runTaskLater(game.getPlugin(), 20);
         }
     }
+
+    @Override
+    public void active() {
+
+    }
+
+    @Override
+    public void inactive() {
+
+    }
+
+    @Override
+    public void end() {
+
+    }
 }
