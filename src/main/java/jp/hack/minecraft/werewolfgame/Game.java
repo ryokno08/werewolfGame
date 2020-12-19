@@ -23,15 +23,21 @@ public class Game extends BukkitRunnable {
     private Boolean canCommunicate = false;
 
     //ゲームの初期状態はロビーでスタート
-    private final LobbyState lobbyState = new LobbyState(plugin);
-    private final MeetingState meetingState = new MeetingState(plugin);
-    public final PlayingState playingState = new PlayingState(plugin);
-    private final VotingState votingState = new VotingState(plugin);
-    public GameState currentState = lobbyState;
+    private final LobbyState lobbyState;
+    private final MeetingState meetingState;
+    public final PlayingState playingState;
+    private final VotingState votingState;
+    public GameState currentState;
 
     Game(JavaPlugin plugin) {
         this.plugin = plugin;
         displayManager.setTaskBarVisible(false);
+
+        lobbyState = new LobbyState(plugin);
+        meetingState = new MeetingState(plugin);
+        playingState = new PlayingState(plugin);
+        votingState = new VotingState(plugin);
+        currentState = lobbyState;
     }
 
     public Game getGame() {
