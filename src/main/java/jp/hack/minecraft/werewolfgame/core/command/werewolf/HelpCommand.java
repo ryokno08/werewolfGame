@@ -33,8 +33,9 @@ public class HelpCommand extends CommandMaster {
     String[] args
   ) {
     sender.sendMessage("人狼プラグイン ヘルプメニュー");
+    sender.sendMessage("人狼ゲームにはサーバー接続時に自動的に参加しています。");
     sender.sendMessage("/werewolf help : このメニューを開く");
-    sender.sendMessage("/werewolf join : 人狼ゲームに参加");
+    sender.sendMessage("/werewolf start : 人狼ゲームを起動");
     return true;
   }
 

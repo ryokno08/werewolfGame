@@ -1,5 +1,6 @@
 package jp.hack.minecraft.werewolfgame.core.command.werewolf;
 
+import jp.hack.minecraft.werewolfgame.Game;
 import jp.hack.minecraft.werewolfgame.GameConfigurator;
 import jp.hack.minecraft.werewolfgame.Main;
 import jp.hack.minecraft.werewolfgame.core.command.CommandManager;
@@ -28,7 +29,8 @@ public class StartCommand  extends CommandMaster {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         manager.plugin.getLogger().info("startコマンドが実行されました");
-        ((GameConfigurator)manager.plugin).getGame().gameStart();
+        Game game = ((GameConfigurator)manager.plugin).getGame();
+        game.gameStart();
         return false;
     }
 

@@ -17,7 +17,6 @@ public final class Main extends JavaPlugin implements GameConfigurator{
         commandManager.addRootCommand(new WerewolfCommand(commandManager)); // plugin.ymlへの登録を忘れずに
 
         game = new Game(this);
-        game.runTaskTimer(this, 10, 20);
     }
 
     @Override

@@ -15,6 +15,7 @@ public class TaskManager {
 
     public TaskManager(Game game){
         this.game = game;
+        setTaskList(maxTask);
     }
 
     public void taskFinished(int no) {

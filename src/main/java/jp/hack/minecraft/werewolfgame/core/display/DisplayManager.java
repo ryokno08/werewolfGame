@@ -3,9 +3,12 @@ package jp.hack.minecraft.werewolfgame.core.display;
 import org.bukkit.entity.Player;
 
 public class DisplayManager {
-    TaskBar taskBar = new TaskBar();
+    TaskBar taskBar;
 
-    public DisplayManager() {}
+    public DisplayManager() {
+        taskBar = new TaskBar();
+        taskBar.setVisible(false);
+    }
 
     public Boolean isTaskBarVisible() {
         return taskBar.isVisible();

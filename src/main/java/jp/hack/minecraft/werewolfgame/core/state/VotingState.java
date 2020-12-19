@@ -6,15 +6,10 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitScheduler;
 
 public class VotingState implements GameState {
-    /*
-    private static final VotingState singleton = new VotingState();
-    private VotingState(){}
-    public static VotingState getInstance() {
-        return singleton;
-    }
+    private JavaPlugin plugin;
 
-     */
-    public VotingState(){
+    public VotingState(JavaPlugin plugin){
+        this.plugin = plugin;
     }
 
     @Override

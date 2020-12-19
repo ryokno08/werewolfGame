@@ -1,19 +1,18 @@
 package jp.hack.minecraft.werewolfgame.core.state;
 
 import jp.hack.minecraft.werewolfgame.Game;
+import jp.hack.minecraft.werewolfgame.GameConfigurator;
+import jp.hack.minecraft.werewolfgame.Main;
 import org.bukkit.Bukkit;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitScheduler;
 
 public class LobbyState implements GameState {
-    /*
-    private static final LobbyState singleton = new LobbyState();
-    private LobbyState(){}
-    public static LobbyState getInstance() {
-        return singleton;
-    }
+    private JavaPlugin plugin;
 
-     */
-    public LobbyState(){}
+    public LobbyState(JavaPlugin plugin){
+        this.plugin = plugin;
+    }
 
     @Override
     public boolean canSpeak() {
@@ -37,6 +36,7 @@ public class LobbyState implements GameState {
 
     public void gameStart() {
         // 5秒ほどタイマー処理してそのあと下行を実行
-        //currentGame.currentState = currentGame.playingState;
+        Game game = ((GameConfigurator)plugin).getGame();
+        game.currentState = game.playingState;
     }
 }

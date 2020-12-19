@@ -13,9 +13,6 @@ import java.util.*;
 
 public class Game extends BukkitRunnable {
     private JavaPlugin plugin;
-    Game(JavaPlugin plugin) {
-        this.plugin = plugin;
-    }
 
     private final DisplayManager displayManager = new DisplayManager();
     private final TaskManager taskManager = new TaskManager(this);
@@ -26,12 +23,16 @@ public class Game extends BukkitRunnable {
     private Boolean canCommunicate = false;
 
     //ゲームの初期状態はロビーでスタート
-    private final LobbyState lobbyState = new LobbyState();
-    private final MeetingState meetingState = new MeetingState();
-    public final PlayingState playingState = new PlayingState();
-    private final VotingState votingState = new VotingState();
-    private GameState currentState = lobbyState;
+    private final LobbyState lobbyState = new LobbyState(plugin);
+    private final MeetingState meetingState = new MeetingState(plugin);
+    public final PlayingState playingState = new PlayingState(plugin);
+    private final VotingState votingState = new VotingState(plugin);
+    public GameState currentState = lobbyState;
 
+    Game(JavaPlugin plugin) {
+        this.plugin = plugin;
+        displayManager.setTaskBarVisible(false);
+    }
 
     public Game getGame() {
         return this;
@@ -118,6 +119,8 @@ public class Game extends BukkitRunnable {
     // gameStart、meetingStartはコマンドが来たとき呼び出す
     public void gameStart() {
         lobbyState.gameStart();
+        runTaskTimer(plugin, 10, 20);
+        displayManager.setTaskBarVisible(true);
     }
     public void meetingStart() {
         meetingState.meetingLogic(plugin);
