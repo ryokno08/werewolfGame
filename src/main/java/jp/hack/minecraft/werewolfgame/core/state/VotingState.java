@@ -29,6 +29,8 @@ public class VotingState implements GameState {
 
     @Override
     public void init(Game game) {
+        Bukkit.broadcastMessage("VotingStateに切り替わりました");
+
         // 設定などからロードする、単位は秒
         final int voteLength = 120;
 

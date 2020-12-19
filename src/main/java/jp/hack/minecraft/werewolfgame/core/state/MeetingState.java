@@ -30,11 +30,7 @@ public class MeetingState implements GameState {
 
     @Override
     public void init(Game game) {
-
-    }
-
-    public void meetingLogic(JavaPlugin plugin) {
-        Game game = ((GameConfigurator)plugin).getGame();
+        Bukkit.broadcastMessage("MeetingStateに切り替わりました");
         // 設定などからロードする、単位は秒
         final int meetingLength = 15;
 
@@ -44,8 +40,8 @@ public class MeetingState implements GameState {
         Bukkit.broadcastMessage("討論開始");
         for (int i = 0; i < meetingLength; i++) {
             int finalI = i;
-            scheduler.scheduleSyncDelayedTask(plugin, () -> Bukkit.broadcastMessage("投票まで"+ (meetingLength - finalI) +"秒"), 20 * i);
+            scheduler.scheduleSyncDelayedTask(game.getPlugin(), () -> Bukkit.broadcastMessage("投票まで"+ (meetingLength - finalI) +"秒"), 20 * i);
         }
-        scheduler.scheduleSyncDelayedTask(plugin, () -> game.voteStart(), 20 * meetingLength);
+        scheduler.scheduleSyncDelayedTask(game.getPlugin(), () -> game.nextState(), 20 * meetingLength);
     }
 }

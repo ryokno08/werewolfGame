@@ -31,7 +31,7 @@ public class LobbyState implements GameState {
 
     @Override
     public void init(Game game) {
-
+        Bukkit.broadcastMessage("LobbyStateに切り替わりました");
     }
 
     public void gameStart() {

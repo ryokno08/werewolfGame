@@ -4,6 +4,7 @@ import jp.hack.minecraft.werewolfgame.Game;
 import jp.hack.minecraft.werewolfgame.core.Task;
 import jp.hack.minecraft.werewolfgame.core.TaskManager;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.Bukkit;
 import org.bukkit.scheduler.BukkitRunnable;
 
 public class PlayingState implements GameState {
@@ -29,6 +30,7 @@ public class PlayingState implements GameState {
 
     @Override
     public void init(Game game) {
+        Bukkit.broadcastMessage("PlayingStateに切り替わりました");
         if(bukkitRunnable == null) {
             bukkitRunnable = new BukkitRunnable() {
                 @Override
