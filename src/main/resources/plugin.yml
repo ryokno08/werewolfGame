@@ -4,6 +4,8 @@ main: jp.hack.minecraft.werewolfgame.Main
 api-version: 1.12
 commands:
   werewolf:
+    aliases:
+      - ww
     description: main command
     usage: "Usage: /<command>"
     permission: werewolf.admin

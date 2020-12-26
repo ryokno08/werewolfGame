@@ -18,7 +18,7 @@ public class TaskCompletedCommand extends CommandMaster {
 
     @Override
     public String getName() {
-        return "completed";
+        return "taskcomp";
     }
 
     @Override
@@ -28,7 +28,7 @@ public class TaskCompletedCommand extends CommandMaster {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        manager.plugin.getLogger().info("TaskCompletedコマンドが実行されました");
+        manager.plugin.getLogger().info("taskcompコマンドが実行されました");
 
         if (args.length < 2) {
             return false;

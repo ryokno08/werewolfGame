@@ -19,7 +19,7 @@ public class TaskBarCommand extends CommandMaster {
 
     @Override
     public String getName() {
-        return "task";
+        return "taskbar";
     }
 
     @Override
@@ -29,7 +29,7 @@ public class TaskBarCommand extends CommandMaster {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        manager.plugin.getLogger().info("TaskBarコマンドが実行されました");
+        manager.plugin.getLogger().info("taskbarコマンドが実行されました");
 
         Game game = ((GameConfigurator)manager.plugin).getGame();
         DisplayManager displayManager = game.getDisplayManager();
