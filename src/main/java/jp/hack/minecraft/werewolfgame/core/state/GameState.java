@@ -2,17 +2,44 @@ package jp.hack.minecraft.werewolfgame.core.state;
 
 import jp.hack.minecraft.werewolfgame.Game;
 
-public interface GameState {
+public abstract class GameState {
+    public enum State{
+        START,
+        ACTIVE,
+        INACTIVE,
+        END,
+        NONE
+    }
+    public State state = State.NONE;
     // チャットできるならtrue, できないならfalse
-    boolean canSpeak();
+    public boolean canSpeak() {
+        return false;
+    }
+
     // 動けるならtrue, 動けないならfalse
-    boolean canMove();
+    public boolean canMove() {
+        return false;
+    }
 
-    void update();
+    public abstract void update();
 
-    void onStart(Game game); // Stateがnewされた時
+    public void onStart(Game game){
+        state = State.START;
+    } // Stateがnewされた時
 
-    void onActive(); // このStateに切り替わった時
-    void onInactive(); // 違うStateに切り替わった時
-    void onEnd(); // Stateが完全に終了した時
+    public void onActive(){
+        state = State.ACTIVE;
+    } // このStateに切り替わった時
+
+    public void onInactive(){
+        state = State.INACTIVE;
+    } // 違うStateに切り替わった時
+
+    public void onEnd(){
+        state = State.END;
+    } // Stateが完全に終了した時
+
+    public boolean isActive(){
+        return state == State.ACTIVE;
+    }
 }
