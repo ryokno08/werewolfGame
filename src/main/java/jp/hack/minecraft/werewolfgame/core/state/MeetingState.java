@@ -3,11 +3,12 @@ package jp.hack.minecraft.werewolfgame.core.state;
 import jp.hack.minecraft.werewolfgame.Game;
 import jp.hack.minecraft.werewolfgame.GameConfigurator;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitScheduler;
 
 public class MeetingState implements GameState {
-    private JavaPlugin plugin;
+    private final JavaPlugin plugin;
 
     public MeetingState(JavaPlugin plugin){
         this.plugin = plugin;
@@ -29,34 +30,35 @@ public class MeetingState implements GameState {
     }
 
     @Override
-    public void init(Game game) {
+    public void onStart(Game game) {
+
+    }
+
+    @Override
+    public void onActive() {
         Bukkit.broadcastMessage("MeetingStateに切り替わりました");
         // 設定などからロードする、単位は秒
         final int meetingLength = 15;
 
         BukkitScheduler scheduler = Bukkit.getServer().getScheduler();
 
-        // チャット欄でなくBossBarやTitleなどを使うべき
-        Bukkit.broadcastMessage("討論開始");
-        for (int i = 0; i < meetingLength; i++) {
-            int finalI = i;
-            scheduler.scheduleSyncDelayedTask(game.getPlugin(), () -> Bukkit.broadcastMessage("投票まで"+ (meetingLength - finalI) +"秒"), 20 * i);
+        for (Player p : plugin.getServer().getOnlinePlayers()) {
+            p.sendTitle("討論開始", "", 20, 20, 20);
         }
-        scheduler.scheduleSyncDelayedTask(game.getPlugin(), () -> game.nextState(), 20 * meetingLength);
+        for (int i = 0; i < meetingLength; i++) {
+            String massage = "投票まで"+ (meetingLength - i) +"秒";
+            scheduler.scheduleSyncDelayedTask(plugin, () -> Bukkit.broadcastMessage(massage), 20 * i);
+        }
+        scheduler.scheduleSyncDelayedTask(plugin, () -> ((GameConfigurator)plugin).getGame().nextState(), 20 * meetingLength);
     }
 
     @Override
-    public void active() {
+    public void onInactive() {
 
     }
 
     @Override
-    public void inactive() {
-
-    }
-
-    @Override
-    public void end() {
+    public void onEnd() {
 
     }
 }

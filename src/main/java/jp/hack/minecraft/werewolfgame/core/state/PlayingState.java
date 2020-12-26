@@ -9,7 +9,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
 public class PlayingState implements GameState {
-    private JavaPlugin plugin;
+    private final JavaPlugin plugin;
 
     private BukkitTask bukkitTask;
 
@@ -30,7 +30,7 @@ public class PlayingState implements GameState {
     public void update(){}
 
     @Override
-    public void init(Game game) {
+    public void onStart(Game game) {
         Bukkit.broadcastMessage("PlayingStateに切り替わりました");
         if(bukkitTask == null) {
             bukkitTask = new BukkitRunnable() {
@@ -51,17 +51,17 @@ public class PlayingState implements GameState {
     }
 
     @Override
-    public void active() {
+    public void onActive() {
 
     }
 
     @Override
-    public void inactive() {
+    public void onInactive() {
 
     }
 
     @Override
-    public void end() {
+    public void onEnd() {
         if (bukkitTask != null) bukkitTask.cancel();
     }
 }

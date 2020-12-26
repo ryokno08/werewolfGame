@@ -1,12 +1,14 @@
 package jp.hack.minecraft.werewolfgame.core.state;
 
 import jp.hack.minecraft.werewolfgame.Game;
+import jp.hack.minecraft.werewolfgame.GameConfigurator;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitScheduler;
 
 public class VotingState implements GameState {
-    private JavaPlugin plugin;
+    private final JavaPlugin plugin;
 
     public VotingState(JavaPlugin plugin){
         this.plugin = plugin;
@@ -28,35 +30,36 @@ public class VotingState implements GameState {
     }
 
     @Override
-    public void init(Game game) {
-        Bukkit.broadcastMessage("VotingStateに切り替わりました");
+    public void onStart(Game game) {
+
+    }
+
+    @Override
+    public void onActive() {
+        Bukkit.broadcastMessage("VotingStateがアクティブになりました");
 
         // 設定などからロードする、単位は秒
         final int voteLength = 120;
 
         BukkitScheduler scheduler = Bukkit.getServer().getScheduler();
 
-        // チャット欄でなくBossBarやTitleなどを使うべき
-        Bukkit.broadcastMessage("投票開始");
-        for (int i = 0; i < voteLength; i++) {
-            int finalI = i;
-            scheduler.scheduleSyncDelayedTask(game.getPlugin(), () -> Bukkit.broadcastMessage("投票終了まで"+ (voteLength - finalI) +"秒"), 20 * i);
+        for (Player p : plugin.getServer().getOnlinePlayers()) {
+            p.sendTitle("投票開始", "", 20, 20, 20);
         }
-        scheduler.scheduleSyncDelayedTask(game.getPlugin(), () -> game.nextState(), 20 * voteLength);
+        for (int i = 0; i < voteLength; i++) {
+            String massage = "投票終了まで"+ (voteLength - i) +"秒";
+            scheduler.scheduleSyncDelayedTask(plugin, () -> Bukkit.broadcastMessage(massage), 20 * i);
+        }
+        scheduler.scheduleSyncDelayedTask(plugin, () -> ((GameConfigurator)plugin).getGame().nextState(), 20 * voteLength);
     }
 
     @Override
-    public void active() {
+    public void onInactive() {
 
     }
 
     @Override
-    public void inactive() {
-
-    }
-
-    @Override
-    public void end() {
+    public void onEnd() {
 
     }
 }

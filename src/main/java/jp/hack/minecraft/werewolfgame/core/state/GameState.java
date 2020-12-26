@@ -10,9 +10,9 @@ public interface GameState {
 
     void update();
 
-    void init(Game game);
+    void onStart(Game game); // Stateがnewされた時
 
-    void active();
-    void inactive();
-    void end();
+    void onActive(); // このStateに切り替わった時
+    void onInactive(); // 違うStateに切り替わった時
+    void onEnd(); // Stateが完全に終了した時
 }

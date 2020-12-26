@@ -35,9 +35,13 @@ public class Game extends BukkitRunnable {
         displayManager.setTaskBarVisible(false);
 
         lobbyState = new LobbyState(plugin);
+        lobbyState.onStart(this);
         meetingState = new MeetingState(plugin);
+        meetingState.onStart(this);
         playingState = new PlayingState(plugin);
+        playingState.onStart(this);
         votingState = new VotingState(plugin);
+        votingState.onStart(this);
         nextStates = new ArrayDeque<>(Arrays.asList(playingState));
         currentState = lobbyState;
     }
@@ -126,38 +130,37 @@ public class Game extends BukkitRunnable {
 
     // gameStart、meetingStartはコマンドが来たとき呼び出す
     public void gameStart() {
-        currentState.inactive();
+        if(currentState == playingState) return;
+        currentState.onInactive();
         currentState = playingState;
-        currentState.active();
+        currentState.onActive();
 
         runTaskTimer(plugin, 10, 20);
         displayManager.setTaskBarVisible(true);
     }
     public void meetingStart() {
-        currentState.inactive();
+        if(currentState == meetingState) return;
+        currentState.onInactive();
         currentState = meetingState;
-        currentState.init(this);
-        currentState.active();
+        currentState.onActive();
+
         nextStates.add(votingState);
     }
     public void voteStart() {
-        currentState.inactive();
+        if(currentState == votingState) return;
+        currentState.onInactive();
         currentState = votingState;
-        currentState.init(this);
-        currentState.active();
+        currentState.onActive();
+
         nextStates.add(playingState);
     }
-/*
-    public void endEvent(){
-        currentState.inactive();
-        currentState = playingState;
-        currentState.init(this);
-        currentState.active();
-    }
- */
 
     public void nextState(){
+        if(nextStates.size() < 1) return;
+
+        currentState.onInactive();
         currentState = nextStates.removeFirst();
+        currentState.onActive();
     }
 
 
