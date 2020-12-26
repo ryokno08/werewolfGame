@@ -30,13 +30,13 @@ public class TaskCompletedCommand extends CommandMaster {
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         manager.plugin.getLogger().info("taskcompコマンドが実行されました");
 
-        if (args.length < 2) {
+        if (args.length < 3) {
             return false;
         }
 
         int num = -1;
         try {
-            num = Integer.parseInt(args[1]);
+            num = Integer.parseInt(args[2]);
         } catch (NumberFormatException e) {
             e.printStackTrace();
             return false;

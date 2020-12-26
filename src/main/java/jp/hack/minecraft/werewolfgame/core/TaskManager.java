@@ -20,6 +20,7 @@ public class TaskManager {
 
     public void taskFinished(int no) {
         taskList.get(no).finished();
+        System.out.println("taskNo."+no+": "+taskList.get(no).isFinished());
     }
 
     public void taskUpdate(int count) {
