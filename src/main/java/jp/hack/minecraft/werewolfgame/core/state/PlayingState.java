@@ -6,11 +6,12 @@ import jp.hack.minecraft.werewolfgame.core.TaskManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.Bukkit;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitTask;
 
 public class PlayingState implements GameState {
     private JavaPlugin plugin;
 
-    private BukkitRunnable bukkitRunnable;
+    private BukkitTask bukkitTask;
 
     public PlayingState(JavaPlugin plugin) {
         this.plugin = plugin;
@@ -31,8 +32,8 @@ public class PlayingState implements GameState {
     @Override
     public void init(Game game) {
         Bukkit.broadcastMessage("PlayingStateに切り替わりました");
-        if(bukkitRunnable == null) {
-            bukkitRunnable = new BukkitRunnable() {
+        if(bukkitTask == null) {
+            bukkitTask = new BukkitRunnable() {
                 @Override
                 public void run() {
                     TaskManager taskManager = game.getTaskManager();
@@ -44,8 +45,8 @@ public class PlayingState implements GameState {
                     }
                     taskManager.taskUpdate(count);
                 }
-            };
-            bukkitRunnable.runTaskLater(game.getPlugin(), 20);
+            }.runTaskLater(game.getPlugin(), 20);
+
         }
     }
 
@@ -61,6 +62,6 @@ public class PlayingState implements GameState {
 
     @Override
     public void end() {
-
+        if (bukkitTask != null) bukkitTask.cancel();
     }
 }
