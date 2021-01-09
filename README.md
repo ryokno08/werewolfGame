@@ -22,6 +22,6 @@ Minecraftで人狼ゲームをヒントにしたコロナの感染ゲームを�
  1.12.2
   
 #### 開発環境構築
-1. cd [worldirectory]
+1. cd [work directory]
 2. git clone git@github.com:ryokno08/werewolfGame.git
 3. open werewolfGame with InteliJ
