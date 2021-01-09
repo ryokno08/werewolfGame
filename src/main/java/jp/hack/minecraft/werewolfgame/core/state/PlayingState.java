@@ -53,16 +53,19 @@ public class PlayingState extends GameState {
 
     @Override
     public void onActive() {
+        super.onActive();
         bukkitTask.cancel();
     }
 
     @Override
     public void onInactive() {
+        super.onInactive();
 
     }
 
     @Override
     public void onEnd() {
+        super.onEnd();
         if (bukkitTask != null) bukkitTask.cancel();
     }
 }

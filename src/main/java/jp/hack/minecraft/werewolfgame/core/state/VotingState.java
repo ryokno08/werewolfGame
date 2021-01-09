@@ -34,11 +34,13 @@ public class VotingState extends GameState {
 
     @Override
     public void onStart(Game game) {
+        super.onStart(game);
 
     }
 
     @Override
     public void onActive() {
+        super.onActive();
         Bukkit.broadcastMessage("VotingStateがアクティブになりました");
 
         // 設定などからロードする、単位は秒
@@ -68,11 +70,13 @@ public class VotingState extends GameState {
 
     @Override
     public void onInactive() {
+        super.onInactive();
 
     }
 
     @Override
     public void onEnd() {
+        super.onEnd();
 
     }
 }

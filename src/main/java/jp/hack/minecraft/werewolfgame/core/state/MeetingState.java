@@ -34,11 +34,13 @@ public class MeetingState extends GameState {
 
     @Override
     public void onStart(Game game) {
+        super.onStart(game);
 
     }
 
     @Override
     public void onActive() {
+        super.onActive();
         Bukkit.broadcastMessage("MeetingStateに切り替わりました");
         // 設定などからロードする、単位は秒
         final int meetingLength = 15;
@@ -72,12 +74,14 @@ public class MeetingState extends GameState {
 
     @Override
     public void onInactive() {
+        super.onInactive();
         task.cancel();
         task = null;
     }
 
     @Override
     public void onEnd() {
+        super.onEnd();
         task.cancel();
         task = null;
     }

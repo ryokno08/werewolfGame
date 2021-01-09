@@ -36,11 +36,13 @@ public class LobbyState extends GameState {
 
     @Override
     public void onStart(Game game) {
+        super.onStart(game);
         Bukkit.broadcastMessage("LobbyStateに切り替わりました");
     }
 
     @Override
     public void onActive() {
+        super.onActive();
         if (task == null) {
             task = new BukkitRunnable() {
                 int counter = 0;
@@ -62,6 +64,7 @@ public class LobbyState extends GameState {
 
     @Override
     public void onInactive() {
+        super.onInactive();
         if (task != null) {
             task.cancel();
             task = null;
@@ -70,6 +73,7 @@ public class LobbyState extends GameState {
 
     @Override
     public void onEnd() {
+        super.onEnd();
         if (task != null) {
             task.cancel();
             task = null;
