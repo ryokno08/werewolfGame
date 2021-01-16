@@ -41,14 +41,12 @@ public class VotingState extends GameState {
     @Override
     public void onActive() {
         super.onActive();
-        Bukkit.broadcastMessage("VotingStateがアクティブになりました");
+        plugin.getLogger().info("VotingStateがアクティブになりました");
 
         // 設定などからロードする、単位は秒
         final int voteLength = 120;
 
-        for (Player p : plugin.getServer().getOnlinePlayers()) {
-            p.sendTitle("投票開始", "", 20, 20, 20);
-        }
+        plugin.getServer().getOnlinePlayers().forEach(player -> player.sendTitle("投票開始", "", 10, 20, 10));
         if (task == null) {
             task = new BukkitRunnable() {
                 int counter = 0;
@@ -57,14 +55,14 @@ public class VotingState extends GameState {
                 public void run() {
                     counter++;
                     if (counter < voteLength) {
-                        Bukkit.broadcastMessage("投票終了まで" + (voteLength - counter) + "秒");
+                        plugin.getServer().getOnlinePlayers().forEach(player -> player.sendMessage("投票終了まで" + (voteLength - counter) + "秒"));
                     } else {
                         Game game = ((GameConfigurator) plugin).getGame();
                         game.nextState();
-                        task.cancel();
+                        this.cancel();
                     }
                 }
-            }.runTaskLater(plugin, 20);
+            }.runTaskTimer(plugin, 0, 20);
         }
     }
 
@@ -77,6 +75,5 @@ public class VotingState extends GameState {
     @Override
     public void onEnd() {
         super.onEnd();
-
     }
 }

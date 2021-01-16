@@ -27,20 +27,20 @@ public class PlayingState extends GameState {
         return true;
     }
 
-    public void update(){}
+    public void update() {
+    }
 
     @Override
     public void onStart(Game game) {
         super.onStart(game);
-        Bukkit.broadcastMessage("PlayingStateに切り替わりました");
-        if(bukkitTask == null) {
+        if (bukkitTask == null) {
             bukkitTask = new BukkitRunnable() {
                 @Override
                 public void run() {
                     TaskManager taskManager = game.getTaskManager();
                     int count = 0;
                     for (Task task : taskManager.getTaskList()) {
-                        if(task.isFinished()) {
+                        if (task.isFinished()) {
                             count++;
                         }
                     }
@@ -54,6 +54,9 @@ public class PlayingState extends GameState {
     @Override
     public void onActive() {
         super.onActive();
+        plugin.getLogger().info("PlayingStateに切り替わりました");
+        plugin.getLogger().info(plugin.getServer().getOnlinePlayers().toString());
+        plugin.getServer().getOnlinePlayers().forEach(player -> player.sendTitle("ゲーム開始", "", 10, 20, 10));
         bukkitTask.cancel();
     }
 

@@ -3,6 +3,7 @@ package jp.hack.minecraft.werewolfgame.core.state;
 import jp.hack.minecraft.werewolfgame.Game;
 import jp.hack.minecraft.werewolfgame.GameConfigurator;
 import jp.hack.minecraft.werewolfgame.Main;
+import jp.hack.minecraft.werewolfgame.util.Messages;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
@@ -37,12 +38,13 @@ public class LobbyState extends GameState {
     @Override
     public void onStart(Game game) {
         super.onStart(game);
-        Bukkit.broadcastMessage("LobbyStateに切り替わりました");
     }
 
     @Override
     public void onActive() {
         super.onActive();
+        plugin.getLogger().info("LobbyStateに切り替わりました");
+        plugin.getServer().getOnlinePlayers().forEach(player -> player.sendMessage("Lobby"));
         if (task == null) {
             task = new BukkitRunnable() {
                 int counter = 0;
@@ -51,7 +53,8 @@ public class LobbyState extends GameState {
                 public void run() {
                     counter++;
                     if (counter < 5) {
-                        // for(Player p : plugin.getServer().getOnlinePlayers()) p.sendTitle(,,,);
+                        for (Player p : plugin.getServer().getOnlinePlayers())
+                            p.sendTitle(Messages.message("003", String.valueOf(5 - counter)), "", 0, 20, 0);
                     } else {
                         Game game = ((GameConfigurator) plugin).getGame();
                         game.nextState();
