@@ -11,7 +11,7 @@ import org.bukkit.command.CommandSender;
 import java.util.ArrayList;
 import java.util.List;
 
-public class StartCommand  extends CommandMaster {
+public class StartCommand extends CommandMaster {
     public StartCommand(CommandManager manager) {
         super(manager);
     }
@@ -29,9 +29,9 @@ public class StartCommand  extends CommandMaster {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         manager.plugin.getLogger().info("startコマンドが実行されました");
-        Game game = ((GameConfigurator)manager.plugin).getGame();
+        Game game = ((GameConfigurator) manager.plugin).getGame();
         game.gameStart();
-        return false;
+        return true;
     }
 
     @Override

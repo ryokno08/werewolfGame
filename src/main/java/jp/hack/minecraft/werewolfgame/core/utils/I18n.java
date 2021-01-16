@@ -86,7 +86,7 @@ public class I18n {
 
     public String format(String string, Object... objects) {
         String format = this.translate(string);
-        MessageFormat messageFormat = (MessageFormat)this.messageFormatCache.get(format);
+        MessageFormat messageFormat = (MessageFormat) this.messageFormatCache.get(format);
         if (messageFormat == null) {
             try {
                 messageFormat = new MessageFormat(format);

@@ -11,7 +11,8 @@ import java.util.stream.Collectors;
 
 public class CommandManager implements TabExecutor {
     public JavaPlugin plugin;
-    public CommandManager(JavaPlugin plugin){
+
+    public CommandManager(JavaPlugin plugin) {
         this.plugin = plugin;
     }
     // protected static final Logger LOGGER = Logger.getLogger("WerewolfGame");
@@ -19,13 +20,14 @@ public class CommandManager implements TabExecutor {
 
     private Map<String, CommandMaster> rootCommands = new HashMap<>();
 
-    public void addRootCommand(CommandMaster command){
-        if(rootCommands.containsKey(command.getName()))
+    public void addRootCommand(CommandMaster command) {
+        if (rootCommands.containsKey(command.getName()))
             rootCommands.remove(command.getName());
         rootCommands.put(command.getName(), command);
         plugin.getCommand(command.getName()).setExecutor(this);
         Objects.requireNonNull(plugin.getCommand(command.getName())).setTabCompleter(this);
     }
+
     /*
     public CommandManager() {
     }
@@ -41,13 +43,13 @@ public class CommandManager implements TabExecutor {
         subCommands.put(subCommand.getName(), subCommand);
     }
 */
-    private boolean onCommandImpl(CommandSender sender, Command command, String label, String[] args){
-        if(rootCommands.get(label).subCommands.containsKey("help"))
-        {
-            return rootCommands.get(label).subCommands.get("help").onCommand(sender, command, label, Arrays.copyOfRange(args,1, args.length) );
+    private boolean onCommandImpl(CommandSender sender, Command command, String label, String[] args) {
+        if (rootCommands.get(label).subCommands.containsKey("help")) {
+            return rootCommands.get(label).subCommands.get("help").onCommand(sender, command, label, Arrays.copyOfRange(args, 1, args.length));
         }
         return false;
     }
+
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         ArrayList<String> compiledArgs = new ArrayList<>(Arrays.asList(args));
@@ -60,8 +62,8 @@ public class CommandManager implements TabExecutor {
          */
 
         // if(args.length <= 1){
-            CommandMaster rootCommannd = rootCommands.get(label);
-            // rootCommannd.onCommand(sender, command, label, args);
+        CommandMaster rootCommannd = rootCommands.get(command.getName());
+        // rootCommannd.onCommand(sender, command, label, args);
         // }
 
         // SubCommand subCommand = subCommands.get(args[0]);
@@ -71,7 +73,7 @@ public class CommandManager implements TabExecutor {
             return false;
         }
         */
-        if(!rootCommannd.onCommand(sender, command, label, args)) return onCommandImpl(sender, command, label, args);
+        if (!rootCommannd.onCommand(sender, command, label, args)) return onCommandImpl(sender, command, label, args);
 
         return true;
     }
@@ -81,7 +83,6 @@ public class CommandManager implements TabExecutor {
         ArrayList<String> compiledArgs = new ArrayList<>(Arrays.asList(args));
         compiledArgs.add(0, alias);
         args = compiledArgs.toArray(new String[compiledArgs.size()]);
-
 
 
         List<String> commands = new ArrayList<>(rootCommands.keySet());
@@ -94,8 +95,8 @@ public class CommandManager implements TabExecutor {
         } else if (args.length == 1) {
             return commands.stream().filter(s->s.startsWith(args[0])).collect(Collectors.toList());
         } else {*/
-            // if(!rootCommands.containsKey(args[0])) return new ArrayList<>();
-            return rootCommands.get(command.getName()).onTabComplete(sender, command, alias, args);
+        // if(!rootCommands.containsKey(args[0])) return new ArrayList<>();
+        return rootCommands.get(command.getName()).onTabComplete(sender, command, alias, args);
         // }
         // return new ArrayList<>();
     }

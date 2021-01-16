@@ -31,10 +31,10 @@ public class TaskBarCommand extends CommandMaster {
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         manager.plugin.getLogger().info("taskbarコマンドが実行されました");
 
-        Game game = ((GameConfigurator)manager.plugin).getGame();
+        Game game = ((GameConfigurator) manager.plugin).getGame();
         DisplayManager displayManager = game.getDisplayManager();
 
-        displayManager.setTaskBarVisible( !displayManager.isTaskBarVisible() );
+        displayManager.setTaskBarVisible(!displayManager.isTaskBarVisible());
         return true;
     }
 

@@ -11,8 +11,9 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitScheduler;
 
 public class GameDirector {
-    public  Location lobbyLocation;
-    public  void onPlayerJoin(JavaPlugin plugin, PlayerJoinEvent event){
+    public Location lobbyLocation;
+
+    public void onPlayerJoin(JavaPlugin plugin, PlayerJoinEvent event) {
         BukkitScheduler scheduler = Bukkit.getServer().getScheduler();
         scheduler.scheduleSyncDelayedTask(plugin, new Runnable() {
             @Override
@@ -20,7 +21,7 @@ public class GameDirector {
                 Player player = event.getPlayer();
                 // デフォルト値の設定
                 // if(lobbyLocation == null)  lobbyLocation = new Location(player.getWorld(),182,5,-134);
-                if(lobbyLocation != null) player.teleport(lobbyLocation);
+                if (lobbyLocation != null) player.teleport(lobbyLocation);
             }
         }, 1);
     }

@@ -14,7 +14,6 @@ public enum Role {
     private Boolean isWolf;
 
 
-
     Role(Boolean isWolfSide) {
         this(isWolfSide, false);
     }
