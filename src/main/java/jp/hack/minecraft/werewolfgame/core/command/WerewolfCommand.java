@@ -4,7 +4,6 @@ import jp.hack.minecraft.werewolfgame.core.command.werewolf.*;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -15,8 +14,8 @@ public class WerewolfCommand extends CommandMaster {
         super(manager);
         addSubCommand(new HelpCommand(this.manager)); // サブコマンドの追加 この場合 /werewolf help を追加したことになる
         addSubCommand(new SetLobbyCommand(this.manager));
-        addSubCommand(new TaskBarCommand(this.manager));
-        addSubCommand(new TaskCompletedCommand(this.manager));
+        addSubCommand(new BarCommand(this.manager));
+        addSubCommand(new CompleteCommand(this.manager));
         addSubCommand(new StartCommand(this.manager));
         addSubCommand(new ReportCommand(this.manager));
     }

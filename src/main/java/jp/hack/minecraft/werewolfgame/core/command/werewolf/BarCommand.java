@@ -2,6 +2,7 @@ package jp.hack.minecraft.werewolfgame.core.command.werewolf;
 
 import jp.hack.minecraft.werewolfgame.Game;
 import jp.hack.minecraft.werewolfgame.GameConfigurator;
+import jp.hack.minecraft.werewolfgame.core.display.DisplayManager;
 import jp.hack.minecraft.werewolfgame.core.command.CommandManager;
 import jp.hack.minecraft.werewolfgame.core.command.CommandMaster;
 import org.bukkit.command.Command;
@@ -10,15 +11,15 @@ import org.bukkit.command.CommandSender;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TaskCompletedCommand extends CommandMaster {
+public class BarCommand extends CommandMaster {
 
-    public TaskCompletedCommand(CommandManager manager) {
+    public BarCommand(CommandManager manager) {
         super(manager);
     }
 
     @Override
     public String getName() {
-        return "taskcomp";
+        return "bar";
     }
 
     @Override
@@ -28,26 +29,12 @@ public class TaskCompletedCommand extends CommandMaster {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        manager.plugin.getLogger().info("taskcompコマンドが実行されました");
-
-        for(String arg : args) System.out.println(arg);
-        System.out.println(args.length);
-
-        if (args.length < 2) {
-            return false;
-        }
-
-        int num = -1;
-        try {
-            num = Integer.parseInt(args[1]);
-        } catch (NumberFormatException e) {
-            e.printStackTrace();
-            return false;
-        }
+        manager.plugin.getLogger().info("barコマンドが実行されました");
 
         Game game = ((GameConfigurator) manager.plugin).getGame();
+        DisplayManager displayManager = game.getDisplayManager();
 
-        game.taskCompleted(num);
+        displayManager.setTaskBarVisible(!displayManager.isTaskBarVisible());
         return true;
     }
 

@@ -40,7 +40,7 @@ public class PlayingState extends GameState {
         super.onActive();
         plugin.getLogger().info("PlayingStateに切り替わりました");
         plugin.getLogger().info(plugin.getServer().getOnlinePlayers().toString());
-        plugin.getServer().getOnlinePlayers().forEach(player -> player.sendTitle("ゲーム開始", "", 10, 20, 10));
+        plugin.getServer().getOnlinePlayers().forEach(player -> player.sendTitle("ゲーム開始！", "", 10, 20, 10));
 
         if (bukkitTask == null) {
             bukkitTask = new BukkitRunnable() {
