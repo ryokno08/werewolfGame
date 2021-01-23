@@ -30,6 +30,9 @@ public class Game extends BukkitRunnable {
     private ArrayDeque<GameState> nextStates;
     private GameState currentState;
 
+    // UUIDは投票者のもの Stringは投票先のUUIDもしくは"Skip"が入る
+    private Map<UUID, String> votedPlayers = new HashMap<>();
+
     Game(JavaPlugin plugin) {
         this.plugin = plugin;
         displayManager.setTaskBarVisible(false);
@@ -168,6 +171,21 @@ public class Game extends BukkitRunnable {
         currentState.onInactive();
         currentState = nextStates.removeFirst();
         currentState.onActive();
+    }
+
+    public boolean votePlayer(UUID voter, UUID target) {
+        if (currentState == votingState && !votedPlayers.containsKey(voter)) {
+            votedPlayers.put(voter, target.toString());
+            return true;
+        }
+        return false;
+    }
+    public boolean voteSkip(UUID uuid) {
+        if (currentState == votingState && !votedPlayers.containsKey(uuid)) {
+            votedPlayers.put(uuid, "Skip");
+            return true;
+        }
+        return false;
     }
 
 
