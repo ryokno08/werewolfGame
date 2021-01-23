@@ -137,7 +137,7 @@ public class Game extends BukkitRunnable {
     public void gameStart() {
         if (currentState == playingState) return;
         currentState.onInactive();
-        currentState = playingState;
+        currentState = lobbyState;
         currentState.onActive();
 
         runTaskTimer(plugin, 10, 20);

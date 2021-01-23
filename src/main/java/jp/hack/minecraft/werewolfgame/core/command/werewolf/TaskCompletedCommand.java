@@ -33,23 +33,20 @@ public class TaskCompletedCommand extends CommandMaster {
         for(String arg : args) System.out.println(arg);
         System.out.println(args.length);
 
-        if (args.length < 1) {
-            sender.sendMessage("0");
+        if (args.length < 2) {
             return false;
         }
 
         int num = -1;
         try {
-            num = Integer.parseInt(args[0]);
+            num = Integer.parseInt(args[1]);
         } catch (NumberFormatException e) {
-            sender.sendMessage("1");
             e.printStackTrace();
             return false;
         }
 
         Game game = ((GameConfigurator) manager.plugin).getGame();
 
-        sender.sendMessage("2");
         game.taskCompleted(num);
         return true;
     }
