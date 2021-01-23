@@ -14,12 +14,12 @@ public class Messages {
         errors.put("001", "存在しないコードのメッセージを取得しようとしました");
     }
 
-    public static String message(String code, String... args) {
+    public static String message(String code, Object... args) {
         if (_instance.messages.containsKey(code)) return String.format(_instance.messages.get(code), args);
         return error("001");
     }
 
-    public static String error(String code, String... args) {
+    public static String error(String code, Object... args) {
         return "ERR" + code + " " + String.format(_instance.errors.get(code), args);
     }
 }
