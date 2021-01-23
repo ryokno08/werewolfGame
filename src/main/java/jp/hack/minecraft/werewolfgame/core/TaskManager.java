@@ -19,6 +19,10 @@ public class TaskManager {
     }
 
     public void taskFinished(int no) {
+        if (taskList.size() <= no - 1) {
+            System.out.println("Unknown data");
+            return;
+        }
         taskList.get(no).finished();
         System.out.println("taskNo." + no + ": " + taskList.get(no).isFinished());
     }

@@ -34,6 +34,7 @@ public class CompleteCommand extends CommandMaster {
         System.out.println(args.length);
 
         if (args.length < 2) {
+            sender.sendMessage("終わったタスクの数字が入力されていません。");
             return false;
         }
 
@@ -41,6 +42,7 @@ public class CompleteCommand extends CommandMaster {
         try {
             num = Integer.parseInt(args[1]);
         } catch (NumberFormatException e) {
+            sender.sendMessage("正しい数字が入力されていません。");
             e.printStackTrace();
             return false;
         }
