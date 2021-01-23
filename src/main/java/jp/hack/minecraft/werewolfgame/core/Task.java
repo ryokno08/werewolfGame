@@ -3,9 +3,11 @@ package jp.hack.minecraft.werewolfgame.core;
 public class Task {
     int taskNo;
     boolean finished = false;
-    public Task(int no){
+
+    public Task(int no) {
         this.taskNo = no;
     }
+
     public void finished() {
         finished = true;
     }
@@ -13,6 +15,7 @@ public class Task {
     public boolean isFinished() {
         return finished;
     }
+
     public int getTaskNo() {
         return taskNo;
     }

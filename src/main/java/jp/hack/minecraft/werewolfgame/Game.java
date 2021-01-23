@@ -96,6 +96,11 @@ public class Game extends BukkitRunnable {
     public Boolean canSpeak() {
         return currentState.canSpeak();
     }
+
+    public Boolean canMove() {
+        return currentState.canMove();
+    }
+
     /*
     public void setCanTalk(Boolean canTalk) {
         this.canTalk = canTalk;
@@ -130,7 +135,7 @@ public class Game extends BukkitRunnable {
 
     // gameStart、meetingStartはコマンドが来たとき呼び出す
     public void gameStart() {
-        if(currentState == playingState) return;
+        if (currentState == playingState) return;
         currentState.onInactive();
         currentState = playingState;
         currentState.onActive();
@@ -138,16 +143,18 @@ public class Game extends BukkitRunnable {
         runTaskTimer(plugin, 10, 20);
         displayManager.setTaskBarVisible(true);
     }
+
     public void meetingStart() {
-        if(currentState == meetingState) return;
+        if (currentState == meetingState) return;
         currentState.onInactive();
         currentState = meetingState;
         currentState.onActive();
 
         nextStates.add(votingState);
     }
+
     public void voteStart() {
-        if(currentState == votingState) return;
+        if (currentState == votingState) return;
         currentState.onInactive();
         currentState = votingState;
         currentState.onActive();
@@ -155,14 +162,13 @@ public class Game extends BukkitRunnable {
         nextStates.add(playingState);
     }
 
-    public void nextState(){
-        if(nextStates.size() < 1) return;
+    public void nextState() {
+        if (nextStates.size() < 1) return;
 
         currentState.onInactive();
         currentState = nextStates.removeFirst();
         currentState.onActive();
     }
-
 
 
     public void stop() {

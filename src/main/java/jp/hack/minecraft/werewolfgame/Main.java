@@ -5,10 +5,11 @@ import jp.hack.minecraft.werewolfgame.core.command.WerewolfCommand;
 import jp.hack.minecraft.werewolfgame.logic.GameEventManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
-public final class Main extends JavaPlugin implements GameConfigurator{
+public final class Main extends JavaPlugin implements GameConfigurator {
 
     private CommandManager commandManager;
     private Game game;
+
     @Override
     public void onEnable() {
         // Plugin startup logic

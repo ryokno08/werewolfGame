@@ -12,19 +12,21 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
+import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitScheduler;
 
 public class GameEventManager implements Listener {
     private JavaPlugin plugin;
+
     public GameEventManager(JavaPlugin Plugin) {
         plugin = Plugin;
     }
 
     @EventHandler
-    public void onPlayerJoin(PlayerJoinEvent event){
+    public void onPlayerJoin(PlayerJoinEvent event) {
         Player p = event.getPlayer();
-        final Game game = ((GameConfigurator)plugin).getGame();
+        final Game game = ((GameConfigurator) plugin).getGame();
         game.putWPlayer(new WPlayer(p.getUniqueId()));
         game.getDisplayManager().addTaskBar(p);
 
@@ -33,7 +35,7 @@ public class GameEventManager implements Listener {
         scheduler.scheduleSyncDelayedTask(plugin, () -> {
             // デフォルト値の設定
             // if(lobbyLocation == null)  lobbyLocation = new Location(player.getWorld(),182,5,-134);
-            if(game.getLobbyPos() != null) p.teleport(game.getLobbyPos());
+            if (game.getLobbyPos() != null) p.teleport(game.getLobbyPos());
         }, 1);
     }
 
@@ -41,19 +43,19 @@ public class GameEventManager implements Listener {
     public final String PREFIX = ChatColor.RED + "[Wolf Side]" + ChatColor.GRAY;
 
     @EventHandler
-    public void onPlayerChat (AsyncPlayerChatEvent e) {
+    public void onPlayerChat(AsyncPlayerChatEvent e) {
 
         Player p = e.getPlayer();
-        Game game = ((GameConfigurator)plugin).getGame();
+        Game game = ((GameConfigurator) plugin).getGame();
         WPlayer spokePlayer = game.getWPlayer(p.getUniqueId());
         String message = e.getMessage();
 
-        if ( game.canSpeak() ) return; //　現在喋ることが許されているか取得し判断する。許されていたらreturn
+        if (game.canSpeak()) return; //　現在喋ることが許されているか取得し判断する。許されていたらreturn
 
-        Boolean canCommunicate = spokePlayer.getRole().isWolf() || ( spokePlayer.getRole().isWolfSide() && game.canCommunicate() );
+        boolean canCommunicate = spokePlayer.getRole().isWolf() || (spokePlayer.getRole().isWolfSide() && game.canCommunicate());
         //　人狼かどうか判断＆オプションで狂人も人狼チャットにメッセージを送れる
 
-        if ( !canCommunicate ) {
+        if (!canCommunicate) {
 
             e.setCancelled(true);
             p.sendMessage("You cannot send messages now.");
@@ -65,10 +67,18 @@ public class GameEventManager implements Listener {
         //人狼は基本こちらに流れる。人狼陣営にしか見えないチャットを送ることができる。
         for (WPlayer wp : game.getwPlayers().values()) {
 
-            canCommunicate = ( wp.getRole().isWolf() || ( wp.getRole().isWolfSide() && game.canCommunicate() ) );
-            if ( canCommunicate ) Bukkit.getPlayer(wp.getUuid()).sendMessage(PREFIX + message);
+            canCommunicate = (wp.getRole().isWolf() || (wp.getRole().isWolfSide() && game.canCommunicate()));
+            if (canCommunicate) Bukkit.getPlayer(wp.getUuid()).sendMessage(PREFIX + message);
 
         }
 
+    }
+
+    @EventHandler
+    public void OnPlayerMove(PlayerMoveEvent e) {
+        if (e.getFrom().getX() == e.getTo().getX() && e.getFrom().getY() == e.getTo().getY() && e.getFrom().getZ() == e.getTo().getZ())
+            return;
+        Game game = ((GameConfigurator) plugin).getGame();
+        if (!game.canMove()) e.setCancelled(true);
     }
 }

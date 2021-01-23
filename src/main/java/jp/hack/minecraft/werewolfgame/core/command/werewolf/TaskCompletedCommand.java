@@ -44,7 +44,7 @@ public class TaskCompletedCommand extends CommandMaster {
             return false;
         }
 
-        Game game = ((GameConfigurator)manager.plugin).getGame();
+        Game game = ((GameConfigurator) manager.plugin).getGame();
 
         sender.sendMessage("2");
         game.taskCompleted(num);

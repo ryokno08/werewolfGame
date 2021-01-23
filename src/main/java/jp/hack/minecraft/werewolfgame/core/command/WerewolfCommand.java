@@ -18,6 +18,7 @@ public class WerewolfCommand extends CommandMaster {
         addSubCommand(new TaskBarCommand(this.manager));
         addSubCommand(new TaskCompletedCommand(this.manager));
         addSubCommand(new StartCommand(this.manager));
+        addSubCommand(new ReportCommand(this.manager));
     }
 
     @Override
@@ -33,14 +34,16 @@ public class WerewolfCommand extends CommandMaster {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         for (String s : args) System.out.println(s);
-        if(args.length < 2) return false;
+        if (args.length < 2) return false;
         return subCommands.get(args[1]).onCommand(sender, command, label, Arrays.copyOfRange(args, 1, args.length - 1));
     }
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
-        if(args.length <= 1) return Stream.of(getName()).filter(s -> s.startsWith(args[0])).collect(Collectors.toList()); // "werewolf"の途中 "wer"など (ここには来ない?)
-        if(args.length <= 2) return subCommands.keySet().stream().filter(s -> s.startsWith(args[1])).collect(Collectors.toList()); // "werewolf aaa"の途中 "werewolf a"など
-        return subCommands.get(args[1]).onTabComplete(sender, command, alias, Arrays.copyOfRange(args, 1, args.length - 1) ); // "werewolf aaa bbb"の途中 "werewolf aaa b"など それぞれのコマンドに任せる
+        if (args.length <= 1)
+            return Stream.of(getName()).filter(s -> s.startsWith(args[0])).collect(Collectors.toList()); // "werewolf"の途中 "wer"など (ここには来ない?)
+        if (args.length <= 2)
+            return subCommands.keySet().stream().filter(s -> s.startsWith(args[1])).collect(Collectors.toList()); // "werewolf aaa"の途中 "werewolf a"など
+        return subCommands.get(args[1]).onTabComplete(sender, command, alias, Arrays.copyOfRange(args, 1, args.length - 1)); // "werewolf aaa bbb"の途中 "werewolf aaa b"など それぞれのコマンドに任せる
     }
 }
