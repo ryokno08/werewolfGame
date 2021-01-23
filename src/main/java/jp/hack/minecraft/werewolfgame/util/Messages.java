@@ -11,6 +11,10 @@ public class Messages {
         messages.put("001", "討論開始");
         messages.put("002", "%sが追放されました");
         messages.put("003", "ゲーム開始まで%d秒");
+        messages.put("004", "%sの死体が発見されました");
+        messages.put("005", "あなたは%sです");
+        messages.put("006", "誰も追放されませんでした");
+
         errors.put("001", "存在しないコードのメッセージを取得しようとしました");
     }
 

@@ -54,7 +54,7 @@ public class LobbyState extends GameState {
                     counter++;
                     if (counter < 5) {
                         for (Player p : plugin.getServer().getOnlinePlayers())
-                            p.sendTitle(Messages.message("003", String.valueOf(5 - counter)), "", 0, 20, 0);
+                            p.sendTitle(Messages.message("003", 5 - counter), "", 0, 20, 0);
                     } else {
                         Game game = ((GameConfigurator) plugin).getGame();
                         game.nextState();
