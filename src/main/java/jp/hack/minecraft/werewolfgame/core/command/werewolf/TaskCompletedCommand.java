@@ -30,6 +30,9 @@ public class TaskCompletedCommand extends CommandMaster {
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         manager.plugin.getLogger().info("taskcompコマンドが実行されました");
 
+        for(String arg : args) System.out.println(arg);
+        System.out.println(args.length);
+
         if (args.length < 1) {
             sender.sendMessage("0");
             return false;
@@ -37,7 +40,7 @@ public class TaskCompletedCommand extends CommandMaster {
 
         int num = -1;
         try {
-            num = Integer.parseInt(args[1]);
+            num = Integer.parseInt(args[0]);
         } catch (NumberFormatException e) {
             sender.sendMessage("1");
             e.printStackTrace();
