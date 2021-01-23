@@ -30,20 +30,23 @@ public class TaskCompletedCommand extends CommandMaster {
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         manager.plugin.getLogger().info("taskcompコマンドが実行されました");
 
-        if (args.length < 3) {
+        if (args.length < 1) {
+            sender.sendMessage("0");
             return false;
         }
 
         int num = -1;
         try {
-            num = Integer.parseInt(args[2]);
+            num = Integer.parseInt(args[1]);
         } catch (NumberFormatException e) {
+            sender.sendMessage("1");
             e.printStackTrace();
             return false;
         }
 
         Game game = ((GameConfigurator)manager.plugin).getGame();
 
+        sender.sendMessage("2");
         game.taskCompleted(num);
         return true;
     }
