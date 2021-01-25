@@ -31,7 +31,7 @@ public class TaskManager {
         finishedTask = count;
 
         DisplayManager manager = game.getDisplayManager();
-        manager.setTask(maxTask / finishedTask);
+        manager.setTask( (float)finishedTask / (float)maxTask );
     }
 
     public List<Task> getTaskList() {

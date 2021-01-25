@@ -42,22 +42,21 @@ public class PlayingState extends GameState {
         plugin.getLogger().info(plugin.getServer().getOnlinePlayers().toString());
         plugin.getServer().getOnlinePlayers().forEach(player -> player.sendTitle("ゲーム開始！", "", 10, 20, 10));
 
-        if (bukkitTask == null) {
-            bukkitTask = new BukkitRunnable() {
-                @Override
-                public void run() {
-                    TaskManager taskManager = ((GameConfigurator) plugin).getGame().getTaskManager();
-                    int count = 0;
-                    for (Task task : taskManager.getTaskList()) {
-                        if (task.isFinished()) {
-                            count++;
-                        }
-                    }
-                    taskManager.taskUpdate(count);
-                }
-            }.runTaskLater(plugin, 20);
 
-        }
+        bukkitTask = new BukkitRunnable() {
+            @Override
+            public void run() {
+                TaskManager taskManager = ((GameConfigurator) plugin).getGame().getTaskManager();
+                int count = 0;
+                for (Task task : taskManager.getTaskList()) {
+                    if (task.isFinished()) {
+                        count++;
+                    }
+                }
+                taskManager.taskUpdate(count);
+            }
+        }.runTaskTimer(plugin, 0, 20);
+
     }
 
     @Override

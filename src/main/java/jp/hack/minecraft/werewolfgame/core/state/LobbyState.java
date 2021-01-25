@@ -51,36 +51,29 @@ public class LobbyState extends GameState {
 
                 @Override
                 public void run() {
-                    counter++;
-                    if (counter < 5) {
-                        for (Player p : plugin.getServer().getOnlinePlayers())
-                            p.sendTitle(Messages.message("003", 5 - counter), "", 0, 20, 0);
-                    } else {
+                    System.out.println(counter);
+                    if (counter >= 5) {
                         Game game = ((GameConfigurator) plugin).getGame();
                         game.nextState();
                         task.cancel();
+                        return;
                     }
+                    for (Player p : plugin.getServer().getOnlinePlayers())
+                        p.sendTitle(Messages.message("003", 5 - counter), "", 0, 20, 0);
+                    counter++;
                 }
-            }.runTaskLater(plugin, 20);
+            }.runTaskTimer(plugin, 0, 20);
         }
     }
 
     @Override
     public void onInactive() {
         super.onInactive();
-        if (task != null) {
-            task.cancel();
-            task = null;
-        }
     }
 
     @Override
     public void onEnd() {
         super.onEnd();
-        if (task != null) {
-            task.cancel();
-            task = null;
-        }
     }
 
 }

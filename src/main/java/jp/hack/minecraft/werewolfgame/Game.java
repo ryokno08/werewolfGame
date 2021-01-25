@@ -143,7 +143,6 @@ public class Game extends BukkitRunnable {
         currentState = lobbyState;
         currentState.onActive();
 
-        runTaskTimer(plugin, 10, 20);
         displayManager.setTaskBarVisible(true);
     }
 
