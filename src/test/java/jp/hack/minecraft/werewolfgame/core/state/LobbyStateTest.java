@@ -11,10 +11,8 @@ import org.powermock.api.easymock.PowerMock;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
-import sun.rmi.rmic.Main;
 
 import static org.junit.Assert.assertEquals;
-import static org.powermock.api.easymock.PowerMock.createMock;
 
 @PowerMockIgnore("jdk.internal.reflect.*")
 @RunWith(PowerMockRunner.class)
@@ -29,7 +27,7 @@ public class LobbyStateTest {
     private LobbyState lobbyState;
 
     @Before
-    public void setUp(){
+    public void setUp() {
         plugin = PowerMock.createMock(JavaPlugin.class);
         game = PowerMock.createMock(Game.class);
         lobbyState = new LobbyState(plugin);
