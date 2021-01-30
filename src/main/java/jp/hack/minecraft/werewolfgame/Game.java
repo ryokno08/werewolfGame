@@ -5,6 +5,7 @@ import jp.hack.minecraft.werewolfgame.core.WPlayer;
 import jp.hack.minecraft.werewolfgame.core.display.DisplayManager;
 import jp.hack.minecraft.werewolfgame.core.TaskManager;
 import jp.hack.minecraft.werewolfgame.core.state.*;
+import jp.hack.minecraft.werewolfgame.core.utils.Scoreboard;
 import org.bukkit.Location;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -27,8 +28,10 @@ public class Game extends BukkitRunnable {
     private final MeetingState meetingState;
     private final PlayingState playingState;
     private final VotingState votingState;
-    private ArrayDeque<GameState> nextStates;
+    // private ArrayDeque<GameState> nextStates;
     private GameState currentState;
+
+    private Map<UUID, Scoreboard> scoreboards; // = new
 
     // UUIDは投票者のもの Stringは投票先のUUIDもしくは"Skip"が入る
     private Map<UUID, String> votedPlayers = new HashMap<>();
@@ -45,7 +48,7 @@ public class Game extends BukkitRunnable {
         playingState.onStart(this);
         votingState = new VotingState(plugin);
         votingState.onStart(this);
-        nextStates = new ArrayDeque<>(Arrays.asList(playingState));
+        // nextStates = new ArrayDeque<>(Arrays.asList(playingState));
         currentState = lobbyState;
     }
 
@@ -153,14 +156,18 @@ public class Game extends BukkitRunnable {
 
         displayManager.setTaskBarVisible(true);
     }
-
+    public void returnToGame() {
+        if (currentState == playingState) return;
+        currentState.onInactive();
+        currentState = playingState;
+        currentState.onActive();
+    }
     public void meetingStart() {
         if (currentState == meetingState) return;
         currentState.onInactive();
         currentState = meetingState;
         currentState.onActive();
 
-        nextStates.add(votingState);
     }
 
     public void voteStart() {
@@ -168,17 +175,15 @@ public class Game extends BukkitRunnable {
         currentState.onInactive();
         currentState = votingState;
         currentState.onActive();
-
-        nextStates.add(playingState);
     }
 
-    public void nextState() {
-        if (nextStates.size() < 1) return;
-
-        currentState.onInactive();
-        currentState = nextStates.removeFirst();
-        currentState.onActive();
-    }
+//    public void nextState() {
+//        if (nextStates.size() < 1) return;
+//
+//        currentState.onInactive();
+//        currentState = nextStates.removeFirst();
+//        currentState.onActive();
+//    }
 
     public boolean votePlayer(UUID voter, UUID target) {
         if (currentState == votingState && !votedPlayers.containsKey(voter)) {

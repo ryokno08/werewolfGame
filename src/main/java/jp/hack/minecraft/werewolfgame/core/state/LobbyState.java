@@ -50,7 +50,8 @@ public class LobbyState extends GameState {
                     System.out.println(counter);
                     if (counter >= 5) {
                         Game game = ((GameConfigurator) plugin).getGame();
-                        game.nextState();
+                        // game.nextState();
+                        game.gameStart();
                         task.cancel();
                         return;
                     }

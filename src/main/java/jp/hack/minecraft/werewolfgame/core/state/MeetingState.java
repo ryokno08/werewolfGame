@@ -42,6 +42,8 @@ public class MeetingState extends GameState {
     @Override
     public void onActive() {
         super.onActive();
+        // ((GameConfigurator)plugin).getGame().nextStates.add(((GameConfigurator)plugin).getGame().votingState);
+
         plugin.getLogger().info("MeetingStateに切り替わりました");
         // 設定などからロードする、単位は秒
         final int meetingLength = 15;

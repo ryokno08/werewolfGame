@@ -41,6 +41,7 @@ public class VotingState extends GameState {
     @Override
     public void onActive() {
         super.onActive();
+        // ((GameConfigurator)plugin).getGame().nextStates.add(playingState);
         plugin.getLogger().info("VotingStateがアクティブになりました");
 
         // 設定などからロードする、単位は秒
@@ -58,7 +59,9 @@ public class VotingState extends GameState {
                         plugin.getServer().getOnlinePlayers().forEach(player -> player.sendMessage("投票終了まで" + (voteLength - counter) + "秒"));
                     } else {
                         Game game = ((GameConfigurator) plugin).getGame();
-                        game.nextState();
+                        // game.nextState();
+                        //game.gameStart();
+                        game.returnToGame();
                         this.cancel();
                     }
                 }
@@ -69,7 +72,6 @@ public class VotingState extends GameState {
     @Override
     public void onInactive() {
         super.onInactive();
-
     }
 
     @Override
