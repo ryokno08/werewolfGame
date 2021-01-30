@@ -5,6 +5,7 @@ import java.util.UUID;
 public class WPlayer {
     private final UUID uuid;
     private Role role;
+    private Boolean killing = false;
 
 
     public WPlayer(UUID uuid) {
@@ -26,5 +27,13 @@ public class WPlayer {
 
     public void setRole(Role role) {
         this.role = role;
+    }
+
+    public Boolean isKilling() {
+        return killing;
+    }
+
+    public void setKilling(Boolean killing) {
+        this.killing = killing;
     }
 }

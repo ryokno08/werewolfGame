@@ -136,6 +136,14 @@ public class Game extends BukkitRunnable {
     }
      */
 
+    public void setCurrentState(GameState currentState) {
+        this.currentState = currentState;
+    }
+
+    public GameState getCurrentState() {
+        return currentState;
+    }
+
     // gameStart、meetingStartはコマンドが来たとき呼び出す
     public void gameStart() {
         if (currentState == playingState) return;
@@ -185,6 +193,14 @@ public class Game extends BukkitRunnable {
             return true;
         }
         return false;
+    }
+
+    public void victory() {
+
+    }
+
+    public void defeat() {
+
     }
 
 

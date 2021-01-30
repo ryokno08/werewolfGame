@@ -2,13 +2,18 @@ package jp.hack.minecraft.werewolfgame.logic;
 
 import jp.hack.minecraft.werewolfgame.Game;
 import jp.hack.minecraft.werewolfgame.GameConfigurator;
+import jp.hack.minecraft.werewolfgame.core.Role;
 import jp.hack.minecraft.werewolfgame.core.WPlayer;
+import jp.hack.minecraft.werewolfgame.core.gamerule.PlayerKill;
+import jp.hack.minecraft.werewolfgame.core.state.PlayingState;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
@@ -80,5 +85,31 @@ public class GameEventManager implements Listener {
             return;
         Game game = ((GameConfigurator) plugin).getGame();
         if (!game.canMove()) e.setCancelled(true);
+        if (game.getWPlayer(e.getPlayer().getUniqueId()).isKilling()) e.setCancelled(true);
+    }
+
+    @EventHandler
+    public void OnPlayerAttack(EntityDamageByEntityEvent e) {
+        if (e.getDamager() instanceof Player && e.getEntity() instanceof Player) {
+            Player damager = (Player) e.getDamager();
+            Player attacker = (Player) e.getEntity();
+
+
+            Game game = ((GameConfigurator) plugin).getGame();
+
+            if ( game.getCurrentState() instanceof PlayingState ) {
+
+                if (Role.VILLAGER.equals(game.getPlayerRole(damager.getUniqueId())))
+                    if (Role.WOLF.equals(game.getPlayerRole(attacker.getUniqueId()))) {
+
+                        PlayerKill playerKill = new PlayerKill(plugin);
+                        playerKill.OnPlayerAttack(e);
+
+                        return;
+                    }
+
+                e.setCancelled(true);
+            }
+        }
     }
 }
