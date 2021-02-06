@@ -34,7 +34,7 @@ public class TaskManager {
         manager.setTask( (float)finishedTask / (float)maxTask );
 
         if(maxTask == finishedTask) {
-            game.victory();
+            game.playerVictory();
         }
     }
 

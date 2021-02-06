@@ -102,14 +102,16 @@ public class GameEventManager implements Listener {
                 if (Role.VILLAGER.equals(game.getPlayerRole(damager.getUniqueId())))
                     if (Role.WOLF.equals(game.getPlayerRole(attacker.getUniqueId()))) {
 
-                        PlayerKill playerKill = new PlayerKill(plugin);
-                        playerKill.OnPlayerAttack(e);
+                        if (attacker.getMainHand().equals(game.getItemForKill())) {
 
-                        return;
+                            PlayerKill playerKill = new PlayerKill(plugin);
+                            playerKill.OnPlayerAttack(e);
+
+                            return;
+                        }
                     }
-
-                e.setCancelled(true);
             }
         }
+        e.setCancelled(true);
     }
 }

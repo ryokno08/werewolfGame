@@ -6,6 +6,7 @@ public class WPlayer {
     private final UUID uuid;
     private Role role;
     private Boolean killing = false;
+    private Boolean died = false;
 
 
     public WPlayer(UUID uuid) {
@@ -35,5 +36,13 @@ public class WPlayer {
 
     public void setKilling(Boolean killing) {
         this.killing = killing;
+    }
+
+    public Boolean isDied() {
+        return died;
+    }
+
+    public void setDied(Boolean died) {
+        this.died = died;
     }
 }

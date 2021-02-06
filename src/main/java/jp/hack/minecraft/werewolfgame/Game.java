@@ -6,10 +6,13 @@ import jp.hack.minecraft.werewolfgame.core.display.DisplayManager;
 import jp.hack.minecraft.werewolfgame.core.TaskManager;
 import jp.hack.minecraft.werewolfgame.core.state.*;
 import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class Game extends BukkitRunnable {
     private JavaPlugin plugin;
@@ -21,6 +24,7 @@ public class Game extends BukkitRunnable {
     private Location respawn;
     private Location lobbyPos;
     private Boolean canCommunicate = false;
+    private ItemStack itemForKill = new ItemStack(Material.IRON_SWORD);
 
     //ゲームの初期状態はロビーでスタート
     private final LobbyState lobbyState;
@@ -83,6 +87,14 @@ public class Game extends BukkitRunnable {
 
     public void setLobbyPos(Location lobbyPos) {
         this.lobbyPos = lobbyPos;
+    }
+
+    public ItemStack getItemForKill() {
+        return itemForKill;
+    }
+
+    public void setItemForKill(ItemStack itemForKill) {
+        this.itemForKill = itemForKill;
     }
 
     public Role getPlayerRole(UUID uuid) {
@@ -195,11 +207,22 @@ public class Game extends BukkitRunnable {
         return false;
     }
 
-    public void victory() {
+    public void confirmGame() {
+        int playerRemains = wPlayers.values().stream().filter(v -> !v.getRole().isWolf() && !v.isDied()).collect(Collectors.toSet()).size();
+        int impostorRemains = wPlayers.values().stream().filter(v -> v.getRole().isWolf() && !v.isDied()).collect(Collectors.toSet()).size();
+
+        if (playerRemains <= impostorRemains) {
+            playerDefeat();
+        } else if (impostorRemains == 0) {
+            playerVictory();
+        }
+    }
+
+    public void playerVictory() {
 
     }
 
-    public void defeat() {
+    public void playerDefeat() {
 
     }
 

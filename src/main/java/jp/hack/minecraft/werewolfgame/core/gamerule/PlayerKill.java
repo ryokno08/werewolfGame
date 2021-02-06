@@ -47,6 +47,8 @@ public class PlayerKill {
         attacker.teleport( damagerLoc.add(0, 0.5, 0) );
 
         damager.setGameMode(GameMode.SPECTATOR);
+        wDamager.setDied(true);
 
+        game.confirmGame();
     }
 }
