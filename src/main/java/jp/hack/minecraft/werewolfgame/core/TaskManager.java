@@ -25,6 +25,8 @@ public class TaskManager {
         }
         taskList.get(no).finished();
         System.out.println("taskNo." + no + ": " + taskList.get(no).isFinished());
+
+        taskUpdate();
     }
 
     public void taskUpdate() {
