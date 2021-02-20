@@ -54,10 +54,10 @@ public class LobbyState extends GameState {
                         game.gameStart();
                         return;
                     }
-                    task.runTaskLater(plugin, 20);
                     for (Player p : plugin.getServer().getOnlinePlayers())
                         p.sendTitle(Messages.message("003", 5 - counter), "", 0, 20, 0);
                     counter++;
+                    task.runTaskLater(plugin, 20);
                 }
             };
             task.runTask(plugin);
@@ -78,8 +78,6 @@ public class LobbyState extends GameState {
                 game.getDisplayManager().youAreClueMate(player);
             }
         }
-
-        task.cancel();
     }
 
     @Override

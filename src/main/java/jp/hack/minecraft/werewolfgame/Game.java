@@ -24,6 +24,7 @@ public class Game extends BukkitRunnable {
 
     private final DisplayManager displayManager;
     private final TaskManager taskManager = new TaskManager(this);
+    private Boolean wasStarted = false;
 
     private final Map<UUID, WPlayer> wPlayers = new HashMap<>();
     private int numberOfImposter = 1;
@@ -71,6 +72,14 @@ public class Game extends BukkitRunnable {
         return plugin;
     }
 
+    public Boolean wasStarted() {
+        return wasStarted;
+    }
+
+    public void setStarted(Boolean wasStarted) {
+        this.wasStarted = wasStarted;
+    }
+
     public Map<UUID, WPlayer> getwPlayers() {
         return wPlayers;
     }
@@ -81,6 +90,14 @@ public class Game extends BukkitRunnable {
 
     public WPlayer getWPlayer(UUID uuid) {
         return wPlayers.get(uuid);
+    }
+
+    public int getNumberOfImposter() {
+        return numberOfImposter;
+    }
+
+    public void setNumberOfImposter(int numberOfImposter) {
+        this.numberOfImposter = numberOfImposter;
     }
 
     public Location getRespawn() {
@@ -168,13 +185,14 @@ public class Game extends BukkitRunnable {
 
     // gameStart、meetingStartはコマンドが来たとき呼び出す
     public void gameStart() {
+        wasStarted = true;
         currentState = lobbyState;
         currentState.onActive();
 
         displayManager.setTaskBarVisible(true);
 
         Random random = new Random();
-        List<Player> players = new ArrayList(Arrays.asList((Player[]) Bukkit.getOnlinePlayers().toArray()));
+        List<Player> players = Arrays.asList((Player[]) Bukkit.getOnlinePlayers().toArray());
         for (int i=0; i<numberOfImposter; i++) {
             Player selectedPlayer = players.get(random.nextInt(players.size()));
             players.remove(selectedPlayer);
@@ -241,10 +259,6 @@ public class Game extends BukkitRunnable {
         }
     }
 
-    public void playerVictory() {
-        displayManager.playerVictory();
-    }
-
     public void ejectPlayer(String uuid) {
         Player player = plugin.getServer().getPlayer(uuid);
         plugin.getServer().getOnlinePlayers().forEach(p -> p.sendMessage(Messages.message("002", player.getDisplayName())));
@@ -258,17 +272,19 @@ public class Game extends BukkitRunnable {
         plugin.getLogger().info(Messages.message("006"));
     }
 
-
-    public void victory() {
-
+    public void playerVictory() {
+        displayManager.playerVictory();
+        stop();
     }
 
     public void playerDefeat() {
         displayManager.playerDefeat();
+        stop();
     }
 
 
     public void stop() {
+        wasStarted = false;
         this.cancel();
     }
 
