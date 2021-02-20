@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 public class Game extends BukkitRunnable {
     private JavaPlugin plugin;
 
-    private final DisplayManager displayManager = new DisplayManager();
+    private final DisplayManager displayManager;
     private final TaskManager taskManager = new TaskManager(this);
 
     private Map<UUID, WPlayer> wPlayers = new HashMap<>();
@@ -42,6 +42,8 @@ public class Game extends BukkitRunnable {
 
     Game(JavaPlugin plugin) {
         this.plugin = plugin;
+
+        displayManager = new DisplayManager(plugin);
         displayManager.setTaskBarVisible(false);
 
         lobbyState = new LobbyState(plugin);
@@ -224,11 +226,12 @@ public class Game extends BukkitRunnable {
     }
 
     public void playerVictory() {
+        displayManager.playerVictory();
 
     }
 
     public void playerDefeat() {
-
+        displayManager.playerDefeat();
     }
 
 

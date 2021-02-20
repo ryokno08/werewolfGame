@@ -3,16 +3,13 @@ package jp.hack.minecraft.werewolfgame.core.gamerule;
 import jp.hack.minecraft.werewolfgame.Game;
 import jp.hack.minecraft.werewolfgame.GameConfigurator;
 import jp.hack.minecraft.werewolfgame.core.WPlayer;
-import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.scheduler.BukkitTask;
 
 public class PlayerKill {
     JavaPlugin plugin;
@@ -21,7 +18,6 @@ public class PlayerKill {
         this.plugin = plugin;
     }
 
-    @EventHandler
     public void OnPlayerAttack(EntityDamageByEntityEvent e) {
         Game game = ((GameConfigurator)plugin).getGame();
 
