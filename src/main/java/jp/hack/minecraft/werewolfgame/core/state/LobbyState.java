@@ -7,11 +7,10 @@ import jp.hack.minecraft.werewolfgame.util.Messages;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.scheduler.BukkitTask;
 
 public class LobbyState extends GameState {
     private final JavaPlugin plugin;
-    private BukkitTask task;
+    private BukkitRunnable task;
 
     public LobbyState(JavaPlugin plugin) {
         this.plugin = plugin;
@@ -53,14 +52,16 @@ public class LobbyState extends GameState {
                         Game game = ((GameConfigurator) plugin).getGame();
                         // game.nextState();
                         game.gameStart();
-                        task.cancel();
                         return;
                     }
+                    task.runTaskLater(plugin, 20);
                     for (Player p : plugin.getServer().getOnlinePlayers())
                         p.sendTitle(Messages.message("003", 5 - counter), "", 0, 20, 0);
                     counter++;
                 }
-            }.runTaskTimer(plugin, 0, 20);
+            };
+            task.runTask(plugin);
+//            task.runTaskTimer(plugin, 0, 20);
         }
     }
 

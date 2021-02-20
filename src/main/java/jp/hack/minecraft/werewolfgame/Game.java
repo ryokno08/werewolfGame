@@ -248,11 +248,14 @@ public class Game extends BukkitRunnable {
     public void ejectPlayer(String uuid) {
         Player player = plugin.getServer().getPlayer(uuid);
         plugin.getServer().getOnlinePlayers().forEach(p -> p.sendMessage(Messages.message("002", player.getDisplayName())));
+        player.setHealth(0);
+        plugin.getLogger().info(Messages.message("002", player.getDisplayName()));
     }
 
     public void voteSkipped() {
         plugin.getServer().getOnlinePlayers().forEach(player -> player.sendMessage("Lobby"));
         plugin.getServer().getOnlinePlayers().forEach(p -> p.sendMessage(Messages.message("006")));
+        plugin.getLogger().info(Messages.message("006"));
     }
 
 
