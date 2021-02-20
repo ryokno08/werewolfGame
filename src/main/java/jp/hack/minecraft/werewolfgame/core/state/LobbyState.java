@@ -2,7 +2,9 @@ package jp.hack.minecraft.werewolfgame.core.state;
 
 import jp.hack.minecraft.werewolfgame.Game;
 import jp.hack.minecraft.werewolfgame.GameConfigurator;
+import jp.hack.minecraft.werewolfgame.core.WPlayer;
 import jp.hack.minecraft.werewolfgame.util.Messages;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -66,6 +68,16 @@ public class LobbyState extends GameState {
     @Override
     public void onInactive() {
         super.onInactive();
+        Game game = ((GameConfigurator) plugin).getGame();
+
+        for (Player player : plugin.getServer().getOnlinePlayers()) {
+            WPlayer wPlayer = game.getWPlayer(player.getUniqueId());
+            if (wPlayer.getRole().isWolf()) {
+                game.getDisplayManager().youAreImposter(player);
+            } else {
+                game.getDisplayManager().youAreClueMate(player);
+            }
+        }
     }
 
     @Override

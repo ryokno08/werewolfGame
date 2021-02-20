@@ -12,6 +12,9 @@ public class DisplayManager {
     JavaPlugin plugin;
     TaskBar taskBar;
 
+    final String IMPOSTER_MESSAGE = ChatColor.RED + "インポスター";
+    final String CLUEMATE_MESSAGE = ChatColor.AQUA + "クルーメイト";
+
     final String DEFEAT_MESSAGE = ChatColor.RED+"敗北";
     final String VICTORY_MESSAGE = ChatColor.GREEN+"勝利";
 
@@ -39,6 +42,14 @@ public class DisplayManager {
 
     public void addTaskBar(Player player) {
         taskBar.addPlayer(player);
+    }
+
+    public void youAreImposter(Player player) {
+        sendTitle(player, IMPOSTER_MESSAGE);
+    }
+
+    public void youAreClueMate(Player player) {
+        sendTitle(player, CLUEMATE_MESSAGE);
     }
 
     public void playerVictory() {

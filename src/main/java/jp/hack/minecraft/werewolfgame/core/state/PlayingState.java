@@ -41,7 +41,6 @@ public class PlayingState extends GameState {
         super.onActive();
         plugin.getLogger().info("PlayingStateに切り替わりました");
         plugin.getLogger().info(plugin.getServer().getOnlinePlayers().toString());
-        plugin.getServer().getOnlinePlayers().forEach(player -> player.sendTitle(ChatColor.RED + "ゲーム開始！", "", 10, 20, 10));
 
 
         bukkitTask = new BukkitRunnable() {
