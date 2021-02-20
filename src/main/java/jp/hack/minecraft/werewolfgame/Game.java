@@ -6,8 +6,10 @@ import jp.hack.minecraft.werewolfgame.core.display.DisplayManager;
 import jp.hack.minecraft.werewolfgame.core.TaskManager;
 import jp.hack.minecraft.werewolfgame.core.state.*;
 import jp.hack.minecraft.werewolfgame.core.utils.Scoreboard;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -16,12 +18,13 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class Game extends BukkitRunnable {
-    private JavaPlugin plugin;
+    private final JavaPlugin plugin;
 
     private final DisplayManager displayManager;
     private final TaskManager taskManager = new TaskManager(this);
 
-    private Map<UUID, WPlayer> wPlayers = new HashMap<>();
+    private final Map<UUID, WPlayer> wPlayers = new HashMap<>();
+    private int numberOfImposter = 1;
     private Location respawn;
     private Location lobbyPos;
     private Boolean canCommunicate = false;
@@ -169,6 +172,16 @@ public class Game extends BukkitRunnable {
         currentState.onActive();
 
         displayManager.setTaskBarVisible(true);
+
+        Random random = new Random();
+        List<Player> players = new ArrayList(Arrays.asList((Player[]) Bukkit.getOnlinePlayers().toArray()));
+        for (int i=0; i<numberOfImposter; i++) {
+            Player selectedPlayer = players.get(random.nextInt(players.size()));
+            players.remove(selectedPlayer);
+
+            WPlayer wPlayer = getWPlayer(selectedPlayer.getUniqueId());
+            wPlayer.setRole(Role.WOLF);
+        }
     }
     public void returnToGame() {
         if (currentState == playingState) return;
