@@ -27,9 +27,7 @@ public class TaskManager {
         System.out.println("taskNo." + no + ": " + taskList.get(no).isFinished());
     }
 
-    public void taskUpdate(int count) {
-        finishedTask = count;
-
+    public void taskUpdate() {
         DisplayManager manager = game.getDisplayManager();
         manager.setTask( (float)finishedTask / (float)maxTask );
     }

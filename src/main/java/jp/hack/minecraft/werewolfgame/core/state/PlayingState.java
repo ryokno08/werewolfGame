@@ -54,7 +54,8 @@ public class PlayingState extends GameState {
                         count++;
                     }
                 }
-                taskManager.taskUpdate(count);
+                taskManager.taskConfirm(count);
+                taskManager.taskUpdate();
             }
         }.runTaskTimer(plugin, 0, 20);
 
