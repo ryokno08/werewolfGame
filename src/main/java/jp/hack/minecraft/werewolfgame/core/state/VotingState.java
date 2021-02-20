@@ -9,6 +9,9 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.scheduler.BukkitTask;
 
+import java.lang.reflect.Array;
+import java.util.*;
+
 public class VotingState extends GameState {
     private final JavaPlugin plugin;
     private BukkitTask task;
@@ -45,7 +48,7 @@ public class VotingState extends GameState {
         plugin.getLogger().info("VotingStateがアクティブになりました");
 
         // 設定などからロードする、単位は秒
-        final int voteLength = 120;
+        final int voteLength = 60;
 
         plugin.getServer().getOnlinePlayers().forEach(player -> player.sendTitle("投票開始", "", 10, 20, 10));
         if (task == null) {
@@ -55,15 +58,51 @@ public class VotingState extends GameState {
                 @Override
                 public void run() {
                     counter++;
-                    if (counter < voteLength) {
-                        plugin.getServer().getOnlinePlayers().forEach(player -> player.sendMessage("投票終了まで" + (voteLength - counter) + "秒"));
-                    } else {
-                        Game game = ((GameConfigurator) plugin).getGame();
-                        // game.nextState();
-                        //game.gameStart();
-                        game.returnToGame();
-                        this.cancel();
+                    Game game = ((GameConfigurator) plugin).getGame();
+                    if (game.votedPlayers.size() >= plugin.getServer().getOnlinePlayers().size()) {
+                        stopVote(game);
                     }
+                    if (counter < voteLength) {
+                        if (counter < 20) {
+                            plugin.getServer().getOnlinePlayers().forEach(player -> player.sendMessage("投票終了まで" + (voteLength - counter) + "秒"));
+                        }
+                    } else {
+//                        for(Player p : plugin.getServer().getOnlinePlayers()){
+//                            if(!game.votedPlayers.containsKey(p.getUniqueId())){
+//                                game.votedPlayers.put(p.getUniqueId(), "Skip");
+//                            }
+//                        }
+                        stopVote(game);
+                    }
+                }
+
+                private void stopVote(Game game) {
+                    Map<String, Integer> VotingResult = new HashMap<>();
+                    game.votedPlayers.forEach((k, v) -> VotingResult.put(v, VotingResult.getOrDefault(v, 0) + 1));
+
+                    List<Map.Entry<String, Integer>> SortedResults = new ArrayList<>(VotingResult.entrySet());
+                    SortedResults.sort((obj1, obj2) -> obj2.getValue().compareTo(obj1.getValue()));
+
+                    if (VotingResult.getOrDefault("Skip", 0)
+                            > plugin.getServer().getOnlinePlayers().size() / 2) {
+                        if (SortedResults.size() < 2) {
+                            if (SortedResults.get(0).getKey().equals("Skip")) {
+                                game.voteSkipped();
+                            } else {
+                                game.ejectPlayer(SortedResults.get(0).getKey());
+                            }
+                        } else if (!SortedResults.get(0).getValue().equals(SortedResults.get(1).getValue())) {
+                            if (SortedResults.get(0).getKey().equals("Skip")) {
+                                game.voteSkipped();
+                            } else {
+                                game.ejectPlayer(SortedResults.get(0).getKey());
+                            }
+                        }
+                    }
+
+
+                    game.returnToGame();
+                    this.cancel();
                 }
             }.runTaskTimer(plugin, 0, 20);
         }

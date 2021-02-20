@@ -1,12 +1,14 @@
 package jp.hack.minecraft.werewolfgame;
 
 import jp.hack.minecraft.werewolfgame.core.Role;
+import jp.hack.minecraft.werewolfgame.core.TaskManager;
 import jp.hack.minecraft.werewolfgame.core.WPlayer;
 import jp.hack.minecraft.werewolfgame.core.display.DisplayManager;
 import jp.hack.minecraft.werewolfgame.core.TaskManager;
 import jp.hack.minecraft.werewolfgame.core.state.*;
 import jp.hack.minecraft.werewolfgame.core.utils.Scoreboard;
 import org.bukkit.Bukkit;
+import jp.hack.minecraft.werewolfgame.util.Messages;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -41,7 +43,7 @@ public class Game extends BukkitRunnable {
     private Map<UUID, Scoreboard> scoreboards; // = new
 
     // UUIDは投票者のもの Stringは投票先のUUIDもしくは"Skip"が入る
-    private Map<UUID, String> votedPlayers = new HashMap<>();
+    public Map<UUID, String> votedPlayers = new HashMap<>();
 
     Game(JavaPlugin plugin) {
         this.plugin = plugin;
@@ -181,12 +183,14 @@ public class Game extends BukkitRunnable {
             wPlayer.setRole(Role.WOLF);
         }
     }
+
     public void returnToGame() {
         if (currentState == playingState) return;
         currentState.onInactive();
         currentState = playingState;
         currentState.onActive();
     }
+
     public void meetingStart() {
         if (currentState == meetingState) return;
         currentState.onInactive();
@@ -217,6 +221,7 @@ public class Game extends BukkitRunnable {
         }
         return false;
     }
+
     public boolean voteSkip(UUID uuid) {
         if (currentState == votingState && !votedPlayers.containsKey(uuid)) {
             votedPlayers.put(uuid, "Skip");
@@ -238,6 +243,20 @@ public class Game extends BukkitRunnable {
 
     public void playerVictory() {
         displayManager.playerVictory();
+    }
+
+    public void ejectPlayer(String uuid) {
+        Player player = plugin.getServer().getPlayer(uuid);
+        plugin.getServer().getOnlinePlayers().forEach(p -> p.sendMessage(Messages.message("002", player.getDisplayName())));
+    }
+
+    public void voteSkipped() {
+        plugin.getServer().getOnlinePlayers().forEach(player -> player.sendMessage("Lobby"));
+        plugin.getServer().getOnlinePlayers().forEach(p -> p.sendMessage(Messages.message("006")));
+    }
+
+
+    public void victory() {
 
     }
 
