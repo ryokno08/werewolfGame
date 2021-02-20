@@ -4,7 +4,6 @@ import jp.hack.minecraft.werewolfgame.Game;
 import jp.hack.minecraft.werewolfgame.GameConfigurator;
 import jp.hack.minecraft.werewolfgame.core.WPlayer;
 import jp.hack.minecraft.werewolfgame.util.Messages;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -78,6 +77,8 @@ public class LobbyState extends GameState {
                 game.getDisplayManager().youAreClueMate(player);
             }
         }
+
+        task.cancel();
     }
 
     @Override
