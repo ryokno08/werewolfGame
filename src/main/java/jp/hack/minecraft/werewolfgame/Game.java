@@ -166,8 +166,6 @@ public class Game extends BukkitRunnable {
 
     // gameStart、meetingStartはコマンドが来たとき呼び出す
     public void gameStart() {
-        if (currentState == playingState) return;
-        currentState.onInactive();
         currentState = lobbyState;
         currentState.onActive();
 
