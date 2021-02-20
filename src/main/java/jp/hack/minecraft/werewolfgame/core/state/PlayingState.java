@@ -12,7 +12,7 @@ import org.bukkit.scheduler.BukkitTask;
 public class PlayingState extends GameState {
     private final JavaPlugin plugin;
 
-    private BukkitTask bukkitTask;
+    private BukkitRunnable runnable;
 
     public PlayingState(JavaPlugin plugin) {
         this.plugin = plugin;
@@ -43,7 +43,7 @@ public class PlayingState extends GameState {
         plugin.getLogger().info(plugin.getServer().getOnlinePlayers().toString());
 
 
-        bukkitTask = new BukkitRunnable() {
+        runnable = new BukkitRunnable() {
             @Override
             public void run() {
                 TaskManager taskManager = ((GameConfigurator) plugin).getGame().getTaskManager();
@@ -54,21 +54,25 @@ public class PlayingState extends GameState {
                     }
                 }
                 taskManager.taskConfirm(count);
-                taskManager.taskUpdate();
             }
-        }.runTaskTimer(plugin, 0, 20);
+        };
+        runnable.runTaskTimer(plugin, 0, 20);
 
     }
 
     @Override
     public void onInactive() {
         super.onInactive();
-        if (bukkitTask != null) bukkitTask.cancel();
+
+        runnable.cancel();
+
+        TaskManager taskManager = ((GameConfigurator) plugin).getGame().getTaskManager();
+        taskManager.taskUpdate();
     }
 
     @Override
     public void onEnd() {
         super.onEnd();
-        if (bukkitTask != null) bukkitTask.cancel();
+        runnable.cancel();
     }
 }
