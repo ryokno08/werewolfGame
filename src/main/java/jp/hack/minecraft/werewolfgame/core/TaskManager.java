@@ -32,6 +32,10 @@ public class TaskManager {
 
         DisplayManager manager = game.getDisplayManager();
         manager.setTask( (float)finishedTask / (float)maxTask );
+    }
+
+    public void taskConfirm(int count) {
+        finishedTask = count;
 
         if(maxTask == finishedTask) {
             game.playerVictory();
