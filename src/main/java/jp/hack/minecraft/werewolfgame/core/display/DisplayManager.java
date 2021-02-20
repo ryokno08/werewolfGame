@@ -4,12 +4,16 @@ import jp.hack.minecraft.werewolfgame.Game;
 import jp.hack.minecraft.werewolfgame.GameConfigurator;
 import jp.hack.minecraft.werewolfgame.core.WPlayer;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class DisplayManager {
     JavaPlugin plugin;
     TaskBar taskBar;
+
+    final String DEFEAT_MESSAGE = ChatColor.RED+"敗北";
+    final String VICTORY_MESSAGE = ChatColor.GREEN+"勝利";
 
     public DisplayManager(JavaPlugin plugin) {
         this.plugin = plugin;
@@ -43,9 +47,9 @@ public class DisplayManager {
             WPlayer wPlayer = game.getWPlayer(player.getUniqueId());
 
             if (wPlayer.getRole().isWolf()) {
-                sendTitle(player, "敗北");
+                sendTitle(player, DEFEAT_MESSAGE);
             } else {
-                sendTitle(player, "勝利");
+                sendTitle(player, VICTORY_MESSAGE);
             }
         }
     }
@@ -56,9 +60,9 @@ public class DisplayManager {
             WPlayer wPlayer = game.getWPlayer(player.getUniqueId());
 
             if (wPlayer.getRole().isWolf()) {
-                sendTitle(player, "勝利");
+                sendTitle(player, VICTORY_MESSAGE);
             } else {
-                sendTitle(player, "敗北");
+                sendTitle(player, DEFEAT_MESSAGE);
             }
 
         }
