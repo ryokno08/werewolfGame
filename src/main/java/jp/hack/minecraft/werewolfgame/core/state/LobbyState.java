@@ -4,6 +4,7 @@ import jp.hack.minecraft.werewolfgame.Game;
 import jp.hack.minecraft.werewolfgame.GameConfigurator;
 import jp.hack.minecraft.werewolfgame.core.WPlayer;
 import jp.hack.minecraft.werewolfgame.util.Messages;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -12,6 +13,8 @@ import org.bukkit.scheduler.BukkitTask;
 public class LobbyState extends GameState {
     private final JavaPlugin plugin;
     private BukkitTask task;
+    private int counter = 0;
+
 
     public LobbyState(JavaPlugin plugin) {
         this.plugin = plugin;
@@ -42,6 +45,8 @@ public class LobbyState extends GameState {
         super.onActive();
         plugin.getLogger().info("LobbyStateに切り替わりました");
         plugin.getServer().getOnlinePlayers().forEach(player -> player.sendMessage("Lobby"));
+
+        counter = 0;
         if (task == null) {
             task = new MyRunTask().runTask(plugin);
         }
@@ -69,22 +74,21 @@ public class LobbyState extends GameState {
 
 
     class MyRunTask extends BukkitRunnable{
-        int counter = 0;
 
         @Override
         public void run() {
             System.out.println(counter);
+            this.cancel();
             if (counter >= 5) {
                 Game game = ((GameConfigurator) plugin).getGame();
-                // game.nextState();
-                game.gameStart();
+                game.returnToGame();
                 task = null;
                 return;
             }
             for (Player p : plugin.getServer().getOnlinePlayers())
                 p.sendTitle(Messages.message("003", 5 - counter), "", 0, 20, 0);
             counter++;
-            task = this.runTaskLater(plugin, 20);
+            task = new MyRunTask().runTaskLater(plugin, 20);
         }
     }
 }
