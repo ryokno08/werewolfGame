@@ -52,7 +52,7 @@ public class Game extends BukkitRunnable {
     Game(JavaPlugin plugin) {
         this.plugin = plugin;
 
-        displayManager = new DisplayManager(plugin);
+        displayManager = new DisplayManager(this);
         taskManager = new TaskManager(this);
 
         displayManager.setTaskBarVisible(false);

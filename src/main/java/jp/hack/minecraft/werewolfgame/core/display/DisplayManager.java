@@ -9,7 +9,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class DisplayManager {
-    JavaPlugin plugin;
+    Game game;
     TaskBar taskBar;
 
     final String IMPOSTER_MESSAGE = ChatColor.RED + "インポスター";
@@ -18,8 +18,8 @@ public class DisplayManager {
     final String DEFEAT_MESSAGE = ChatColor.RED+"敗北";
     final String VICTORY_MESSAGE = ChatColor.GREEN+"勝利";
 
-    public DisplayManager(JavaPlugin plugin) {
-        this.plugin = plugin;
+    public DisplayManager(Game game) {
+        this.game = game;
         taskBar = new TaskBar();
         taskBar.setVisible(false);
     }
@@ -54,7 +54,6 @@ public class DisplayManager {
 
     public void playerVictory() {
         for (Player player : Bukkit.getServer().getOnlinePlayers()) {
-            Game game = ((GameConfigurator)plugin).getGame();
             WPlayer wPlayer = game.getWPlayer(player.getUniqueId());
 
             if (wPlayer.getRole().isWolf()) {
@@ -67,7 +66,6 @@ public class DisplayManager {
 
     public void playerDefeat() {
         for (Player player : Bukkit.getServer().getOnlinePlayers()) {
-            Game game = ((GameConfigurator) plugin).getGame();
             WPlayer wPlayer = game.getWPlayer(player.getUniqueId());
 
             if (wPlayer.getRole().isWolf()) {
