@@ -10,16 +10,13 @@ import java.util.List;
 
 public class TaskManager {
 
-    private final JavaPlugin plugin;
     private final Game game;
     private int maxTasks;
     private int finishedTask = 0;
     private List<Task> taskList;
 
-    public TaskManager(JavaPlugin plugin) {
-        this.plugin = plugin;
-        this.game = ((GameConfigurator) plugin).getGame();
-
+    public TaskManager(Game game) {
+        this.game = game;
         this.maxTasks = game.getNumberOfTasks();
         setTasks(maxTasks);
     }

@@ -10,6 +10,6 @@ commands:
     permission: werewolf.admin
     permission-message: You don't have <permission>
 permissions:
-    werewolf.admin:
+  werewolf.admin:
     description: game master permission
     default: op

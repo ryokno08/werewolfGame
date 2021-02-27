@@ -53,7 +53,7 @@ public class Game extends BukkitRunnable {
         this.plugin = plugin;
 
         displayManager = new DisplayManager(plugin);
-        taskManager = new TaskManager(plugin);
+        taskManager = new TaskManager(this);
 
         displayManager.setTaskBarVisible(false);
 
@@ -199,8 +199,8 @@ public class Game extends BukkitRunnable {
         currentState.onActive();
 
         Random random = new Random();
-        List<Player> players = Arrays.asList((Player[]) Bukkit.getOnlinePlayers().toArray());
-        for (int i=0; i<numberOfImposter; i++) {
+        List<Player> players = new ArrayList<>(Bukkit.getOnlinePlayers());
+        for (int i = 0; i < numberOfImposter; i++) {
             Player selectedPlayer = players.get(random.nextInt(players.size()));
             players.remove(selectedPlayer);
 
