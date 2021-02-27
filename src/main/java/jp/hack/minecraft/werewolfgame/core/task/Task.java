@@ -1,4 +1,4 @@
-package jp.hack.minecraft.werewolfgame.core;
+package jp.hack.minecraft.werewolfgame.core.task;
 
 public class Task {
     int taskNo;

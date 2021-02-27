@@ -1,10 +1,9 @@
 package jp.hack.minecraft.werewolfgame;
 
 import jp.hack.minecraft.werewolfgame.core.Role;
-import jp.hack.minecraft.werewolfgame.core.TaskManager;
+import jp.hack.minecraft.werewolfgame.core.task.TaskManager;
 import jp.hack.minecraft.werewolfgame.core.WPlayer;
 import jp.hack.minecraft.werewolfgame.core.display.DisplayManager;
-import jp.hack.minecraft.werewolfgame.core.TaskManager;
 import jp.hack.minecraft.werewolfgame.core.state.*;
 import jp.hack.minecraft.werewolfgame.core.utils.Scoreboard;
 import org.bukkit.Bukkit;
@@ -22,12 +21,16 @@ import java.util.stream.Collectors;
 public class Game extends BukkitRunnable {
     private final JavaPlugin plugin;
 
-    private final DisplayManager displayManager;
-    private final TaskManager taskManager = new TaskManager(this);
-    private Boolean wasStarted = false;
-
     private final Map<UUID, WPlayer> wPlayers = new HashMap<>();
+    private final DisplayManager displayManager;
+    private final TaskManager taskManager;
+
+    private Boolean wasStarted = false;
+    private Boolean impostorVictory = false;
+    private Boolean clueMateVictory = false;
+
     private int numberOfImposter = 1;
+    private int numberOfTasks = 10;
     private Location respawn;
     private Location lobbyPos;
     private Boolean canCommunicate = false;
@@ -50,6 +53,8 @@ public class Game extends BukkitRunnable {
         this.plugin = plugin;
 
         displayManager = new DisplayManager(plugin);
+        taskManager = new TaskManager(plugin);
+
         displayManager.setTaskBarVisible(false);
 
         lobbyState = new LobbyState(plugin);
@@ -76,10 +81,6 @@ public class Game extends BukkitRunnable {
         return wasStarted;
     }
 
-    public void setStarted(Boolean wasStarted) {
-        this.wasStarted = wasStarted;
-    }
-
     public Map<UUID, WPlayer> getwPlayers() {
         return wPlayers;
     }
@@ -98,6 +99,14 @@ public class Game extends BukkitRunnable {
 
     public void setNumberOfImposter(int numberOfImposter) {
         this.numberOfImposter = numberOfImposter;
+    }
+
+    public int getNumberOfTasks() {
+        return numberOfTasks;
+    }
+
+    public void setNumberOfTasks(int numberOfTasks) {
+        this.numberOfTasks = numberOfTasks;
     }
 
     public Location getRespawn() {
@@ -165,7 +174,7 @@ public class Game extends BukkitRunnable {
     }
 
     public void taskCompleted(int no) {
-        taskManager.taskFinished(no);
+        taskManager.onTaskFinished(no);
     }
 
     // public void start() {}
@@ -188,8 +197,6 @@ public class Game extends BukkitRunnable {
         wasStarted = true;
         currentState = lobbyState;
         currentState.onActive();
-
-        displayManager.setTaskBarVisible(true);
 
         Random random = new Random();
         List<Player> players = Arrays.asList((Player[]) Bukkit.getOnlinePlayers().toArray());
@@ -248,13 +255,35 @@ public class Game extends BukkitRunnable {
         return false;
     }
 
-    public void confirmGame() {
-        int playerRemains = wPlayers.values().stream().filter(v -> !v.getRole().isWolf() && !v.isDied()).collect(Collectors.toSet()).size();
+    public void confirmTask() {
+        int finishedTask = taskManager.getFinishedTask();
+
+        if(numberOfTasks == finishedTask) {
+            clueMateVictory = true;
+        }
+    }
+
+    public void confirmNoOfPlayers() {
+        int clueMateRemains = wPlayers.values().stream().filter(v -> !v.getRole().isWolf() && !v.isDied()).collect(Collectors.toSet()).size();
         int impostorRemains = wPlayers.values().stream().filter(v -> v.getRole().isWolf() && !v.isDied()).collect(Collectors.toSet()).size();
 
-        if (playerRemains <= impostorRemains) {
+        if (clueMateRemains <= impostorRemains) {
+            impostorVictory = true;
+        }
+        if (impostorRemains == 0) {
+            clueMateVictory = true;
+        }
+    }
+
+    public void confirmGame() {
+        confirmTask();
+        confirmNoOfPlayers();
+
+        if (impostorVictory && clueMateVictory) {
+            playerDraw();
+        } else if (impostorVictory) {
             playerDefeat();
-        } else if (impostorRemains == 0) {
+        } else if (clueMateVictory){
             playerVictory();
         }
     }
@@ -282,8 +311,13 @@ public class Game extends BukkitRunnable {
         stop();
     }
 
+    public void playerDraw() {
+        stop();
+    }
+
 
     public void stop() {
+        displayManager.setTaskBarVisible(false);
         wasStarted = false;
         this.cancel();
     }

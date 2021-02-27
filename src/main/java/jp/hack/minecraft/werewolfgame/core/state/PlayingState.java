@@ -2,20 +2,21 @@ package jp.hack.minecraft.werewolfgame.core.state;
 
 import jp.hack.minecraft.werewolfgame.Game;
 import jp.hack.minecraft.werewolfgame.GameConfigurator;
-import jp.hack.minecraft.werewolfgame.core.Task;
-import jp.hack.minecraft.werewolfgame.core.TaskManager;
-import org.bukkit.ChatColor;
+import jp.hack.minecraft.werewolfgame.core.display.DisplayManager;
+import jp.hack.minecraft.werewolfgame.core.task.Task;
+import jp.hack.minecraft.werewolfgame.core.task.TaskManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.scheduler.BukkitTask;
 
 public class PlayingState extends GameState {
     private final JavaPlugin plugin;
+    private final Game game;
 
     private BukkitRunnable runnable;
 
     public PlayingState(JavaPlugin plugin) {
         this.plugin = plugin;
+        this.game = ((GameConfigurator) plugin).getGame();
     }
 
     @Override
@@ -41,19 +42,22 @@ public class PlayingState extends GameState {
         super.onActive();
         plugin.getLogger().info("PlayingStateに切り替わりました");
         plugin.getLogger().info(plugin.getServer().getOnlinePlayers().toString());
-
+        DisplayManager displayManager = game.getDisplayManager();
+        displayManager.setTaskBarVisible(true);
 
         runnable = new BukkitRunnable() {
             @Override
             public void run() {
-                TaskManager taskManager = ((GameConfigurator) plugin).getGame().getTaskManager();
+                TaskManager taskManager = game.getTaskManager();
                 int count = 0;
                 for (Task task : taskManager.getTaskList()) {
                     if (task.isFinished()) {
                         count++;
                     }
                 }
-                taskManager.taskConfirm(count);
+                taskManager.setFinishedTask(count);
+                game.confirmGame();
+
             }
         };
         runnable.runTaskTimer(plugin, 0, 20);
@@ -67,7 +71,9 @@ public class PlayingState extends GameState {
         runnable.cancel();
 
         TaskManager taskManager = ((GameConfigurator) plugin).getGame().getTaskManager();
-        taskManager.taskUpdate();
+        taskManager.taskBarUpdate();
+
+        DisplayManager displayManager = game.getDisplayManager();
     }
 
     @Override
