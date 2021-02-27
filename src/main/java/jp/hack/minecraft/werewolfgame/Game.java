@@ -317,6 +317,7 @@ public class Game extends BukkitRunnable {
 
 
     public void stop() {
+        currentState.onInactive();
         displayManager.setTaskBarVisible(false);
         wasStarted = false;
         this.cancel();

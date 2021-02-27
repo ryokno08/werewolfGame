@@ -10,13 +10,11 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 public class PlayingState extends GameState {
     private final JavaPlugin plugin;
-    private final Game game;
 
     private BukkitRunnable runnable;
 
     public PlayingState(JavaPlugin plugin) {
         this.plugin = plugin;
-        this.game = ((GameConfigurator) plugin).getGame();
     }
 
     @Override
@@ -41,13 +39,16 @@ public class PlayingState extends GameState {
     public void onActive() {
         super.onActive();
         plugin.getLogger().info("PlayingStateに切り替わりました");
-        plugin.getLogger().info(plugin.getServer().getOnlinePlayers().toString());
+
+        Game game = ((GameConfigurator) plugin).getGame();
         DisplayManager displayManager = game.getDisplayManager();
         displayManager.setTaskBarVisible(true);
 
         runnable = new BukkitRunnable() {
             @Override
             public void run() {
+                System.out.println("タスク進行・人数　確認処理");
+
                 TaskManager taskManager = game.getTaskManager();
                 int count = 0;
                 for (Task task : taskManager.getTaskList()) {
@@ -57,7 +58,6 @@ public class PlayingState extends GameState {
                 }
                 taskManager.setFinishedTask(count);
                 game.confirmGame();
-
             }
         };
         runnable.runTaskTimer(plugin, 0, 20);
@@ -72,8 +72,6 @@ public class PlayingState extends GameState {
 
         TaskManager taskManager = ((GameConfigurator) plugin).getGame().getTaskManager();
         taskManager.taskBarUpdate();
-
-        DisplayManager displayManager = game.getDisplayManager();
     }
 
     @Override
