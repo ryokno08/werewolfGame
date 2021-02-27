@@ -40,3 +40,10 @@ processResources {
         filter ReplaceTokens, tokens: [version: version]
     }
 }
+
+tasks.withType(ProcessResources){
+    filteringCharset = 'UTF-8'
+    filesMatching('**/*.properties') {
+        filter(org.apache.tools.ant.filters.EscapeUnicode)
+    }
+}

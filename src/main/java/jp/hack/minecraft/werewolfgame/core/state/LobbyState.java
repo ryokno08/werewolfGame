@@ -7,10 +7,11 @@ import jp.hack.minecraft.werewolfgame.util.Messages;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitTask;
 
 public class LobbyState extends GameState {
     private final JavaPlugin plugin;
-    private BukkitRunnable task;
+    private BukkitTask task;
 
     public LobbyState(JavaPlugin plugin) {
         this.plugin = plugin;
@@ -42,26 +43,7 @@ public class LobbyState extends GameState {
         plugin.getLogger().info("LobbyStateに切り替わりました");
         plugin.getServer().getOnlinePlayers().forEach(player -> player.sendMessage("Lobby"));
         if (task == null) {
-            task = new BukkitRunnable() {
-                int counter = 0;
-
-                @Override
-                public void run() {
-                    System.out.println(counter);
-                    if (counter >= 5) {
-                        Game game = ((GameConfigurator) plugin).getGame();
-                        // game.nextState();
-                        game.gameStart();
-                        return;
-                    }
-                    for (Player p : plugin.getServer().getOnlinePlayers())
-                        p.sendTitle(Messages.message("003", 5 - counter), "", 0, 20, 0);
-                    counter++;
-                    task.runTaskLater(plugin, 20);
-                }
-            };
-            task.runTask(plugin);
-//            task.runTaskTimer(plugin, 0, 20);
+            task = new MyRunTask().runTask(plugin);
         }
     }
 
@@ -85,4 +67,24 @@ public class LobbyState extends GameState {
         super.onEnd();
     }
 
+
+    class MyRunTask extends BukkitRunnable{
+        int counter = 0;
+
+        @Override
+        public void run() {
+            System.out.println(counter);
+            if (counter >= 5) {
+                Game game = ((GameConfigurator) plugin).getGame();
+                // game.nextState();
+                game.gameStart();
+                task = null;
+                return;
+            }
+            for (Player p : plugin.getServer().getOnlinePlayers())
+                p.sendTitle(Messages.message("003", 5 - counter), "", 0, 20, 0);
+            counter++;
+            task = this.runTaskLater(plugin, 20);
+        }
+    }
 }

@@ -28,21 +28,6 @@ public class CommandManager implements TabExecutor {
         Objects.requireNonNull(plugin.getCommand(command.getName())).setTabCompleter(this);
     }
 
-    /*
-    public CommandManager() {
-    }
-
-     */
-/*
-    public ArrayList<String> getSubCommands(String parentName) {
-        return new ArrayList<String>(rootCommands.get(parentName).stream().map(subCommand -> subCommand.getName())); // 2020/10/10 19:11 サブコマンドの名前一覧のList<Str>を出したい
-    }
-*/
-/*
-    public void addSubCommand(SubCommand subCommand){
-        subCommands.put(subCommand.getName(), subCommand);
-    }
-*/
     private boolean onCommandImpl(CommandSender sender, Command command, String label, String[] args) {
         if (rootCommands.get(label).subCommands.containsKey("help")) {
             return rootCommands.get(label).subCommands.get("help").onCommand(sender, command, label, Arrays.copyOfRange(args, 1, args.length));
