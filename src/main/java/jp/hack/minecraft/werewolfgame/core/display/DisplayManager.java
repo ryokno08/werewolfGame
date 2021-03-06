@@ -9,6 +9,7 @@ import org.bukkit.entity.Player;
 public class DisplayManager {
     Game game;
     TaskBar taskBar;
+    VoteBoard voteBoard;
 
     final String IMPOSTER_MESSAGE = ChatColor.RED + "インポスター";
     final String CLUEMATE_MESSAGE = ChatColor.AQUA + "クルーメイト";
@@ -20,6 +21,7 @@ public class DisplayManager {
         this.game = game;
         taskBar = new TaskBar();
         taskBar.setVisible(false);
+        voteBoard = new VoteBoard();
     }
 
     public void sendTitle(Player player, String title) {

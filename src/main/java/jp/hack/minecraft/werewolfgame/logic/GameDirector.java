@@ -1,6 +1,7 @@
 package jp.hack.minecraft.werewolfgame.logic;
 
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -21,6 +22,7 @@ public class GameDirector {
                 Player player = event.getPlayer();
                 // デフォルト値の設定
                 // if(lobbyLocation == null)  lobbyLocation = new Location(player.getWorld(),182,5,-134);
+                player.setGameMode(GameMode.ADVENTURE);
                 if (lobbyLocation != null) player.teleport(lobbyLocation);
             }
         }, 1);
