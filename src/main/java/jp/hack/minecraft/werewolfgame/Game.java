@@ -33,6 +33,7 @@ public class Game extends BukkitRunnable {
     private int numberOfTasks = 10;
     private Location respawn;
     private Location lobbyPos;
+    private Location meetingPos;
     private Boolean canCommunicate = false;
     private ItemStack itemForKill = new ItemStack(Material.IRON_SWORD);
 
@@ -123,6 +124,14 @@ public class Game extends BukkitRunnable {
 
     public void setLobbyPos(Location lobbyPos) {
         this.lobbyPos = lobbyPos;
+    }
+
+    public Location getMeetingPos() {
+        return meetingPos;
+    }
+
+    public void setMeetingPos(Location meetingPos) {
+        this.meetingPos = meetingPos;
     }
 
     public ItemStack getItemForKill() {

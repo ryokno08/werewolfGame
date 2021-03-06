@@ -19,6 +19,7 @@ public class WerewolfCommand extends CommandMaster {
         addSubCommand(new StartCommand(this.manager));
         addSubCommand(new ReportCommand(this.manager));
         addSubCommand(new VoteCommand(this.manager));
+        addSubCommand(new SetMeetingLocationCommand(this.manager));
     }
 
     @Override
