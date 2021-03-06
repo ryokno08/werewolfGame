@@ -39,7 +39,7 @@ public class PlayerKill {
 
         Location damagerLoc = damager.getLocation();
 
-        damagerLoc.add(0, 1, 0).getBlock().setType( Material.SKELETON_SKULL );
+        damagerLoc.add(0, 1, 0).getBlock().setType( Material.SKULL );
         attacker.teleport( damagerLoc.add(0, 0.5, 0) );
 
         damager.setGameMode(GameMode.SPECTATOR);

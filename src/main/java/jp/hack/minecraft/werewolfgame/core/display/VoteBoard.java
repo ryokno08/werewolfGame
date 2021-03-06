@@ -13,7 +13,7 @@ public class VoteBoard {
 
     VoteBoard() {
         scoreboard = Objects.requireNonNull(Bukkit.getServer().getScoreboardManager()).getNewScoreboard();
-        objective = scoreboard.registerNewObjective("VoteBoard", "dummy", "VoteBoard");
+        objective = scoreboard.registerNewObjective("VoteBoard", "dummy");
         isVisible = false;
     }
 

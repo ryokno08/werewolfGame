@@ -5,7 +5,6 @@ import jp.hack.minecraft.werewolfgame.core.task.TaskManager;
 import jp.hack.minecraft.werewolfgame.core.WPlayer;
 import jp.hack.minecraft.werewolfgame.core.display.DisplayManager;
 import jp.hack.minecraft.werewolfgame.core.state.*;
-import jp.hack.minecraft.werewolfgame.core.utils.Scoreboard;
 import org.bukkit.Bukkit;
 import jp.hack.minecraft.werewolfgame.util.Messages;
 import org.bukkit.Location;
@@ -44,8 +43,6 @@ public class Game extends BukkitRunnable {
     private final VotingState votingState;
     // private ArrayDeque<GameState> nextStates;
     private GameState currentState;
-
-    private Map<UUID, Scoreboard> scoreboards; // = new
 
     // UUIDは投票者のもの Stringは投票先のUUIDもしくは"Skip"が入る
     public Map<UUID, String> votedPlayers = new HashMap<>();
