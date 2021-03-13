@@ -1,18 +1,13 @@
 package jp.hack.minecraft.werewolfgame.core;
 
 public enum Role {
-    CLUEMATE(false),
-    IMPOSTER(true, true);
+    CLUE_MATE(false),
+    IMPOSTER(true);
 
 
     private Boolean isImposter;
 
-
-    Role(Boolean isImposterSide) {
-        this(isImposterSide, false);
-    }
-
-    Role(Boolean isImposterSide, Boolean isImposter) {
+    Role(Boolean isImposter) {
         this.isImposter = isImposter;
     }
 

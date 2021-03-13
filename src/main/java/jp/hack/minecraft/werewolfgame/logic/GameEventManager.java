@@ -3,7 +3,6 @@ package jp.hack.minecraft.werewolfgame.logic;
 import jp.hack.minecraft.werewolfgame.Game;
 import jp.hack.minecraft.werewolfgame.GameConfigurator;
 import jp.hack.minecraft.werewolfgame.core.Role;
-import jp.hack.minecraft.werewolfgame.core.WPlayer;
 import jp.hack.minecraft.werewolfgame.core.gamerule.PlayerKill;
 import jp.hack.minecraft.werewolfgame.core.state.PlayingState;
 import org.bukkit.Bukkit;
@@ -82,7 +81,7 @@ public class GameEventManager implements Listener {
             Player attacker = (Player) e.getDamager();
             Player entity = (Player) e.getEntity();
 
-            if ( game.getPlayerRole( entity.getUniqueId() ) .equals(Role.CLUEMATE))
+            if ( game.getPlayerRole( entity.getUniqueId() ) .equals(Role.CLUE_MATE))
                 if ( game.getPlayerRole( attacker.getUniqueId() ) .equals(Role.IMPOSTER)) {
                     if (attacker.getInventory().getItemInMainHand().getType().equals(game.getItemForKill().getType())) {
 

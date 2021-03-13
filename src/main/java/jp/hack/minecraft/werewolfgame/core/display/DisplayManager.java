@@ -12,9 +12,8 @@ public class DisplayManager {
     VoteBoard voteBoard;
 
     final String IMPOSTER_MESSAGE = ChatColor.RED + "インポスター";
-    final String CLUEMATE_MESSAGE = ChatColor.AQUA + "クルーメイト";
+    final String CLUE_MATE_MESSAGE = ChatColor.AQUA + "クルーメイト";
 
-    final String DEFEAT_MESSAGE = ChatColor.RED+"敗北";
     final String VICTORY_MESSAGE = ChatColor.GREEN+"勝利";
 
     public DisplayManager(Game game) {
@@ -26,6 +25,9 @@ public class DisplayManager {
 
     public void sendTitle(Player player, String title) {
         player.sendTitle(title, "", 5, 100, 5);
+    }
+    public void sendTitle(Player player, String title, String subTitle) {
+        player.sendTitle(title, subTitle, 5, 100, 5);
     }
 
     public Boolean isTaskBarVisible() {
@@ -49,18 +51,14 @@ public class DisplayManager {
     }
 
     public void youAreClueMate(Player player) {
-        sendTitle(player, CLUEMATE_MESSAGE);
+        sendTitle(player, CLUE_MATE_MESSAGE);
     }
 
     public void playerVictory() {
         for (Player player : Bukkit.getServer().getOnlinePlayers()) {
             WPlayer wPlayer = game.getWPlayer(player.getUniqueId());
 
-            if (wPlayer.getRole().isImposter()) {
-                sendTitle(player, DEFEAT_MESSAGE);
-            } else {
-                sendTitle(player, VICTORY_MESSAGE);
-            }
+            sendTitle(player, VICTORY_MESSAGE, CLUE_MATE_MESSAGE);
         }
     }
 
@@ -68,12 +66,7 @@ public class DisplayManager {
         for (Player player : Bukkit.getServer().getOnlinePlayers()) {
             WPlayer wPlayer = game.getWPlayer(player.getUniqueId());
 
-            if (wPlayer.getRole().isImposter()) {
-                sendTitle(player, VICTORY_MESSAGE);
-            } else {
-                sendTitle(player, DEFEAT_MESSAGE);
-            }
-
+            sendTitle(player, VICTORY_MESSAGE, IMPOSTER_MESSAGE);
         }
     }
 }

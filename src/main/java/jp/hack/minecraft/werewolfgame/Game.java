@@ -17,7 +17,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class Game extends BukkitRunnable {
+public class Game {
     private final JavaPlugin plugin;
 
     private final Map<UUID, WPlayer> wPlayers = new HashMap<>();
@@ -312,11 +312,5 @@ public class Game extends BukkitRunnable {
         currentState.onInactive();
         displayManager.setTaskBarVisible(false);
         wasStarted = false;
-        this.cancel();
-    }
-
-    @Override
-    public void run() {
-        System.out.println("更新処理");
     }
 }
