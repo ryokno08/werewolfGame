@@ -9,11 +9,10 @@ import org.bukkit.scheduler.BukkitTask;
 import java.util.*;
 
 public class VotingState extends GameState {
-    private final JavaPlugin plugin;
     private BukkitTask task;
 
-    public VotingState(JavaPlugin plugin) {
-        this.plugin = plugin;
+    public VotingState(JavaPlugin plugin, Game game) {
+        super(plugin, game);
     }
 
     @Override
@@ -27,26 +26,15 @@ public class VotingState extends GameState {
     }
 
     @Override
-    public void update() {
-
-    }
-
-    @Override
-    public void onStart(Game game) {
-        super.onStart(game);
-
-    }
-
-    @Override
     public void onActive() {
         super.onActive();
         // ((GameConfigurator)plugin).getGame().nextStates.add(playingState);
         plugin.getLogger().info("VotingStateがアクティブになりました");
 
         // 設定などからロードする、単位は秒
-        final int voteLength = 60;
+        int limitOfVoting = game.getLimitOfVoting();
 
-        plugin.getServer().getOnlinePlayers().forEach(player -> player.sendTitle("投票開始", "", 10, 20, 10));
+        game.getJoinedPlayers().forEach(player -> player.sendTitle("投票開始", "", 10, 20, 10));
         if (task == null) {
             task = new BukkitRunnable() {
                 int counter = 0;
@@ -54,13 +42,12 @@ public class VotingState extends GameState {
                 @Override
                 public void run() {
                     counter++;
-                    Game game = ((GameConfigurator) plugin).getGame();
-                    if (game.votedPlayers.size() >= plugin.getServer().getOnlinePlayers().size()) {
-                        stopVote(game);
+                    if (game.votedPlayers.size() >= game.getJoinedPlayers().size()) {
+                        stopVote();
                     }
-                    if (counter < voteLength) {
+                    if (counter < limitOfVoting) {
                         if (counter < 20) {
-                            plugin.getServer().getOnlinePlayers().forEach(player -> player.sendMessage("投票終了まで" + (voteLength - counter) + "秒"));
+                            game.getJoinedPlayers().forEach(player -> player.sendMessage("投票終了まで" + (limitOfVoting - counter) + "秒"));
                         }
                     } else {
 //                        for(Player p : plugin.getServer().getOnlinePlayers()){
@@ -68,11 +55,11 @@ public class VotingState extends GameState {
 //                                game.votedPlayers.put(p.getUniqueId(), "Skip");
 //                            }
 //                        }
-                        stopVote(game);
+                        stopVote();
                     }
                 }
 
-                private void stopVote(Game game) {
+                private void stopVote() {
                     Map<String, Integer> VotingResult = new HashMap<>();
                     game.votedPlayers.forEach((k, v) -> VotingResult.put(v, VotingResult.getOrDefault(v, 0) + 1));
 
@@ -97,7 +84,7 @@ public class VotingState extends GameState {
                     }
 
 
-                    game.returnToPlay();
+                    game.changeState(game.getPlayingState());
                     this.cancel();
                 }
             }.runTaskTimer(plugin, 0, 20);

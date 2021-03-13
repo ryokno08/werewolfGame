@@ -13,11 +13,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MeetingState extends GameState {
-    private final JavaPlugin plugin;
     private BukkitTask task;
 
-    public MeetingState(JavaPlugin plugin) {
-        this.plugin = plugin;
+    public MeetingState(JavaPlugin plugin, Game game) {
+        super(plugin, game);
     }
 
     @Override
@@ -30,16 +29,6 @@ public class MeetingState extends GameState {
         return false;
     }
 
-    @Override
-    public void update() {
-
-    }
-
-    @Override
-    public void onStart(Game game) {
-        super.onStart(game);
-
-    }
 
     @Override
     public void onActive() {
@@ -47,13 +36,12 @@ public class MeetingState extends GameState {
         // ((GameConfigurator)plugin).getGame().nextStates.add(((GameConfigurator)plugin).getGame().votingState);
 
         plugin.getLogger().info("MeetingStateに切り替わりました");
-        Game game = ((GameConfigurator) plugin).getGame();
         // 設定などからロードする、単位は秒
         final int meetingLength = 15;
 
         // 設定などからロードする、ロビーにてレポートするときの半径、単位はブロック
         final float robbyRadius = 3;
-        List<Player> players = new ArrayList<>(plugin.getServer().getOnlinePlayers());
+        List<Player> players = game.getJoinedPlayers();
         for (int i = 0; i < players.size(); i++) {
             double rad = (2 * Math.PI / (float) players.size()) * i;
             Player p = players.get(i);
@@ -67,7 +55,7 @@ public class MeetingState extends GameState {
             p.teleport(loc);
         }
 
-        plugin.getServer().getOnlinePlayers().forEach(player -> player.sendTitle(Messages.message("001"), "", 10, 20, 10));
+        game.getJoinedPlayers().forEach(player -> player.sendTitle(Messages.message("001"), "", 10, 20, 10));
         if (task == null) {
             task = new BukkitRunnable() {
                 int counter = 0;
@@ -76,10 +64,9 @@ public class MeetingState extends GameState {
                 public void run() {
                     counter++;
                     if (counter < meetingLength) {
-                        plugin.getServer().getOnlinePlayers().forEach(player -> player.sendMessage("投票まで" + (meetingLength - counter) + "秒"));
+                        game.getJoinedPlayers().forEach(player -> player.sendMessage("投票まで" + (meetingLength - counter) + "秒"));
                     } else {
-                        Game game = ((GameConfigurator) plugin).getGame();
-                        game.voteStart();
+                        game.changeState(game.getVotingState());
                         this.cancel();
                     }
                 }

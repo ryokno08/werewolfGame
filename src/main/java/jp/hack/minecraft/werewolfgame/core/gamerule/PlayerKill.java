@@ -39,7 +39,7 @@ public class PlayerKill {
 
         Location entityLocation = entity.getLocation();
 
-        entityLocation.add(0, 1, 0).getBlock().setType( Material.SKULL );
+        entityLocation.add(0, 0, 0).getBlock().setType( Material.SKULL );
         attacker.teleport( entityLocation.add(0, 0.5, 0) );
 
         entity.setGameMode(GameMode.SPECTATOR);

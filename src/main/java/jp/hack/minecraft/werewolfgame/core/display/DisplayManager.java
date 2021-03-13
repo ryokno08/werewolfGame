@@ -14,7 +14,8 @@ public class DisplayManager {
     final String IMPOSTER_MESSAGE = ChatColor.RED + "インポスター";
     final String CLUE_MATE_MESSAGE = ChatColor.AQUA + "クルーメイト";
 
-    final String VICTORY_MESSAGE = ChatColor.GREEN+"勝利";
+    final String RED_VICTORY_MESSAGE = ChatColor.RED+"勝利";
+    final String AQUA_VICTORY_MESSAGE = ChatColor.AQUA+"勝利";
 
     public DisplayManager(Game game) {
         this.game = game;
@@ -24,7 +25,7 @@ public class DisplayManager {
     }
 
     public void sendTitle(Player player, String title) {
-        player.sendTitle(title, "", 5, 100, 5);
+        player.sendTitle(title, "", 5, 2*20, 5);
     }
     public void sendTitle(Player player, String title, String subTitle) {
         player.sendTitle(title, subTitle, 5, 100, 5);
@@ -55,18 +56,14 @@ public class DisplayManager {
     }
 
     public void playerVictory() {
-        for (Player player : Bukkit.getServer().getOnlinePlayers()) {
-            WPlayer wPlayer = game.getWPlayer(player.getUniqueId());
-
-            sendTitle(player, VICTORY_MESSAGE, CLUE_MATE_MESSAGE);
+        for (Player player : game.getJoinedPlayers()) {
+            sendTitle(player, AQUA_VICTORY_MESSAGE, CLUE_MATE_MESSAGE);
         }
     }
 
     public void playerDefeat() {
-        for (Player player : Bukkit.getServer().getOnlinePlayers()) {
-            WPlayer wPlayer = game.getWPlayer(player.getUniqueId());
-
-            sendTitle(player, VICTORY_MESSAGE, IMPOSTER_MESSAGE);
+        for (Player player : game.getJoinedPlayers()) {
+            sendTitle(player, RED_VICTORY_MESSAGE, IMPOSTER_MESSAGE);
         }
     }
 }

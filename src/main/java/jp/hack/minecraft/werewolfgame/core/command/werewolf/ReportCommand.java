@@ -31,7 +31,7 @@ public class ReportCommand extends CommandMaster {
         Player player = (Player) sender;
 
         Game game = ((GameConfigurator) manager.plugin).getGame();
-        game.meetingStart();
+        game.changeState(game.getMeetingState());
         return true;
     }
 

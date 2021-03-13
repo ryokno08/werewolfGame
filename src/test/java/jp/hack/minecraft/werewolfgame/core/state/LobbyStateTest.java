@@ -30,14 +30,12 @@ public class LobbyStateTest {
     public void setUp() {
         plugin = PowerMock.createMock(JavaPlugin.class);
         game = PowerMock.createMock(Game.class);
-        lobbyState = new LobbyState(plugin);
+        lobbyState = new LobbyState(plugin, game);
     }
 
 
     @Test
     public void testOnStart() {
-        lobbyState.onStart(game);
-        assertEquals(lobbyState.getState(), GameState.State.START);
     }
 
 

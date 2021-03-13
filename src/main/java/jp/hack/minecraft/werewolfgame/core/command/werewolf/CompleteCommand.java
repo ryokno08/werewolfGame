@@ -7,6 +7,7 @@ import jp.hack.minecraft.werewolfgame.core.command.CommandMaster;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,17 +32,16 @@ public class CompleteCommand extends CommandMaster {
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         manager.plugin.getLogger().info("completeコマンドが実行されました");
 
-        for(String arg : args) System.out.println(arg);
-        System.out.println(args.length);
+        Player player = (Player) sender;
 
         if (args.length < 2) {
             sender.sendMessage(ChatColor.RED +"終わったタスクの数字が入力されていません。");
             return false;
         }
 
-        int num = -1;
+        int no = -1;
         try {
-            num = Integer.parseInt(args[1]);
+            no = Integer.parseInt(args[1]);
         } catch (NumberFormatException e) {
             sender.sendMessage(ChatColor.RED+"正しい数字が入力されていません。");
             e.printStackTrace();
@@ -49,9 +49,9 @@ public class CompleteCommand extends CommandMaster {
         }
 
         Game game = ((GameConfigurator) manager.plugin).getGame();
+        game.taskCompleted(player, no);
 
-        game.taskCompleted(num);
-        sender.sendMessage(ChatColor.GREEN + "" + num + "番のタスク状況がtrueに変更されました。");
+        sender.sendMessage(ChatColor.GREEN + "" + no + "番のタスク状況がtrueに変更されました。");
         return true;
     }
 

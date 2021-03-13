@@ -14,6 +14,10 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitTask;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -28,16 +32,14 @@ public class Game {
     }
 
     private final Map<UUID, WPlayer> wPlayers = new HashMap<>();
+    private List<Player> joinedPlayers = new ArrayList<>();
     private DisplayManager displayManager;
     private TaskManager taskManager;
 
     private Boolean wasStarted = false;
-    private Boolean impostorVictory = false;
-    private Boolean clueMateVictory = false;
-
     private int numberOfImposter = 1;
-    private int numberOfTasks = 10;
-    private Location respawn;
+    private int numberOfTasks = 3;
+    private int limitOfVoting = 60;
     private Location lobbyPos;
     private Location meetingPos;
     private ItemStack itemForKill = new ItemStack(Material.IRON_SWORD);
@@ -47,7 +49,6 @@ public class Game {
     private MeetingState meetingState;
     private PlayingState playingState;
     private VotingState votingState;
-    // private ArrayDeque<GameState> nextStates;
     private GameState currentState;
 
     private LocationConfiguration configuration;
@@ -67,7 +68,7 @@ public class Game {
         return wasStarted;
     }
 
-    public Map<UUID, WPlayer> getwPlayers() {
+    public Map<UUID, WPlayer> getWPlayers() {
         return wPlayers;
     }
 
@@ -77,6 +78,14 @@ public class Game {
 
     public WPlayer getWPlayer(UUID uuid) {
         return wPlayers.get(uuid);
+    }
+
+    public List<Player> getJoinedPlayers() {
+        return joinedPlayers;
+    }
+
+    public void setJoinedPlayers(List<Player> joinedPlayers) {
+        this.joinedPlayers = joinedPlayers;
     }
 
     public int getNumberOfImposter() {
@@ -95,14 +104,12 @@ public class Game {
         this.numberOfTasks = numberOfTasks;
     }
 
-    public Location getRespawn() {
-        if (respawn == null) respawn = configuration.getLocationData("respawn");
-        return respawn;
+    public int getLimitOfVoting() {
+        return limitOfVoting;
     }
 
-    public void setRespawn(Location respawn) {
-        configuration.setLocationData("respawn", respawn);
-        this.respawn = respawn;
+    public void setLimitOfVoting(int limitOfVoting) {
+        this.limitOfVoting = limitOfVoting;
     }
 
     public Location getLobbyPos() {
@@ -138,7 +145,7 @@ public class Game {
     }
 
     public Boolean setPlayerRole(UUID uuid, Role role) {
-        if (!getwPlayers().containsKey(uuid)) return false;
+        if (!getWPlayers().containsKey(uuid)) return false;
 
         getWPlayer(uuid).setRole(role);
         return true;
@@ -160,8 +167,8 @@ public class Game {
         return taskManager;
     }
 
-    public void taskCompleted(int no) {
-        taskManager.onTaskFinished(no);
+    public void taskCompleted(Player player, int no) {
+        taskManager.onTaskFinished(player, no);
     }
 
     public void setCurrentState(GameState currentState) {
@@ -172,11 +179,26 @@ public class Game {
         return currentState;
     }
 
+    public LobbyState getLobbyState() {
+        return lobbyState;
+    }
+    public PlayingState getPlayingState() {
+        return playingState;
+    }
+    public MeetingState getMeetingState() {
+        return meetingState;
+    }
+    public VotingState getVotingState() {
+        return votingState;
+    }
+
 
     Game(JavaPlugin plugin, LocationConfiguration configuration) {
         this.plugin = plugin;
         this.configuration = configuration;
     }
+
+
 
 
 
@@ -186,31 +208,60 @@ public class Game {
         if (wasStarted) return false;
         wasStarted = true;
 
-        displayManager = new DisplayManager(this);
-        displayManager.setTaskBarVisible(false);
-        taskManager = new TaskManager(this);
+        resetManagers();
+        resetStates();
+        resetWPlayers(); //Managerリセット後に実行
+        setImposters(); //wPlayersリセット後に実行
 
-        lobbyState = new LobbyState(plugin);
-        lobbyState.onStart(this);
-        meetingState = new MeetingState(plugin);
-        meetingState.onStart(this);
-        playingState = new PlayingState(plugin);
-        playingState.onStart(this);
-        votingState = new VotingState(plugin);
-        votingState.onStart(this);
+        displayManager.setTaskBarVisible(false);
 
         currentState = lobbyState;
         currentState.onActive();
 
-        Random random = new Random();
+        return true;
+    }
+
+
+
+
+
+    private void resetManagers() {
+
+        displayManager = new DisplayManager(this);
+        taskManager = new TaskManager(this);
+
+    }
+
+    private void resetStates() {
+
+        lobbyState = new LobbyState(plugin, this);
+        meetingState = new MeetingState(plugin, this);
+        playingState = new PlayingState(plugin, this);
+        votingState = new VotingState(plugin, this);
+
+    }
+
+    private void resetWPlayers() {
 
         wPlayers.clear();
-        List<Player> players = new ArrayList<>(Bukkit.getOnlinePlayers());
+        setJoinedPlayers(new ArrayList<>(plugin.getServer().getOnlinePlayers()));
 
-        for (Player player : players) {
-            this.putWPlayer(new WPlayer(player.getUniqueId()));
-            this.getDisplayManager().addTaskBar(player);
+        for (Player player : joinedPlayers) {
+            WPlayer wPlayer = new WPlayer(player.getUniqueId());
+            this.putWPlayer(wPlayer);
+
+            player.getInventory().clear();
+
+            displayManager.addTaskBar(player);
+            taskManager.setTasks(wPlayer);
         }
+    }
+
+    private void setImposters() {
+
+        List<Player> players = new ArrayList<>(this.joinedPlayers);
+
+        Random random = new Random();
         for (int i = 0; i < numberOfImposter; i++) {
             Player selectedPlayer = players.get(random.nextInt(players.size()));
             players.remove(selectedPlayer);
@@ -219,30 +270,19 @@ public class Game {
             wPlayer.setRole(Role.IMPOSTER);
         }
 
-        return true;
     }
 
-    public void returnToPlay() {
-        if (currentState == playingState) return;
+    public void changeState(GameState state) {
+        if (currentState == state) return;
         currentState.onInactive();
-        currentState = playingState;
-        currentState.onActive();
+        currentState = state;
+        if (currentState == lobbyState || currentState == playingState) {
+            changeScene();
+        } else {
+            currentState.onActive();
+        }
     }
 
-    public void meetingStart() {
-        if (currentState == meetingState) return;
-        currentState.onInactive();
-        currentState = meetingState;
-        currentState.onActive();
-
-    }
-
-    public void voteStart() {
-        if (currentState == votingState) return;
-        currentState.onInactive();
-        currentState = votingState;
-        currentState.onActive();
-    }
 
 
     public boolean votePlayer(UUID voter, UUID target) {
@@ -261,7 +301,7 @@ public class Game {
         return false;
     }
 
-    public GameJudge confirmTask() {
+    private GameJudge confirmTask() {
         int finishedTask = taskManager.getFinishedTask();
 
         if(numberOfTasks == finishedTask) {
@@ -270,12 +310,9 @@ public class Game {
         return GameJudge.NONE;
     }
 
-    public GameJudge confirmNoOfPlayers() {
+    private GameJudge confirmNoOfPlayers() {
         int clueMateRemains = wPlayers.values().stream().filter(p -> !p.getRole().isImposter() && !p.isDied()).collect(Collectors.toSet()).size();
         int impostorRemains = wPlayers.values().stream().filter(p -> p.getRole().isImposter() && !p.isDied()).collect(Collectors.toSet()).size();
-
-        System.out.println("clueMateRemains: "+clueMateRemains);
-        System.out.println("impostorRemains: "+impostorRemains);
 
         if (clueMateRemains <= impostorRemains) {
             return GameJudge.IMPOSTER_WIN;
@@ -304,17 +341,27 @@ public class Game {
 
     }
 
+    private BukkitTask task;
+    private int counter = 0;
+    private final int limit = 3;
+
+    public void changeScene() {
+        this.joinedPlayers.forEach(p->{
+            p.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, limit*20, 100));
+        });
+        task = new MyRunTask().runTask(plugin);
+    }
+
     public void ejectPlayer(String uuid) {
         Player player = plugin.getServer().getPlayer(uuid);
-        plugin.getServer().getOnlinePlayers().forEach(p -> p.sendMessage(Messages.message("002", player.getDisplayName())));
-        // player.setHealth(0);
+        this.joinedPlayers.forEach(p -> p.sendMessage(Messages.message("002", player.getDisplayName())));
         player.setGameMode(GameMode.SPECTATOR);
         plugin.getLogger().info(Messages.message("002", player.getDisplayName()));
     }
 
     public void voteSkipped() {
-        plugin.getServer().getOnlinePlayers().forEach(player -> player.sendMessage("Lobby"));
-        plugin.getServer().getOnlinePlayers().forEach(p -> p.sendMessage(Messages.message("006")));
+        this.joinedPlayers.forEach(player -> player.sendMessage("Lobby"));
+        this.joinedPlayers.forEach(p -> p.sendMessage(Messages.message("006")));
         plugin.getLogger().info(Messages.message("006"));
     }
 
@@ -329,15 +376,29 @@ public class Game {
     }
 
 
-    public void stop() {
+    private void stop() {
         wasStarted = false;
         currentState.onInactive();
         displayManager.setTaskBarVisible(false);
 
-        plugin.getServer().getOnlinePlayers().forEach(p -> {
+        this.joinedPlayers.forEach(p -> {
             p.setGameMode(GameMode.ADVENTURE);
-            plugin.getLogger().info(getLobbyPos().serialize().toString());
             p.teleport(getLobbyPos());
+            plugin.getLogger().info(getLobbyPos().serialize().toString());
         });
+    }
+
+    class MyRunTask extends BukkitRunnable {
+
+        @Override
+        public void run() {
+            System.out.println(counter);
+            if (counter >= limit) {
+                currentState.onActive();
+                return;
+            }
+            counter++;
+            task = new MyRunTask().runTaskLater(plugin, 20);
+        }
     }
 }

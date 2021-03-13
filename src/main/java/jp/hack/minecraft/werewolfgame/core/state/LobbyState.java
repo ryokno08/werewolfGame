@@ -13,13 +13,11 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
 public class LobbyState extends GameState {
-    private final JavaPlugin plugin;
     private BukkitTask task;
     private int counter = 0;
 
-
-    public LobbyState(JavaPlugin plugin) {
-        this.plugin = plugin;
+    public LobbyState(JavaPlugin plugin, Game game) {
+        super(plugin, game);
     }
 
     @Override
@@ -33,23 +31,13 @@ public class LobbyState extends GameState {
     }
 
     @Override
-    public void update() {
-
-    }
-
-    @Override
-    public void onStart(Game game) {
-        super.onStart(game);
-    }
-
-    @Override
     public void onActive() {
         super.onActive();
         plugin.getLogger().info("LobbyStateに切り替わりました");
-        plugin.getServer().getOnlinePlayers().forEach(player -> player.sendMessage("Lobby"));
 
         counter = 0;
         if (task == null) {
+            System.out.println("LobbyState Count");
             task = new MyRunTask().runTask(plugin);
         }
     }
@@ -57,9 +45,8 @@ public class LobbyState extends GameState {
     @Override
     public void onInactive() {
         super.onInactive();
-        Game game = ((GameConfigurator) plugin).getGame();
 
-        for (Player player : plugin.getServer().getOnlinePlayers()) {
+        for (Player player : game.getJoinedPlayers()) {
             player.setGameMode(GameMode.ADVENTURE);
 
             WPlayer wPlayer = game.getWPlayer(player.getUniqueId());
@@ -72,26 +59,20 @@ public class LobbyState extends GameState {
         }
     }
 
-    @Override
-    public void onEnd() {
-        super.onEnd();
-    }
-
-
     class MyRunTask extends BukkitRunnable{
+
+        final int limit = 5;
 
         @Override
         public void run() {
             System.out.println(counter);
-            this.cancel();
-            if (counter >= 5) {
-                Game game = ((GameConfigurator) plugin).getGame();
-                game.returnToPlay();
+            if (counter >= limit) {
+                game.changeState(game.getPlayingState());
                 task = null;
                 return;
             }
-            for (Player p : plugin.getServer().getOnlinePlayers())
-                p.sendTitle(Messages.message("003", 5 - counter), "", 0, 20, 0);
+            for (Player p : game.getJoinedPlayers())
+                p.sendTitle(Messages.message("003", limit - counter), "", 0, 20, 0);
             counter++;
             task = new MyRunTask().runTaskLater(plugin, 20);
         }
