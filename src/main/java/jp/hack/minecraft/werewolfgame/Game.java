@@ -5,6 +5,7 @@ import jp.hack.minecraft.werewolfgame.core.task.TaskManager;
 import jp.hack.minecraft.werewolfgame.core.WPlayer;
 import jp.hack.minecraft.werewolfgame.core.display.DisplayManager;
 import jp.hack.minecraft.werewolfgame.core.state.*;
+import jp.hack.minecraft.werewolfgame.util.LocationConfiguration;
 import org.bukkit.Bukkit;
 import jp.hack.minecraft.werewolfgame.util.Messages;
 import org.bukkit.GameMode;
@@ -48,6 +49,8 @@ public class Game {
     private VotingState votingState;
     // private ArrayDeque<GameState> nextStates;
     private GameState currentState;
+
+    private LocationConfiguration configuration;
 
     // UUIDは投票者のもの Stringは投票先のUUIDもしくは"Skip"が入る
     public Map<UUID, String> votedPlayers = new HashMap<>();
@@ -93,26 +96,32 @@ public class Game {
     }
 
     public Location getRespawn() {
+        if (respawn == null) respawn = configuration.getLocationData("respawn");
         return respawn;
     }
 
     public void setRespawn(Location respawn) {
+        configuration.setLocationData("respawn", respawn);
         this.respawn = respawn;
     }
 
     public Location getLobbyPos() {
+        if (lobbyPos == null) lobbyPos = configuration.getLocationData("lobbyPos");
         return lobbyPos;
     }
 
     public void setLobbyPos(Location lobbyPos) {
+        configuration.setLocationData("lobbyPos", lobbyPos);
         this.lobbyPos = lobbyPos;
     }
 
     public Location getMeetingPos() {
+        if (meetingPos == null) meetingPos = configuration.getLocationData("meetingPos");
         return meetingPos;
     }
 
     public void setMeetingPos(Location meetingPos) {
+        configuration.setLocationData("meetingPos", meetingPos);
         this.meetingPos = meetingPos;
     }
 
@@ -164,10 +173,9 @@ public class Game {
     }
 
 
-
-
-    Game(JavaPlugin plugin) {
+    Game(JavaPlugin plugin, LocationConfiguration configuration) {
         this.plugin = plugin;
+        this.configuration = configuration;
     }
 
 
@@ -299,7 +307,8 @@ public class Game {
     public void ejectPlayer(String uuid) {
         Player player = plugin.getServer().getPlayer(uuid);
         plugin.getServer().getOnlinePlayers().forEach(p -> p.sendMessage(Messages.message("002", player.getDisplayName())));
-        player.setHealth(0);
+        // player.setHealth(0);
+        player.setGameMode(GameMode.SPECTATOR);
         plugin.getLogger().info(Messages.message("002", player.getDisplayName()));
     }
 
@@ -327,7 +336,8 @@ public class Game {
 
         plugin.getServer().getOnlinePlayers().forEach(p -> {
             p.setGameMode(GameMode.ADVENTURE);
-            p.teleport(lobbyPos);
+            plugin.getLogger().info(getLobbyPos().serialize().toString());
+            p.teleport(getLobbyPos());
         });
     }
 }
