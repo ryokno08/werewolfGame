@@ -4,7 +4,6 @@ import jp.hack.minecraft.werewolfgame.Game;
 import jp.hack.minecraft.werewolfgame.GameConfigurator;
 import jp.hack.minecraft.werewolfgame.core.WPlayer;
 import jp.hack.minecraft.werewolfgame.util.Messages;
-import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -64,7 +63,7 @@ public class LobbyState extends GameState {
             player.setGameMode(GameMode.ADVENTURE);
 
             WPlayer wPlayer = game.getWPlayer(player.getUniqueId());
-            if (wPlayer.getRole().isWolf()) {
+            if (wPlayer.getRole().isImposter()) {
                 game.getDisplayManager().youAreImposter(player);
                 player.getInventory().setItem(8, new ItemStack(Material.IRON_SWORD));
             } else {

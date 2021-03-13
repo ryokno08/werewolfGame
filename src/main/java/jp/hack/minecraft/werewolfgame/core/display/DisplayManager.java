@@ -56,7 +56,7 @@ public class DisplayManager {
         for (Player player : Bukkit.getServer().getOnlinePlayers()) {
             WPlayer wPlayer = game.getWPlayer(player.getUniqueId());
 
-            if (wPlayer.getRole().isWolf()) {
+            if (wPlayer.getRole().isImposter()) {
                 sendTitle(player, DEFEAT_MESSAGE);
             } else {
                 sendTitle(player, VICTORY_MESSAGE);
@@ -68,7 +68,7 @@ public class DisplayManager {
         for (Player player : Bukkit.getServer().getOnlinePlayers()) {
             WPlayer wPlayer = game.getWPlayer(player.getUniqueId());
 
-            if (wPlayer.getRole().isWolf()) {
+            if (wPlayer.getRole().isImposter()) {
                 sendTitle(player, VICTORY_MESSAGE);
             } else {
                 sendTitle(player, DEFEAT_MESSAGE);

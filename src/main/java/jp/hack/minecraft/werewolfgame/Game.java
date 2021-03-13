@@ -158,19 +158,6 @@ public class Game extends BukkitRunnable {
         return currentState.canMove();
     }
 
-    /*
-    public void setCanTalk(Boolean canTalk) {
-        this.canTalk = canTalk;
-    }
-    */
-    public Boolean canCommunicate() {
-        return canCommunicate;
-    }
-
-    public void setCanCommunicate(Boolean canCommunicate) {
-        this.canCommunicate = canCommunicate;
-    }
-
     public DisplayManager getDisplayManager() {
         return displayManager;
     }
@@ -200,18 +187,26 @@ public class Game extends BukkitRunnable {
 
     // gameStart、meetingStartはコマンドが来たとき呼び出す
     public void gameStart() {
+
         wasStarted = true;
         currentState = lobbyState;
         currentState.onActive();
 
         Random random = new Random();
+
+        wPlayers.clear();
         List<Player> players = new ArrayList<>(Bukkit.getOnlinePlayers());
+
+        for (Player player : players) {
+            this.putWPlayer(new WPlayer(player.getUniqueId()));
+            this.getDisplayManager().addTaskBar(player);
+        }
         for (int i = 0; i < numberOfImposter; i++) {
             Player selectedPlayer = players.get(random.nextInt(players.size()));
             players.remove(selectedPlayer);
 
             WPlayer wPlayer = getWPlayer(selectedPlayer.getUniqueId());
-            wPlayer.setRole(Role.WOLF);
+            wPlayer.setRole(Role.IMPOSTER);
         }
     }
 
@@ -270,8 +265,8 @@ public class Game extends BukkitRunnable {
     }
 
     public void confirmNoOfPlayers() {
-        int clueMateRemains = wPlayers.values().stream().filter(v -> !v.getRole().isWolf() && !v.isDied()).collect(Collectors.toSet()).size();
-        int impostorRemains = wPlayers.values().stream().filter(v -> v.getRole().isWolf() && !v.isDied()).collect(Collectors.toSet()).size();
+        int clueMateRemains = wPlayers.values().stream().filter(v -> !v.getRole().isImposter() && !v.isDied()).collect(Collectors.toSet()).size();
+        int impostorRemains = wPlayers.values().stream().filter(v -> v.getRole().isImposter() && !v.isDied()).collect(Collectors.toSet()).size();
 
         if (clueMateRemains <= impostorRemains) {
             impostorVictory = true;

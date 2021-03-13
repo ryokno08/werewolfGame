@@ -1,33 +1,22 @@
 package jp.hack.minecraft.werewolfgame.core;
 
 public enum Role {
-    UNSET(false),
-    VILLAGER(false),
-    SEER(false),
-    PSYCHIC(false),
-    HUNTER(false),
-    MADMAN(true),
-    WOLF(true, true);
+    CLUEMATE(false),
+    IMPOSTER(true, true);
 
 
-    private Boolean isWolfSide;
-    private Boolean isWolf;
+    private Boolean isImposter;
 
 
-    Role(Boolean isWolfSide) {
-        this(isWolfSide, false);
+    Role(Boolean isImposterSide) {
+        this(isImposterSide, false);
     }
 
-    Role(Boolean isWolfSide, Boolean isWolf) {
-        this.isWolfSide = isWolfSide;
-        this.isWolf = isWolf;
+    Role(Boolean isImposterSide, Boolean isImposter) {
+        this.isImposter = isImposter;
     }
 
-    public Boolean isWolfSide() {
-        return isWolfSide;
-    }
-
-    public Boolean isWolf() {
-        return isWolf;
+    public Boolean isImposter() {
+        return isImposter;
     }
 }

@@ -10,7 +10,7 @@ public class WPlayer {
 
 
     public WPlayer(UUID uuid) {
-        this(uuid, Role.UNSET);
+        this(uuid, Role.CLUEMATE);
     }
 
     public WPlayer(UUID uuid, Role role) {

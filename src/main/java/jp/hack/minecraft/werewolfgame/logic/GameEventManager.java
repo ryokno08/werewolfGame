@@ -8,16 +8,12 @@ import jp.hack.minecraft.werewolfgame.core.gamerule.PlayerKill;
 import jp.hack.minecraft.werewolfgame.core.state.PlayingState;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitScheduler;
@@ -36,9 +32,6 @@ public class GameEventManager implements Listener {
         if (!game.wasStarted()) return;
 
         Player p = event.getPlayer();
-        game.putWPlayer(new WPlayer(p.getUniqueId()));
-        game.getDisplayManager().addTaskBar(p);
-
 
         BukkitScheduler scheduler = Bukkit.getServer().getScheduler();
         scheduler.scheduleSyncDelayedTask(plugin, () -> {
@@ -78,30 +71,29 @@ public class GameEventManager implements Listener {
 
     @EventHandler
     public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
+        e.setCancelled(true);
+
         Game game = ((GameConfigurator) plugin).getGame();
         if (game == null) return;
         if (!game.wasStarted()) return;
+        if ( !(game.getCurrentState() instanceof PlayingState) ) return;
 
         if (e.getDamager() instanceof Player && e.getEntity() instanceof Player) {
             Player damager = (Player) e.getDamager();
             Player attacker = (Player) e.getEntity();
 
-            if ( game.getCurrentState() instanceof PlayingState ) {
+            if (Role.CLUEMATE.equals(game.getPlayerRole(damager.getUniqueId())))
+                if (Role.IMPOSTER.equals(game.getPlayerRole(attacker.getUniqueId()))) {
+                    if (attacker.getInventory().getItemInMainHand().getType().equals(game.getItemForKill().getType())) {
 
-                if (Role.VILLAGER.equals(game.getPlayerRole(damager.getUniqueId())))
-                    if (Role.WOLF.equals(game.getPlayerRole(attacker.getUniqueId()))) {
-                        if (attacker.getInventory().getItemInMainHand().getType().equals(game.getItemForKill().getType())) {
+                        System.out.println("[!KILL]" + attacker.getDisplayName() + " killed " + damager.getDisplayName());
 
-                            System.out.println( "[!KILL]" + attacker.getDisplayName() + " killed " + damager.getDisplayName() );
+                        PlayerKill playerKill = new PlayerKill(plugin);
+                        playerKill.OnPlayerAttack(e);
 
-                            PlayerKill playerKill = new PlayerKill(plugin);
-                            playerKill.OnPlayerAttack(e);
-
-                            return;
-                        }
+                        return;
                     }
-            }
+                }
         }
-        e.setCancelled(true);
     }
 }
