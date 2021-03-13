@@ -79,19 +79,17 @@ public class GameEventManager implements Listener {
         if ( !(game.getCurrentState() instanceof PlayingState) ) return;
 
         if (e.getDamager() instanceof Player && e.getEntity() instanceof Player) {
-            Player damager = (Player) e.getDamager();
-            Player attacker = (Player) e.getEntity();
+            Player attacker = (Player) e.getDamager();
+            Player entity = (Player) e.getEntity();
 
-            if (Role.CLUEMATE.equals(game.getPlayerRole(damager.getUniqueId())))
-                if (Role.IMPOSTER.equals(game.getPlayerRole(attacker.getUniqueId()))) {
+            if ( game.getPlayerRole( entity.getUniqueId() ) .equals(Role.CLUEMATE))
+                if ( game.getPlayerRole( attacker.getUniqueId() ) .equals(Role.IMPOSTER)) {
                     if (attacker.getInventory().getItemInMainHand().getType().equals(game.getItemForKill().getType())) {
 
-                        System.out.println("[!KILL]" + attacker.getDisplayName() + " killed " + damager.getDisplayName());
+                        System.out.println("[!KILL]" + attacker.getDisplayName() + " killed " + entity.getDisplayName());
 
                         PlayerKill playerKill = new PlayerKill(plugin);
                         playerKill.OnPlayerAttack(e);
-
-                        return;
                     }
                 }
         }

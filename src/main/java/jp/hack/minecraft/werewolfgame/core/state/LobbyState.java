@@ -86,7 +86,7 @@ public class LobbyState extends GameState {
             this.cancel();
             if (counter >= 5) {
                 Game game = ((GameConfigurator) plugin).getGame();
-                game.returnToGame();
+                game.returnToPlay();
                 task = null;
                 return;
             }

@@ -21,8 +21,8 @@ public class Game extends BukkitRunnable {
     private final JavaPlugin plugin;
 
     private final Map<UUID, WPlayer> wPlayers = new HashMap<>();
-    private final DisplayManager displayManager;
-    private final TaskManager taskManager;
+    private DisplayManager displayManager;
+    private TaskManager taskManager;
 
     private Boolean wasStarted = false;
     private Boolean impostorVictory = false;
@@ -33,39 +33,18 @@ public class Game extends BukkitRunnable {
     private Location respawn;
     private Location lobbyPos;
     private Location meetingPos;
-    private Boolean canCommunicate = false;
     private ItemStack itemForKill = new ItemStack(Material.IRON_SWORD);
 
     //ゲームの初期状態はロビーでスタート
-    private final LobbyState lobbyState;
-    private final MeetingState meetingState;
-    private final PlayingState playingState;
-    private final VotingState votingState;
+    private LobbyState lobbyState;
+    private MeetingState meetingState;
+    private PlayingState playingState;
+    private VotingState votingState;
     // private ArrayDeque<GameState> nextStates;
     private GameState currentState;
 
     // UUIDは投票者のもの Stringは投票先のUUIDもしくは"Skip"が入る
     public Map<UUID, String> votedPlayers = new HashMap<>();
-
-    Game(JavaPlugin plugin) {
-        this.plugin = plugin;
-
-        displayManager = new DisplayManager(this);
-        taskManager = new TaskManager(this);
-
-        displayManager.setTaskBarVisible(false);
-
-        lobbyState = new LobbyState(plugin);
-        lobbyState.onStart(this);
-        meetingState = new MeetingState(plugin);
-        meetingState.onStart(this);
-        playingState = new PlayingState(plugin);
-        playingState.onStart(this);
-        votingState = new VotingState(plugin);
-        votingState.onStart(this);
-        // nextStates = new ArrayDeque<>(Arrays.asList(playingState));
-        currentState = lobbyState;
-    }
 
     public Game getGame() {
         return this;
@@ -170,13 +149,6 @@ public class Game extends BukkitRunnable {
         taskManager.onTaskFinished(no);
     }
 
-    // public void start() {}
-    /*
-    public void hostStart() {
-        currentState = new LobbyState(this);
-    }
-     */
-
     public void setCurrentState(GameState currentState) {
         this.currentState = currentState;
     }
@@ -185,10 +157,34 @@ public class Game extends BukkitRunnable {
         return currentState;
     }
 
-    // gameStart、meetingStartはコマンドが来たとき呼び出す
-    public void gameStart() {
 
+
+
+    Game(JavaPlugin plugin) {
+        this.plugin = plugin;
+    }
+
+
+
+    // gameStart、meetingStartはコマンドが来たとき呼び出す
+    public Boolean gameStart() {
+
+        if (wasStarted) return false;
         wasStarted = true;
+
+        displayManager = new DisplayManager(this);
+        displayManager.setTaskBarVisible(false);
+        taskManager = new TaskManager(this);
+
+        lobbyState = new LobbyState(plugin);
+        lobbyState.onStart(this);
+        meetingState = new MeetingState(plugin);
+        meetingState.onStart(this);
+        playingState = new PlayingState(plugin);
+        playingState.onStart(this);
+        votingState = new VotingState(plugin);
+        votingState.onStart(this);
+
         currentState = lobbyState;
         currentState.onActive();
 
@@ -208,9 +204,11 @@ public class Game extends BukkitRunnable {
             WPlayer wPlayer = getWPlayer(selectedPlayer.getUniqueId());
             wPlayer.setRole(Role.IMPOSTER);
         }
+
+        return true;
     }
 
-    public void returnToGame() {
+    public void returnToPlay() {
         if (currentState == playingState) return;
         currentState.onInactive();
         currentState = playingState;
@@ -232,13 +230,6 @@ public class Game extends BukkitRunnable {
         currentState.onActive();
     }
 
-//    public void nextState() {
-//        if (nextStates.size() < 1) return;
-//
-//        currentState.onInactive();
-//        currentState = nextStates.removeFirst();
-//        currentState.onActive();
-//    }
 
     public boolean votePlayer(UUID voter, UUID target) {
         if (currentState == votingState && !votedPlayers.containsKey(voter)) {

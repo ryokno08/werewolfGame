@@ -2,14 +2,10 @@ package jp.hack.minecraft.werewolfgame.core.state;
 
 import jp.hack.minecraft.werewolfgame.Game;
 import jp.hack.minecraft.werewolfgame.GameConfigurator;
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.scheduler.BukkitTask;
 
-import java.lang.reflect.Array;
 import java.util.*;
 
 public class VotingState extends GameState {
@@ -101,7 +97,7 @@ public class VotingState extends GameState {
                     }
 
 
-                    game.returnToGame();
+                    game.returnToPlay();
                     this.cancel();
                 }
             }.runTaskTimer(plugin, 0, 20);
