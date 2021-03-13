@@ -7,18 +7,24 @@ import jp.hack.minecraft.werewolfgame.core.display.DisplayManager;
 import jp.hack.minecraft.werewolfgame.core.state.*;
 import org.bukkit.Bukkit;
 import jp.hack.minecraft.werewolfgame.util.Messages;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class Game {
     private final JavaPlugin plugin;
+
+    enum GameJudge {
+        CLUE_WIN,
+        IMPOSTER_WIN,
+        NONE
+    }
 
     private final Map<UUID, WPlayer> wPlayers = new HashMap<>();
     private DisplayManager displayManager;
@@ -247,37 +253,47 @@ public class Game {
         return false;
     }
 
-    public void confirmTask() {
+    public GameJudge confirmTask() {
         int finishedTask = taskManager.getFinishedTask();
 
         if(numberOfTasks == finishedTask) {
-            clueMateVictory = true;
+            return GameJudge.CLUE_WIN;
         }
+        return GameJudge.NONE;
     }
 
-    public void confirmNoOfPlayers() {
+    public GameJudge confirmNoOfPlayers() {
         int clueMateRemains = wPlayers.values().stream().filter(v -> !v.getRole().isImposter() && !v.isDied()).collect(Collectors.toSet()).size();
         int impostorRemains = wPlayers.values().stream().filter(v -> v.getRole().isImposter() && !v.isDied()).collect(Collectors.toSet()).size();
 
+        System.out.println("clueMateRemains: "+clueMateRemains);
+        System.out.println("impostorRemains: "+impostorRemains);
+
         if (clueMateRemains <= impostorRemains) {
-            impostorVictory = true;
+            return GameJudge.IMPOSTER_WIN;
         }
         if (impostorRemains == 0) {
-            clueMateVictory = true;
+            return GameJudge.CLUE_WIN;
         }
+        return GameJudge.NONE;
     }
 
     public void confirmGame() {
-        confirmTask();
-        confirmNoOfPlayers();
 
-        if (impostorVictory && clueMateVictory) {
-            playerDraw();
-        } else if (impostorVictory) {
-            playerDefeat();
-        } else if (clueMateVictory){
+        GameJudge gameJudge = confirmTask();
+
+        if (gameJudge == GameJudge.CLUE_WIN) {
             playerVictory();
+        } else {
+            gameJudge = confirmNoOfPlayers();
+
+            if (gameJudge == GameJudge.CLUE_WIN) {
+                playerVictory();
+            } else if (gameJudge == GameJudge.IMPOSTER_WIN) {
+                playerDefeat();
+            }
         }
+
     }
 
     public void ejectPlayer(String uuid) {
@@ -303,14 +319,15 @@ public class Game {
         stop();
     }
 
-    public void playerDraw() {
-        stop();
-    }
-
 
     public void stop() {
+        wasStarted = false;
         currentState.onInactive();
         displayManager.setTaskBarVisible(false);
-        wasStarted = false;
+
+        plugin.getServer().getOnlinePlayers().forEach(p -> {
+            p.setGameMode(GameMode.ADVENTURE);
+            p.teleport(lobbyPos);
+        });
     }
 }
