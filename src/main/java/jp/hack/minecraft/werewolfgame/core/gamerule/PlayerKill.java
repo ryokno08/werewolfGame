@@ -21,29 +21,29 @@ public class PlayerKill {
     public void OnPlayerAttack(EntityDamageByEntityEvent e) {
         Game game = ((GameConfigurator)plugin).getGame();
 
-        Player damager = (Player) e.getDamager();
-        Player attacker = (Player) e.getEntity();
-        WPlayer wDamager = game.getWPlayer(damager.getUniqueId());
+        Player entity = (Player) e.getEntity();
+        Player attacker = (Player) e.getDamager();
+        WPlayer wEntity = game.getWPlayer(entity.getUniqueId());
         WPlayer wAttacker = game.getWPlayer(attacker.getUniqueId());
 
         wAttacker.setKilling(true);
-        wDamager.setKilling(true);
+        wEntity.setKilling(true);
 
         new BukkitRunnable() {
             @Override
             public void run() {
                 wAttacker.setKilling(false);
-                wDamager.setKilling(false);
+                wEntity.setKilling(false);
             }
         }.runTaskLater(plugin, 10);
 
-        Location damagerLoc = damager.getLocation();
+        Location entityLocation = entity.getLocation();
 
-        damagerLoc.add(0, 1, 0).getBlock().setType( Material.SKULL );
-        attacker.teleport( damagerLoc.add(0, 0.5, 0) );
+        entityLocation.add(0, 1, 0).getBlock().setType( Material.SKULL );
+        attacker.teleport( entityLocation.add(0, 0.5, 0) );
 
-        damager.setGameMode(GameMode.SPECTATOR);
-        wDamager.setDied(true);
+        entity.setGameMode(GameMode.SPECTATOR);
+        wEntity.setDied(true);
 
         game.confirmGame();
     }

@@ -263,8 +263,8 @@ public class Game {
     }
 
     public GameJudge confirmNoOfPlayers() {
-        int clueMateRemains = wPlayers.values().stream().filter(v -> !v.getRole().isImposter() && !v.isDied()).collect(Collectors.toSet()).size();
-        int impostorRemains = wPlayers.values().stream().filter(v -> v.getRole().isImposter() && !v.isDied()).collect(Collectors.toSet()).size();
+        int clueMateRemains = wPlayers.values().stream().filter(p -> !p.getRole().isImposter() && !p.isDied()).collect(Collectors.toSet()).size();
+        int impostorRemains = wPlayers.values().stream().filter(p -> p.getRole().isImposter() && !p.isDied()).collect(Collectors.toSet()).size();
 
         System.out.println("clueMateRemains: "+clueMateRemains);
         System.out.println("impostorRemains: "+impostorRemains);
