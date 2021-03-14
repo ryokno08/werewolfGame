@@ -29,8 +29,8 @@ public class CommandManager implements TabExecutor {
     }
 
     private boolean onCommandImpl(CommandSender sender, Command command, String label, String[] args) {
-        if (rootCommands.get(label).subCommands.containsKey("help")) {
-            return rootCommands.get(label).subCommands.get("help").onCommand(sender, command, label, Arrays.copyOfRange(args, 1, args.length));
+        if (rootCommands.get(command.getName()).subCommands.containsKey("help")) {
+            return rootCommands.get(command.getName()).subCommands.get("help").onCommand(sender, command, label, Arrays.copyOfRange(args, 1, args.length));
         }
         return false;
     }
