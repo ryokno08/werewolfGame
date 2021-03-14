@@ -28,6 +28,9 @@ public class PlayingState extends GameState {
 
         DisplayManager displayManager = game.getDisplayManager();
         displayManager.setTaskBarVisible(true);
+
+        System.out.println(game.getJoinedPlayers());
+        game.getJoinedPlayers().forEach(player -> player.teleport(game.getMeetingPos()));
     }
 
     @Override

@@ -18,7 +18,7 @@ public class SetLobbyCommand extends CommandMaster {
 
     @Override
     public String getName() {
-        return "setLobby";
+        return "setlobby";
     }
 
     @Override
@@ -33,7 +33,6 @@ public class SetLobbyCommand extends CommandMaster {
 
         Game game = ((GameConfigurator) manager.plugin).getGame();
         game.setLobbyPos(player.getLocation());
-        game.saveConfig();
         sender.sendMessage("ロビーの座標が保存されました");
         return true;
     }

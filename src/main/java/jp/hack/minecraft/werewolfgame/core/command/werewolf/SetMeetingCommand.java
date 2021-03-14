@@ -18,7 +18,7 @@ public class SetMeetingCommand extends CommandMaster {
 
     @Override
     public String getName() {
-        return "setMeeting";
+        return "setmeeting";
     }
 
     @Override
@@ -33,7 +33,6 @@ public class SetMeetingCommand extends CommandMaster {
 
         Game game = ((GameConfigurator) manager.plugin).getGame();
         game.setMeetingPos(player.getLocation());
-        game.saveConfig();
         sender.sendMessage("ミーティングの座標が保存されました");
         return true;
     }

@@ -124,6 +124,8 @@ public class Game {
 
     public void setLobbyPos(Location lobbyPos) {
         this.lobbyPos = lobbyPos;
+        configuration.setLocationData("lobby", lobbyPos);
+        configuration.save();
     }
 
     public Location getMeetingPos() {
@@ -132,6 +134,8 @@ public class Game {
 
     public void setMeetingPos(Location meetingPos) {
         this.meetingPos = meetingPos;
+        configuration.setLocationData("meeting", meetingPos);
+        configuration.save();
     }
 
     public ItemStack getItemForKill() {
@@ -225,22 +229,10 @@ public class Game {
         return ErrorJudge.NONE;
     }
 
-
-
-    public void saveConfig() {
-        if (lobbyPos != null) configuration.setLocationData("lobby", lobbyPos);
-        if (meetingPos != null) configuration.setLocationData("meeting", meetingPos);
-
-    }
-
     private boolean reloadConfig() {
 
         lobbyPos = configuration.getLocationData("lobby");
         meetingPos = configuration.getLocationData("meeting");
-        System.out.println("lobbyPos:"+lobbyPos);
-        System.out.println("meetingPos:"+meetingPos);
-        System.out.println("return:"+(meetingPos != null && lobbyPos != null));
-        System.out.println("------------------------------");
         return (meetingPos != null && lobbyPos != null);
 
     }

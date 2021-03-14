@@ -14,12 +14,11 @@ public class WerewolfCommand extends CommandMaster {
         super(manager);
         addSubCommand(new HelpCommand(this.manager)); // サブコマンドの追加 この場合 /werewolf help を追加したことになる
         addSubCommand(new SetLobbyCommand(this.manager));
-        addSubCommand(new BarCommand(this.manager));
+        addSubCommand(new SetMeetingCommand(this.manager));
         addSubCommand(new CompleteCommand(this.manager));
         addSubCommand(new StartCommand(this.manager));
         addSubCommand(new ReportCommand(this.manager));
         addSubCommand(new VoteCommand(this.manager));
-        addSubCommand(new SetMeetingCommand(this.manager));
     }
 
     @Override
@@ -36,6 +35,7 @@ public class WerewolfCommand extends CommandMaster {
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         for (String s : args) System.out.println(s);
         if (args.length < 2) return false;
+        if (!subCommands.containsKey(args[1].toLowerCase())) return false;
         return subCommands.get(args[1]).onCommand(sender, command, label, Arrays.copyOfRange(args, 1, args.length));
     }
 
