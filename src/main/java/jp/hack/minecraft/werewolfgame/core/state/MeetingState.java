@@ -1,7 +1,6 @@
 package jp.hack.minecraft.werewolfgame.core.state;
 
 import jp.hack.minecraft.werewolfgame.Game;
-import jp.hack.minecraft.werewolfgame.GameConfigurator;
 import jp.hack.minecraft.werewolfgame.util.Messages;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -9,7 +8,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class MeetingState extends GameState {

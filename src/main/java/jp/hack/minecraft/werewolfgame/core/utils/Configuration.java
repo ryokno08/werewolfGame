@@ -545,7 +545,7 @@ public class Configuration extends YamlConfiguration {
         return super.getLongList(path);
     }
 
-    public synchronized Map<String, Object> getMap() {
+    public synchronized Map<String, Object> getMap(String name) {
         return map;
     }
 

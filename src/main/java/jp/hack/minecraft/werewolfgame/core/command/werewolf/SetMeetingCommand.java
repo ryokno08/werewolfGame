@@ -11,14 +11,14 @@ import org.bukkit.entity.Player;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SetMeetingLocationCommand extends CommandMaster {
-    public SetMeetingLocationCommand(CommandManager manager) {
+public class SetMeetingCommand extends CommandMaster {
+    public SetMeetingCommand(CommandManager manager) {
         super(manager);
     }
 
     @Override
     public String getName() {
-        return "setMeetingLoc";
+        return "setMeeting";
     }
 
     @Override
@@ -28,11 +28,13 @@ public class SetMeetingLocationCommand extends CommandMaster {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        sender.sendMessage("SetMeetingLocコマンドが実行されました");
+        sender.sendMessage("SetMeetingコマンドが実行されました");
         Player player = (Player) sender;
-        manager.plugin.getLogger().info(player.toString());
+
         Game game = ((GameConfigurator) manager.plugin).getGame();
         game.setMeetingPos(player.getLocation());
+        game.saveConfig();
+        sender.sendMessage("ミーティングの座標が保存されました");
         return true;
     }
 

@@ -30,9 +30,11 @@ public class SetLobbyCommand extends CommandMaster {
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         sender.sendMessage("SetLobbyコマンドが実行されました");
         Player player = (Player) sender;
-        manager.plugin.getLogger().info(player.toString());
+
         Game game = ((GameConfigurator) manager.plugin).getGame();
         game.setLobbyPos(player.getLocation());
+        game.saveConfig();
+        sender.sendMessage("ロビーの座標が保存されました");
         return true;
     }
 

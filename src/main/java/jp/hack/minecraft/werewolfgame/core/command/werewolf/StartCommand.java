@@ -31,12 +31,22 @@ public class StartCommand extends CommandMaster {
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         manager.plugin.getLogger().info("startコマンドが実行されました");
         Game game = ((GameConfigurator) manager.plugin).getGame();
-        
-        if (game.wasStarted()) {
-            sender.sendMessage(ChatColor.RED+"すでにゲームはスタートしています");
-            return false;
+
+        Game.ErrorJudge errorJudge = game.gameStart();
+        switch (errorJudge) {
+            case ALREADY_STARTED:
+                sender.sendMessage(ChatColor.RED + "すでにゲームはスタートしています");
+                break;
+            case CONFIG_NULL:
+                sender.sendMessage(ChatColor.RED + "座標の設定を行ってください");
+                break;
+            case MANAGER_NULL:
+                sender.sendMessage(ChatColor.RED + "エラーを確認しました：ManagerがNULLです");
+                break;
+            case WPLAYERS_NULL:
+                sender.sendMessage(ChatColor.RED + "エラーを確認しました：WPlayersがNULLです");
+                break;
         }
-        game.gameStart();
         return true;
     }
 

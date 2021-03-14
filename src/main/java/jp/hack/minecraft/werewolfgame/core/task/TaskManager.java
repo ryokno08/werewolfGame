@@ -36,7 +36,7 @@ public class TaskManager {
         WPlayer wPlayer = game.getWPlayer(player.getUniqueId());
         List<Task> taskList = wPlayer.getTasks();
 
-        if (taskList.size() <= no - 1) {
+        if (no > taskList.size()-1 || no < 0) {
             System.out.println("Unknown data");
             return;
         }

@@ -6,7 +6,6 @@ import jp.hack.minecraft.werewolfgame.core.WPlayer;
 import jp.hack.minecraft.werewolfgame.core.display.DisplayManager;
 import jp.hack.minecraft.werewolfgame.core.state.*;
 import jp.hack.minecraft.werewolfgame.util.LocationConfiguration;
-import org.bukkit.Bukkit;
 import jp.hack.minecraft.werewolfgame.util.Messages;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -17,7 +16,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.scheduler.BukkitTask;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -25,7 +23,15 @@ import java.util.stream.Collectors;
 public class Game {
     private final JavaPlugin plugin;
 
-    enum GameJudge {
+    public enum ErrorJudge {
+        CONFIG_NULL,
+        ALREADY_STARTED,
+        MANAGER_NULL,
+        WPLAYERS_NULL,
+        NONE
+    }
+
+    enum WinnerJudge {
         CLUE_WIN,
         IMPOSTER_WIN,
         NONE
@@ -113,22 +119,18 @@ public class Game {
     }
 
     public Location getLobbyPos() {
-        if (lobbyPos == null) lobbyPos = configuration.getLocationData("lobbyPos");
         return lobbyPos;
     }
 
     public void setLobbyPos(Location lobbyPos) {
-        configuration.setLocationData("lobbyPos", lobbyPos);
         this.lobbyPos = lobbyPos;
     }
 
     public Location getMeetingPos() {
-        if (meetingPos == null) meetingPos = configuration.getLocationData("meetingPos");
         return meetingPos;
     }
 
     public void setMeetingPos(Location meetingPos) {
-        configuration.setLocationData("meetingPos", meetingPos);
         this.meetingPos = meetingPos;
     }
 
@@ -203,27 +205,46 @@ public class Game {
 
 
     // gameStart、meetingStartはコマンドが来たとき呼び出す
-    public Boolean gameStart() {
+    public ErrorJudge gameStart() {
 
-        if (wasStarted) return false;
-        wasStarted = true;
+        if (wasStarted) return ErrorJudge.ALREADY_STARTED;
 
         resetManagers();
         resetStates();
-        resetWPlayers(); //Managerリセット後に実行
-        setImposters(); //wPlayersリセット後に実行
+        if (!reloadConfig()) return ErrorJudge.CONFIG_NULL;
+        if (!resetWPlayers()) return ErrorJudge.MANAGER_NULL; //Managerリセット後に実行
+        if (!setImposters()) return ErrorJudge.WPLAYERS_NULL; //wPlayersリセット後に実行
 
         displayManager.setTaskBarVisible(false);
 
         currentState = lobbyState;
         currentState.onActive();
 
-        return true;
+        wasStarted = true;
+
+        return ErrorJudge.NONE;
     }
 
 
 
+    public void saveConfig() {
 
+        configuration.setLocationData("lobby", lobbyPos);
+        configuration.setLocationData("meeting", meetingPos);
+
+    }
+
+    private boolean reloadConfig() {
+
+        lobbyPos = configuration.getLocationData("lobby");
+        meetingPos = configuration.getLocationData("meeting");
+        System.out.println("lobbyPos:"+lobbyPos);
+        System.out.println("meetingPos:"+meetingPos);
+        System.out.println("return:"+(meetingPos != null && lobbyPos != null));
+        System.out.println("------------------------------");
+        return (meetingPos != null && lobbyPos != null);
+
+    }
 
     private void resetManagers() {
 
@@ -241,7 +262,9 @@ public class Game {
 
     }
 
-    private void resetWPlayers() {
+    private Boolean resetWPlayers() {
+
+        if (displayManager == null || taskManager == null) return false;
 
         wPlayers.clear();
         setJoinedPlayers(new ArrayList<>(plugin.getServer().getOnlinePlayers()));
@@ -255,9 +278,12 @@ public class Game {
             displayManager.addTaskBar(player);
             taskManager.setTasks(wPlayer);
         }
+        return true;
     }
 
-    private void setImposters() {
+    private Boolean setImposters() {
+
+        if (wPlayers.isEmpty()) return false;
 
         List<Player> players = new ArrayList<>(this.joinedPlayers);
 
@@ -270,13 +296,15 @@ public class Game {
             wPlayer.setRole(Role.IMPOSTER);
         }
 
+        return true;
+
     }
 
     public void changeState(GameState state) {
         if (currentState == state) return;
         currentState.onInactive();
         currentState = state;
-        if (currentState == lobbyState || currentState == playingState) {
+        if (currentState != votingState) {
             changeScene();
         } else {
             currentState.onActive();
@@ -301,55 +329,62 @@ public class Game {
         return false;
     }
 
-    private GameJudge confirmTask() {
+    private WinnerJudge confirmTask() {
         int finishedTask = taskManager.getFinishedTask();
 
         if(numberOfTasks == finishedTask) {
-            return GameJudge.CLUE_WIN;
+            return WinnerJudge.CLUE_WIN;
         }
-        return GameJudge.NONE;
+        return WinnerJudge.NONE;
     }
 
-    private GameJudge confirmNoOfPlayers() {
+    private WinnerJudge confirmNoOfPlayers() {
         int clueMateRemains = wPlayers.values().stream().filter(p -> !p.getRole().isImposter() && !p.isDied()).collect(Collectors.toSet()).size();
         int impostorRemains = wPlayers.values().stream().filter(p -> p.getRole().isImposter() && !p.isDied()).collect(Collectors.toSet()).size();
 
         if (clueMateRemains <= impostorRemains) {
-            return GameJudge.IMPOSTER_WIN;
+            return WinnerJudge.IMPOSTER_WIN;
         }
         if (impostorRemains == 0) {
-            return GameJudge.CLUE_WIN;
+            return WinnerJudge.CLUE_WIN;
         }
-        return GameJudge.NONE;
+        return WinnerJudge.NONE;
     }
 
     public void confirmGame() {
 
-        GameJudge gameJudge = confirmTask();
+        WinnerJudge winnerJudge = confirmTask();
 
-        if (gameJudge == GameJudge.CLUE_WIN) {
+        if (winnerJudge == WinnerJudge.CLUE_WIN) {
             playerVictory();
         } else {
-            gameJudge = confirmNoOfPlayers();
+            winnerJudge = confirmNoOfPlayers();
 
-            if (gameJudge == GameJudge.CLUE_WIN) {
+            if (winnerJudge == WinnerJudge.CLUE_WIN) {
                 playerVictory();
-            } else if (gameJudge == GameJudge.IMPOSTER_WIN) {
+            } else if (winnerJudge == WinnerJudge.IMPOSTER_WIN) {
                 playerDefeat();
             }
         }
 
     }
 
-    private BukkitTask task;
-    private int counter = 0;
-    private final int limit = 3;
+    private BukkitRunnable task;
+    private final int limit = 3*20;
 
     public void changeScene() {
         this.joinedPlayers.forEach(p->{
-            p.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, limit*20, 100));
+            p.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, limit, 100));
         });
-        task = new MyRunTask().runTask(plugin);
+
+        task = new BukkitRunnable() {
+            @Override
+            public void run() {
+                currentState.onActive();
+            }
+        };
+
+        task.runTaskLater(plugin, limit);
     }
 
     public void ejectPlayer(String uuid) {
@@ -386,19 +421,5 @@ public class Game {
             p.teleport(getLobbyPos());
             plugin.getLogger().info(getLobbyPos().serialize().toString());
         });
-    }
-
-    class MyRunTask extends BukkitRunnable {
-
-        @Override
-        public void run() {
-            System.out.println(counter);
-            if (counter >= limit) {
-                currentState.onActive();
-                return;
-            }
-            counter++;
-            task = new MyRunTask().runTaskLater(plugin, 20);
-        }
     }
 }

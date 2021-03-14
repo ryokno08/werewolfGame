@@ -2,13 +2,9 @@ package jp.hack.minecraft.werewolfgame.util;
 
 import jp.hack.minecraft.werewolfgame.core.utils.Configuration;
 import org.bukkit.Location;
-import org.bukkit.Server;
-import org.bukkit.util.Vector;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.Map;
 
 public class LocationConfiguration extends Configuration {
     public LocationConfiguration(File configFile) {
@@ -20,13 +16,18 @@ public class LocationConfiguration extends Configuration {
 
     public Location getLocationData(String name) {
         synchronized (this) {
-            return super.getSerializable("location." + name, Location.class);
+            System.out.println(name);
+            System.out.println(super.getMap(name));
+            System.out.println(super.getMap(name).values());
+            System.out.println(super.getMap(name).get("world"));
+            return Location.deserialize(super.getMap(name));
         }
     }
 
     public void setLocationData(String name, Location loc) {
         synchronized (this) {
-            super.setProperty("location." + name, loc.serialize());
+            super.setProperty(name, loc.serialize());
+            super.save();
         }
     }
 }

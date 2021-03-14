@@ -33,22 +33,27 @@ public class CompleteCommand extends CommandMaster {
         manager.plugin.getLogger().info("completeコマンドが実行されました");
 
         Player player = (Player) sender;
+        Game game = ((GameConfigurator) manager.plugin).getGame();
+
+        if (!game.wasStarted()) {
+            sender.sendMessage(ChatColor.RED +"まだゲームは始まっていません");
+            return true;
+        }
 
         if (args.length < 2) {
-            sender.sendMessage(ChatColor.RED +"終わったタスクの数字が入力されていません。");
-            return false;
+            sender.sendMessage(ChatColor.RED +"タスクの数字が入力されていません");
+            return true;
         }
 
         int no = -1;
         try {
             no = Integer.parseInt(args[1]);
         } catch (NumberFormatException e) {
-            sender.sendMessage(ChatColor.RED+"正しい数字が入力されていません。");
+            sender.sendMessage(ChatColor.RED+"正しい数字が入力されていません");
             e.printStackTrace();
-            return false;
+            return true;
         }
 
-        Game game = ((GameConfigurator) manager.plugin).getGame();
         game.taskCompleted(player, no);
 
         sender.sendMessage(ChatColor.GREEN + "" + no + "番のタスク状況がtrueに変更されました。");

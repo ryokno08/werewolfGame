@@ -1,7 +1,6 @@
 package jp.hack.minecraft.werewolfgame.core.state;
 
 import jp.hack.minecraft.werewolfgame.Game;
-import jp.hack.minecraft.werewolfgame.GameConfigurator;
 import jp.hack.minecraft.werewolfgame.core.WPlayer;
 import jp.hack.minecraft.werewolfgame.util.Messages;
 import org.bukkit.GameMode;
@@ -37,7 +36,7 @@ public class LobbyState extends GameState {
 
         counter = 0;
         if (task == null) {
-            System.out.println("LobbyState Count");
+            System.out.println("GameStart Count");
             task = new MyRunTask().runTask(plugin);
         }
     }
