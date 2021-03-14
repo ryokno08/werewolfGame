@@ -25,7 +25,9 @@ public final class Main extends JavaPlugin implements GameConfigurator {
         super.onEnable();
         getServer().getPluginManager().registerEvents(new GameEventManager(this), this); // イベントはここに統一
 
-        configuration = new LocationConfiguration(new File(getDataFolder(), "config.yml"));
+
+//        configuration = new LocationConfiguration(new File(getDataFolder(), "config.yml"));
+        configuration = new LocationConfiguration(this);
         configuration.load();
 
         game = new Game(this, configuration);

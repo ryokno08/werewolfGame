@@ -228,9 +228,8 @@ public class Game {
 
 
     public void saveConfig() {
-
-        configuration.setLocationData("lobby", lobbyPos);
-        configuration.setLocationData("meeting", meetingPos);
+        if (lobbyPos != null) configuration.setLocationData("lobby", lobbyPos);
+        if (meetingPos != null) configuration.setLocationData("meeting", meetingPos);
 
     }
 
