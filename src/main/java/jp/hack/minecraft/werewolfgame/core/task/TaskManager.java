@@ -19,6 +19,14 @@ public class TaskManager {
         this.maxTasks = game.getNumberOfTasks();
     }
 
+    public int getMaxTasks() {
+        return maxTasks;
+    }
+
+    public void setMaxTasks(int maxTasks) {
+        this.maxTasks = maxTasks;
+    }
+
     private void updateFinishedTask() {
         int count = 0;
         for (WPlayer wPlayer : game.getWPlayers().values()) {
@@ -31,9 +39,8 @@ public class TaskManager {
         finishedTask = count;
     }
 
-    public void onTaskFinished(Player player, int no) {
+    public void onTaskFinished(WPlayer wPlayer, int no) {
 
-        WPlayer wPlayer = game.getWPlayer(player.getUniqueId());
         List<Task> taskList = wPlayer.getTasks();
 
         if (no > taskList.size()-1 || no < 0) {
@@ -51,7 +58,7 @@ public class TaskManager {
     public void taskBarUpdate() {
 
         DisplayManager manager = game.getDisplayManager();
-        manager.setTask( (float) finishedTask / (float) maxTasks);
+        manager.setTask( (float) finishedTask / (float) maxTasks );
 
     }
 

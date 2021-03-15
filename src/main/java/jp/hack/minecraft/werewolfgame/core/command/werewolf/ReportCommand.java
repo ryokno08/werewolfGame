@@ -2,8 +2,10 @@ package jp.hack.minecraft.werewolfgame.core.command.werewolf;
 
 import jp.hack.minecraft.werewolfgame.Game;
 import jp.hack.minecraft.werewolfgame.GameConfigurator;
+import jp.hack.minecraft.werewolfgame.core.WPlayer;
 import jp.hack.minecraft.werewolfgame.core.command.CommandManager;
 import jp.hack.minecraft.werewolfgame.core.command.CommandMaster;
+import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -29,9 +31,20 @@ public class ReportCommand extends CommandMaster {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         Player player = (Player) sender;
-
         Game game = ((GameConfigurator) manager.plugin).getGame();
-        game.changeState(game.getMeetingState());
+
+        if(!game.getWPlayers().containsKey(player.getUniqueId())) {
+            sender.sendMessage(ChatColor.RED+"あなたはゲームに参加していないため、実行できません");
+        }
+        WPlayer wPlayer = game.getWPlayer(player.getUniqueId());
+
+        if (wPlayer.getReport()) {
+            sender.sendMessage(ChatColor.RED+"すでにリポートを消費したため招集できません");
+        } else {
+            sender.sendMessage(ChatColor.LIGHT_PURPLE+"＊リポートを消費しました");
+            wPlayer.setReport(true);
+            game.changeState(game.getMeetingState());
+        }
         return true;
     }
 

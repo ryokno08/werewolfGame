@@ -44,7 +44,7 @@ public class StartCommand extends CommandMaster {
                 sender.sendMessage(ChatColor.RED + "エラーを確認しました：ManagerがNULLです");
                 break;
             case WPLAYERS_NULL:
-                sender.sendMessage(ChatColor.RED + "エラーを確認しました：WPlayersがNULLです");
+                sender.sendMessage(ChatColor.RED + "プレイヤーがいません");
                 break;
         }
         return true;

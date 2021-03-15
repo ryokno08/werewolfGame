@@ -14,6 +14,7 @@ public class WPlayer {
 
     private Boolean killing = false;
     private Boolean died = false;
+    private Boolean report = false;
 
 
     public WPlayer(UUID uuid) {
@@ -71,5 +72,13 @@ public class WPlayer {
 
     public void setDied(Boolean died) {
         this.died = died;
+    }
+
+    public Boolean getReport() {
+        return report;
+    }
+
+    public void setReport(Boolean report) {
+        this.report = report;
     }
 }

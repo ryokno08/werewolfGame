@@ -29,7 +29,12 @@ public class SetLobbyCommand extends CommandMaster {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         sender.sendMessage("SetLobbyコマンドが実行されました");
-        Player player = (Player) sender;
+        if(sender instanceof Player) {
+            sender.sendMessage("あなたはプレイヤーではないため実行できません。早くサーバーに入って");
+            return true;
+        }
+            Player player = (Player) sender;
+
 
         Game game = ((GameConfigurator) manager.plugin).getGame();
         game.setLobbyPos(player.getLocation());

@@ -47,6 +47,7 @@ public class LobbyState extends GameState {
 
         for (Player player : game.getJoinedPlayers()) {
             player.setGameMode(GameMode.ADVENTURE);
+            game.getDisplayManager().setTaskBarVisible(true);
 
             WPlayer wPlayer = game.getWPlayer(player.getUniqueId());
             if (wPlayer.getRole().isImposter()) {

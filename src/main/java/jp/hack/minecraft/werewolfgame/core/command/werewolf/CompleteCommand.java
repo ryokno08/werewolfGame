@@ -34,6 +34,10 @@ public class CompleteCommand extends CommandMaster {
 
         Player player = (Player) sender;
         Game game = ((GameConfigurator) manager.plugin).getGame();
+        if(!game.getWPlayers().containsKey(player.getUniqueId())) {
+            sender.sendMessage(ChatColor.RED +"あなたはゲームに参加していないため、実行できません");
+            return true;
+        }
 
         if (!game.wasStarted()) {
             sender.sendMessage(ChatColor.RED +"まだゲームは始まっていません");
@@ -54,7 +58,7 @@ public class CompleteCommand extends CommandMaster {
             return true;
         }
 
-        game.taskCompleted(player, no);
+        game.taskCompleted(player.getUniqueId(), no);
 
         sender.sendMessage(ChatColor.GREEN + "" + no + "番のタスク状況がtrueに変更されました。");
         return true;

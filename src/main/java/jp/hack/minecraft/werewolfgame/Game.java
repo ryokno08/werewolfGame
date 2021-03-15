@@ -173,8 +173,8 @@ public class Game {
         return taskManager;
     }
 
-    public void taskCompleted(Player player, int no) {
-        taskManager.onTaskFinished(player, no);
+    public void taskCompleted(UUID uuid, int no) {
+        taskManager.onTaskFinished(getWPlayer(uuid), no);
     }
 
     public void setCurrentState(GameState currentState) {
@@ -220,6 +220,7 @@ public class Game {
         if (!setImposters()) return ErrorJudge.WPLAYERS_NULL; //wPlayersリセット後に実行
 
         displayManager.setTaskBarVisible(false);
+        taskManager.setMaxTasks(numberOfTasks * wPlayers.size());
 
         currentState = lobbyState;
         currentState.onActive();
