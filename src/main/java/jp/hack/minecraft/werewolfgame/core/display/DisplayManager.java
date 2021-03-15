@@ -25,7 +25,7 @@ public class DisplayManager {
     }
 
     public void sendTitle(Player player, String title) {
-        player.sendTitle(title, "", 5, 2*20, 5);
+        player.sendTitle(title, "", 10, 2*20, 10);
     }
     public void sendTitle(Player player, String title, String subTitle) {
         player.sendTitle(title, subTitle, 5, 100, 5);

@@ -295,10 +295,10 @@ public class Game {
     public void changeState(GameState state) {
         if (currentState == state) return;
         currentState.onInactive();
-        currentState = state;
         if (currentState != votingState) {
-            changeScene();
+            changeScene(state);
         } else {
+            currentState = state;
             currentState.onActive();
         }
     }
@@ -364,14 +364,16 @@ public class Game {
     private BukkitRunnable task;
     private final int limit = 3*20;
 
-    public void changeScene() {
+    public void changeScene(GameState state) {
+        GameState state1 = state;
         this.joinedPlayers.forEach(p->{
-            p.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, limit, 100));
+            p.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, limit +(25), 100));
         });
 
         task = new BukkitRunnable() {
             @Override
             public void run() {
+                currentState = state1;
                 currentState.onActive();
             }
         };

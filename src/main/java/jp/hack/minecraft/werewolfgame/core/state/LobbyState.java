@@ -5,6 +5,8 @@ import jp.hack.minecraft.werewolfgame.core.WPlayer;
 import jp.hack.minecraft.werewolfgame.util.Messages;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
+import org.bukkit.Sound;
+import org.bukkit.SoundCategory;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -26,7 +28,7 @@ public class LobbyState extends GameState {
 
     @Override
     public boolean canMove() {
-        return true;
+        return false;
     }
 
     @Override
@@ -46,6 +48,7 @@ public class LobbyState extends GameState {
         super.onInactive();
 
         for (Player player : game.getJoinedPlayers()) {
+            player.playSound(player.getLocation(), Sound.ENTITY_ZOMBIE_VILLAGER_AMBIENT, SoundCategory.MASTER, (float) 1.0, (float) 0.3);
             player.setGameMode(GameMode.ADVENTURE);
             game.getDisplayManager().setTaskBarVisible(true);
 
