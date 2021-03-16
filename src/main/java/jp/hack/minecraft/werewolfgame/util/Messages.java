@@ -1,5 +1,7 @@
 package jp.hack.minecraft.werewolfgame.util;
 
+import org.bukkit.ChatColor;
+
 import java.util.HashMap;
 
 public class Messages {
@@ -15,6 +17,21 @@ public class Messages {
         messages.put("005", "あなたは%sです");
         messages.put("006", "誰も追放されませんでした");
 
+        errors.put("you.notPlayer", "あなたはプレイヤーではないため実行できません。早くサーバーに入って");
+        errors.put("you.notJoinYet", "あなたはゲームに参加していないため、実行できません");
+        errors.put("you.notClueMate", "あんたはクルーメイトではありません。タスクはできないよ");
+        errors.put("you.alreadyReported", "リポートは一回のみすることができます");
+
+        errors.put("game.notStartYet", "まだゲームは始まっていません");
+        errors.put("game.alreadyStarted", "すでにゲームは始まっています");
+        errors.put("game.inTheMiddle", "ゲーム中は設定できません");
+        errors.put("game.nullData", "%sがNULLです");
+        errors.put("game.noData", "%sの設定がありません");
+        errors.put("game.noPlayers", "プレイヤーがいません");
+
+        errors.put("command.noArgument","%sが入力されていません");
+        errors.put("command.illegalArgument","正しい引数を入力してください");
+
         errors.put("001", "存在しないコードのメッセージを取得しようとしました");
     }
 
@@ -24,6 +41,6 @@ public class Messages {
     }
 
     public static String error(String code, Object... args) {
-        return "ERR" + code + " " + String.format(_instance.errors.get(code), args);
+        return ChatColor.RED + String.format(_instance.errors.get(code), args);
     }
 }

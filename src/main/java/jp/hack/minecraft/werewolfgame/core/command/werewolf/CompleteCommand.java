@@ -4,6 +4,7 @@ import jp.hack.minecraft.werewolfgame.Game;
 import jp.hack.minecraft.werewolfgame.GameConfigurator;
 import jp.hack.minecraft.werewolfgame.core.command.CommandManager;
 import jp.hack.minecraft.werewolfgame.core.command.CommandMaster;
+import jp.hack.minecraft.werewolfgame.util.Messages;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -31,21 +32,23 @@ public class CompleteCommand extends CommandMaster {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         manager.plugin.getLogger().info("completeコマンドが実行されました");
+        if (!(sender instanceof Player)) {
+            sender.sendMessage(Messages.error("you.notPlayer"));
+            return true;
+        }
 
-        Player player = (Player) sender;
         Game game = ((GameConfigurator) manager.plugin).getGame();
-        if(!game.getWPlayers().containsKey(player.getUniqueId())) {
-            sender.sendMessage(ChatColor.RED +"あなたはゲームに参加していないため、実行できません");
-            return true;
-        }
-
+        Player player = (Player) sender;
         if (!game.wasStarted()) {
-            sender.sendMessage(ChatColor.RED +"まだゲームは始まっていません");
+            sender.sendMessage(Messages.error("game.notStartYet"));
             return true;
         }
-
+        if(!game.getWPlayers().containsKey(player.getUniqueId())) {
+            sender.sendMessage(Messages.error("you.notJoinYet"));
+            return true;
+        }
         if (args.length < 2) {
-            sender.sendMessage(ChatColor.RED +"タスクの数字が入力されていません");
+            sender.sendMessage(Messages.error("command.noArgument", "タスクの数字"));
             return true;
         }
 
@@ -53,7 +56,7 @@ public class CompleteCommand extends CommandMaster {
         try {
             no = Integer.parseInt(args[1]);
         } catch (NumberFormatException e) {
-            sender.sendMessage(ChatColor.RED+"正しい数字が入力されていません");
+            sender.sendMessage(Messages.error("command.illegalArgument"));
             e.printStackTrace();
             return true;
         }

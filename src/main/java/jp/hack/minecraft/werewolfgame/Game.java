@@ -1,12 +1,15 @@
 package jp.hack.minecraft.werewolfgame;
 
+import jp.hack.minecraft.werewolfgame.core.Colors;
 import jp.hack.minecraft.werewolfgame.core.Role;
+import jp.hack.minecraft.werewolfgame.core.display.WPlayerInventory;
 import jp.hack.minecraft.werewolfgame.core.task.TaskManager;
 import jp.hack.minecraft.werewolfgame.core.WPlayer;
 import jp.hack.minecraft.werewolfgame.core.display.DisplayManager;
 import jp.hack.minecraft.werewolfgame.core.state.*;
 import jp.hack.minecraft.werewolfgame.util.LocationConfiguration;
 import jp.hack.minecraft.werewolfgame.util.Messages;
+import org.bukkit.Color;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -41,6 +44,7 @@ public class Game {
     private List<Player> joinedPlayers = new ArrayList<>();
     private DisplayManager displayManager;
     private TaskManager taskManager;
+    private WPlayerInventory wPlayerInventory;
 
     private Boolean wasStarted = false;
     private int numberOfImposter = 1;
@@ -220,7 +224,7 @@ public class Game {
         if (!setImposters()) return ErrorJudge.WPLAYERS_NULL; //wPlayersリセット後に実行
 
         displayManager.setTaskBarVisible(false);
-        taskManager.setMaxTasks(numberOfTasks * wPlayers.size());
+        taskManager.setMaxTasks(numberOfTasks * (wPlayers.size() - numberOfImposter));
 
         currentState = lobbyState;
         currentState.onActive();
@@ -260,13 +264,17 @@ public class Game {
 
         wPlayers.clear();
         setJoinedPlayers(new ArrayList<>(plugin.getServer().getOnlinePlayers()));
+        List<Color> colors = new ArrayList<>(Colors.values());
 
         for (Player player : joinedPlayers) {
             WPlayer wPlayer = new WPlayer(player.getUniqueId());
             this.putWPlayer(wPlayer);
 
-            player.getInventory().clear();
+            int random = new Random().nextInt(colors.size());
+            wPlayer.setColor(colors.get(random));
+            colors.remove(random);
 
+            displayManager.resetColorArmor(player);
             displayManager.addTaskBar(player);
             taskManager.setTasks(wPlayer);
         }
@@ -286,6 +294,7 @@ public class Game {
 
             WPlayer wPlayer = getWPlayer(selectedPlayer.getUniqueId());
             wPlayer.setRole(Role.IMPOSTER);
+            wPlayer.clearTasks();
         }
 
         return true;
@@ -302,8 +311,6 @@ public class Game {
             currentState.onActive();
         }
     }
-
-
 
     public boolean votePlayer(UUID voter, UUID target) {
         if (currentState == votingState && !votedPlayers.containsKey(voter)) {
@@ -346,18 +353,20 @@ public class Game {
     public void confirmGame() {
 
         WinnerJudge winnerJudge = confirmTask();
+        if (winnerJudge == WinnerJudge.NONE) return;
 
         if (winnerJudge == WinnerJudge.CLUE_WIN) {
-            playerVictory();
+            displayManager.showIssue(true);
         } else {
             winnerJudge = confirmNoOfPlayers();
 
             if (winnerJudge == WinnerJudge.CLUE_WIN) {
-                playerVictory();
+                displayManager.showIssue(true);
             } else if (winnerJudge == WinnerJudge.IMPOSTER_WIN) {
-                playerDefeat();
+                displayManager.showIssue(false);
             }
         }
+        stop();
 
     }
 
@@ -394,17 +403,6 @@ public class Game {
         plugin.getLogger().info(Messages.message("006"));
     }
 
-    public void playerVictory() {
-        displayManager.playerVictory();
-        stop();
-    }
-
-    public void playerDefeat() {
-        displayManager.playerDefeat();
-        stop();
-    }
-
-
     private void stop() {
         wasStarted = false;
         currentState.onInactive();
@@ -413,7 +411,6 @@ public class Game {
         this.joinedPlayers.forEach(p -> {
             p.setGameMode(GameMode.ADVENTURE);
             p.teleport(getLobbyPos());
-            plugin.getLogger().info(getLobbyPos().serialize().toString());
         });
     }
 }

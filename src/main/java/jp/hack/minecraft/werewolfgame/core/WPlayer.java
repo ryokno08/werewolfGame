@@ -1,6 +1,7 @@
 package jp.hack.minecraft.werewolfgame.core;
 
 import jp.hack.minecraft.werewolfgame.core.task.Task;
+import org.bukkit.Color;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,9 +9,10 @@ import java.util.UUID;
 
 public class WPlayer {
     private final UUID uuid;
+    private UUID votedPlayerUUID;
+    private Color color;
     private Role role;
     private List<Task> tasks = new ArrayList<>();
-    private UUID votedPlayerUUID;
 
     private Boolean killing = false;
     private Boolean died = false;
@@ -36,6 +38,14 @@ public class WPlayer {
 
     public void setRole(Role role) {
         this.role = role;
+    }
+
+    public Color getColor() {
+        return color;
+    }
+
+    public void setColor(Color color) {
+        this.color = color;
     }
 
     public void clearTasks() {

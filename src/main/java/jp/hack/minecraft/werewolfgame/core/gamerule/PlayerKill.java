@@ -6,6 +6,7 @@ import jp.hack.minecraft.werewolfgame.core.WPlayer;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Particle;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -39,10 +40,11 @@ public class PlayerKill {
 
         Location entityLocation = entity.getLocation();
 
-        entityLocation.add(0, 0, 0).getBlock().setType( Material.SKULL );
+        entityLocation.getBlock().setType( Material.SKULL );
         attacker.teleport( entityLocation.add(0, 0.5, 0) );
 
         entity.setGameMode(GameMode.SPECTATOR);
+        attacker.spawnParticle(Particle.REDSTONE, attacker.getLocation(), 30, 1.0, 3.0, 1.0);
         wEntity.setDied(true);
 
         game.confirmGame();

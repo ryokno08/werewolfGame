@@ -5,9 +5,11 @@ import jp.hack.minecraft.werewolfgame.GameConfigurator;
 import jp.hack.minecraft.werewolfgame.Main;
 import jp.hack.minecraft.werewolfgame.core.command.CommandManager;
 import jp.hack.minecraft.werewolfgame.core.command.CommandMaster;
+import jp.hack.minecraft.werewolfgame.util.Messages;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,21 +32,25 @@ public class StartCommand extends CommandMaster {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         manager.plugin.getLogger().info("startコマンドが実行されました");
-        Game game = ((GameConfigurator) manager.plugin).getGame();
+        if (!(sender instanceof Player)) {
+            sender.sendMessage(Messages.error("you.notPlayer"));
+            return true;
+        }
 
+        Game game = ((GameConfigurator) manager.plugin).getGame();
         Game.ErrorJudge errorJudge = game.gameStart();
         switch (errorJudge) {
             case ALREADY_STARTED:
-                sender.sendMessage(ChatColor.RED + "すでにゲームはスタートしています");
+                sender.sendMessage(Messages.error("game.alreadyStarted"));
                 break;
             case CONFIG_NULL:
-                sender.sendMessage(ChatColor.RED + "座標の設定を行ってください");
+                sender.sendMessage(Messages.error("game.noData", "座標"));
                 break;
             case MANAGER_NULL:
-                sender.sendMessage(ChatColor.RED + "エラーを確認しました：ManagerがNULLです");
+                sender.sendMessage(Messages.error("game.nullData", "manager"));
                 break;
             case WPLAYERS_NULL:
-                sender.sendMessage(ChatColor.RED + "プレイヤーがいません");
+                sender.sendMessage(Messages.error("you.noPlayers"));
                 break;
         }
         return true;

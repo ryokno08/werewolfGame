@@ -4,6 +4,8 @@ import jp.hack.minecraft.werewolfgame.Game;
 import jp.hack.minecraft.werewolfgame.GameConfigurator;
 import jp.hack.minecraft.werewolfgame.core.command.CommandManager;
 import jp.hack.minecraft.werewolfgame.core.command.CommandMaster;
+import jp.hack.minecraft.werewolfgame.util.Messages;
+import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -29,11 +31,20 @@ public class SetMeetingCommand extends CommandMaster {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         sender.sendMessage("SetMeetingコマンドが実行されました");
-        Player player = (Player) sender;
+        if (!(sender instanceof Player)) {
+            sender.sendMessage(Messages.error("you.notPlayer"));
+            return true;
+        }
 
         Game game = ((GameConfigurator) manager.plugin).getGame();
+        if (game.wasStarted()) {
+            sender.sendMessage(Messages.error("game.inTheMiddle"));
+            return true;
+        }
+
+        Player player = (Player) sender;
         game.setMeetingPos(player.getLocation());
-        sender.sendMessage("ミーティングの座標が保存されました");
+        sender.sendMessage(ChatColor.GREEN+"ミーティングの座標が保存されました");
         return true;
     }
 

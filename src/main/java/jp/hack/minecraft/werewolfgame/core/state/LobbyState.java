@@ -2,6 +2,7 @@ package jp.hack.minecraft.werewolfgame.core.state;
 
 import jp.hack.minecraft.werewolfgame.Game;
 import jp.hack.minecraft.werewolfgame.core.WPlayer;
+import jp.hack.minecraft.werewolfgame.core.display.WPlayerInventory;
 import jp.hack.minecraft.werewolfgame.util.Messages;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
@@ -55,9 +56,10 @@ public class LobbyState extends GameState {
             WPlayer wPlayer = game.getWPlayer(player.getUniqueId());
             if (wPlayer.getRole().isImposter()) {
                 game.getDisplayManager().youAreImposter(player);
-                player.getInventory().setItem(8, new ItemStack(Material.IRON_SWORD));
+                game.getDisplayManager().resetInventory(player, WPlayerInventory.WPlayerInventoryType.IMPOSTER_INV);
             } else {
                 game.getDisplayManager().youAreClueMate(player);
+                game.getDisplayManager().resetInventory(player, WPlayerInventory.WPlayerInventoryType.CLUE_INV);
             }
         }
     }

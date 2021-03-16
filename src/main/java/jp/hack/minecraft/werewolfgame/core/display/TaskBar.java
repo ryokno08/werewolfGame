@@ -9,7 +9,7 @@ import org.bukkit.entity.Player;
 
 
 public class TaskBar {
-    private final String title = ChatColor.GREEN + "Task Progress";
+    private final String title = ChatColor.GREEN + "タスク進捗";
     private final BarColor color = BarColor.GREEN;
     private final BarStyle style = BarStyle.SOLID;
     private final BossBar taskBar;
