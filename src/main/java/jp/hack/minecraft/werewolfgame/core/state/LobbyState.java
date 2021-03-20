@@ -29,7 +29,7 @@ public class LobbyState extends GameState {
 
     @Override
     public boolean canMove() {
-        return false;
+        return true;
     }
 
     @Override

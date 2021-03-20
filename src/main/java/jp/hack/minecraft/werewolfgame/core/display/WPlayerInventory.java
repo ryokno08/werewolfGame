@@ -42,10 +42,6 @@ public class WPlayerInventory {
         IMPOSTER_INV
     }
 
-    private PlayerInventory createInventory() {
-        return (PlayerInventory) Bukkit.createInventory(null, InventoryType.PLAYER);
-    }
-
     public Map<Integer, ItemStack> createClueInv() {
         return new HashMap<>(clueInv);
     }

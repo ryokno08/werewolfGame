@@ -225,6 +225,7 @@ public class Game {
 
         displayManager.setTaskBarVisible(false);
         taskManager.setMaxTasks(numberOfTasks * (wPlayers.size() - numberOfImposter));
+        taskManager.taskBarUpdate();
 
         currentState = lobbyState;
         currentState.onActive();
@@ -287,9 +288,8 @@ public class Game {
 
         List<Player> players = new ArrayList<>(this.joinedPlayers);
 
-        Random random = new Random();
         for (int i = 0; i < numberOfImposter; i++) {
-            Player selectedPlayer = players.get(random.nextInt(players.size()));
+            Player selectedPlayer = players.get(new Random().nextInt(players.size()));
             players.remove(selectedPlayer);
 
             WPlayer wPlayer = getWPlayer(selectedPlayer.getUniqueId());
@@ -330,8 +330,9 @@ public class Game {
 
     private WinnerJudge confirmTask() {
         int finishedTask = taskManager.getFinishedTask();
+        int maxTask = taskManager.getMaxTasks();
 
-        if(numberOfTasks == finishedTask) {
+        if ( maxTask == finishedTask ) {
             return WinnerJudge.CLUE_WIN;
         }
         return WinnerJudge.NONE;
@@ -341,10 +342,10 @@ public class Game {
         int clueMateRemains = wPlayers.values().stream().filter(p -> !p.getRole().isImposter() && !p.isDied()).collect(Collectors.toSet()).size();
         int impostorRemains = wPlayers.values().stream().filter(p -> p.getRole().isImposter() && !p.isDied()).collect(Collectors.toSet()).size();
 
-        if (clueMateRemains <= impostorRemains) {
+        if ( clueMateRemains <= impostorRemains ) {
             return WinnerJudge.IMPOSTER_WIN;
         }
-        if (impostorRemains == 0) {
+        if ( impostorRemains == 0 ) {
             return WinnerJudge.CLUE_WIN;
         }
         return WinnerJudge.NONE;

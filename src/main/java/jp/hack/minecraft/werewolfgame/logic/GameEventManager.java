@@ -3,6 +3,7 @@ package jp.hack.minecraft.werewolfgame.logic;
 import jp.hack.minecraft.werewolfgame.Game;
 import jp.hack.minecraft.werewolfgame.GameConfigurator;
 import jp.hack.minecraft.werewolfgame.core.Role;
+import jp.hack.minecraft.werewolfgame.core.gamerule.DropItem;
 import jp.hack.minecraft.werewolfgame.core.gamerule.PlayerKill;
 import jp.hack.minecraft.werewolfgame.core.state.PlayingState;
 import org.bukkit.Bukkit;
@@ -12,6 +13,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
+import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -57,7 +59,16 @@ public class GameEventManager implements Listener {
     }
 
     @EventHandler
-    public void OnPlayerMove(PlayerMoveEvent e) {
+    public void onPlayerDropItem(PlayerDropItemEvent event) {
+        Game game = ((GameConfigurator) plugin).getGame();
+        if (game == null) return;
+        if (!game.wasStarted()) return;
+
+        new DropItem().onPlayerDropItem(event);
+    }
+
+    @EventHandler
+    public void onPlayerMove(PlayerMoveEvent e) {
         Game game = ((GameConfigurator) plugin).getGame();
         if (game == null) return;
         if (!game.wasStarted()) return;
