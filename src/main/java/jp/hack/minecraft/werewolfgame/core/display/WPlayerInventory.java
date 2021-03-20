@@ -1,6 +1,5 @@
 package jp.hack.minecraft.werewolfgame.core.display;
 
-import com.sun.tools.javac.jvm.Items;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Color;
