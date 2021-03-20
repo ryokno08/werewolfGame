@@ -275,6 +275,7 @@ public class Game {
             wPlayer.setColor(colors.get(random));
             colors.remove(random);
 
+            player.getInventory().clear();
             displayManager.resetColorArmor(player);
             displayManager.addTaskBar(player);
             taskManager.setTasks(wPlayer);

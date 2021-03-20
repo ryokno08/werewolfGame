@@ -26,7 +26,6 @@ public class PlayingState extends GameState {
         super.onActive();
         plugin.getLogger().info("PlayingStateに切り替わりました");
 
-        DisplayManager displayManager = game.getDisplayManager();
         game.getJoinedPlayers().forEach(player -> player.teleport(game.getMeetingPos()));
     }
 

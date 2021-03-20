@@ -62,6 +62,10 @@ public class DisplayManager {
         sendTitle(player, CLUE_MATE_MESSAGE);
     }
 
+    public void showDeath(Player player, String message) {
+        sendTitle(player, ChatColor.RED+"You Died!", message);
+    }
+
     public void showIssue(Boolean clueWin) {
         for (Player player : game.getJoinedPlayers()) {
             WPlayer wPlayer = game.getWPlayer(player.getUniqueId());

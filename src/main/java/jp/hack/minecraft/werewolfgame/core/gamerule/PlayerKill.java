@@ -44,7 +44,8 @@ public class PlayerKill {
         attacker.teleport( entityLocation.add(0, 0.5, 0) );
 
         entity.setGameMode(GameMode.SPECTATOR);
-        attacker.spawnParticle(Particle.REDSTONE, attacker.getLocation(), 30, 1.0, 3.0, 1.0);
+        attacker.spawnParticle(Particle.REDSTONE, attacker.getLocation(), 30, 2.0, 3.0, 2.0);
+        game.getDisplayManager().showDeath(entity, "By " + attacker.getDisplayName());
         wEntity.setDied(true);
 
         game.confirmGame();
