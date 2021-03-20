@@ -21,6 +21,7 @@ public class Messages {
         errors.put("you.notJoinYet", "あなたはゲームに参加していないため、実行できません");
         errors.put("you.notClueMate", "あんたはクルーメイトではありません。タスクはできないよ");
         errors.put("you.alreadyReported", "リポートは一回のみすることができます");
+        errors.put("you.cannotCommandNow", "このコマンドは現在実行できません");
 
         errors.put("game.notStartYet", "まだゲームは始まっていません");
         errors.put("game.alreadyStarted", "すでにゲームは始まっています");

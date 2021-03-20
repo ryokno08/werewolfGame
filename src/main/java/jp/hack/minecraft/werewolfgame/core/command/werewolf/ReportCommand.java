@@ -43,17 +43,22 @@ public class ReportCommand extends CommandMaster {
             sender.sendMessage(Messages.error("game.notStartYet"));
             return true;
         }
-        if(!game.getWPlayers().containsKey(player.getUniqueId())) {
+        if (!game.getWPlayers().containsKey(player.getUniqueId())) {
             sender.sendMessage(Messages.error("you.notJoinYet"));
             return true;
         }
         WPlayer wPlayer = game.getWPlayer(player.getUniqueId());
 
+        if (game.getCurrentState() != game.getPlayingState()) {
+            sender.sendMessage(Messages.error("you.cannotCommandNow"));
+            return true;
+        }
+
         if (wPlayer.getReport()) {
             sender.sendMessage(Messages.error("you.alreadyReported"));
             return true;
         } else {
-            sender.sendMessage(ChatColor.LIGHT_PURPLE+"＊リポートを消費しました");
+            sender.sendMessage(ChatColor.LIGHT_PURPLE + "＊リポートを消費しました");
             wPlayer.setReport(true);
             game.changeState(game.getMeetingState());
         }
