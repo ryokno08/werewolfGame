@@ -2,11 +2,14 @@ package jp.hack.minecraft.werewolfgame.core.display;
 
 import jp.hack.minecraft.werewolfgame.Game;
 import jp.hack.minecraft.werewolfgame.core.WPlayer;
+import jp.hack.minecraft.werewolfgame.util.Messages;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Color;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -31,6 +34,17 @@ public class DisplayManager {
         wPlayerInventory = new WPlayerInventory();
     }
 
+    public void log(String log) {
+        game.getPlugin().getLogger().info(log);
+    }
+    public void allBlindness(int duration) {
+        game.getJoinedPlayers().forEach(p->{
+            p.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, duration, 100));
+        });
+    }
+    public void allSendMessage(String code, String... args) {
+        game.getJoinedPlayers().forEach(p->p.sendMessage(Messages.message(code, (Object) args)));
+    }
     public void sendTitle(Player player, String title) {
         player.sendTitle(title, "", 10, 2*20, 10);
     }

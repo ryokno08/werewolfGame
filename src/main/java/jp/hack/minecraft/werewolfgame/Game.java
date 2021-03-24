@@ -1,5 +1,6 @@
 package jp.hack.minecraft.werewolfgame;
 
+import jp.hack.minecraft.werewolfgame.core.Cadaver;
 import jp.hack.minecraft.werewolfgame.core.Colors;
 import jp.hack.minecraft.werewolfgame.core.Role;
 import jp.hack.minecraft.werewolfgame.core.display.WPlayerInventory;
@@ -16,8 +17,6 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.*;
@@ -41,6 +40,7 @@ public class Game {
     }
 
     private final Map<UUID, WPlayer> wPlayers = new HashMap<>();
+    private final Map<UUID, Cadaver> cadavers = new HashMap<>();
     private List<Player> joinedPlayers = new ArrayList<>();
     private DisplayManager displayManager;
     private TaskManager taskManager;
@@ -88,6 +88,16 @@ public class Game {
 
     public WPlayer getWPlayer(UUID uuid) {
         return wPlayers.get(uuid);
+    }
+
+    public Cadaver createCadaver(Player player) {
+        Cadaver cadaver = new Cadaver(player);
+        cadavers.put(player.getUniqueId(), cadaver);
+        return cadaver;
+    }
+
+    public Map<UUID, Cadaver> getCadavers() {
+        return cadavers;
     }
 
     public List<Player> getJoinedPlayers() {
@@ -154,11 +164,8 @@ public class Game {
         return getWPlayer(uuid).getRole();
     }
 
-    public Boolean setPlayerRole(UUID uuid, Role role) {
-        if (!getWPlayers().containsKey(uuid)) return false;
-
+    public void setPlayerRole(UUID uuid, Role role) {
         getWPlayer(uuid).setRole(role);
-        return true;
     }
 
     public Boolean canSpeak() {
@@ -217,11 +224,8 @@ public class Game {
 
         if (wasStarted) return ErrorJudge.ALREADY_STARTED;
 
-        resetManagers();
-        resetStates();
-        if (!reloadConfig()) return ErrorJudge.CONFIG_NULL;
-        if (!resetWPlayers()) return ErrorJudge.MANAGER_NULL; //Managerリセット後に実行
-        if (!setImposters()) return ErrorJudge.WPLAYERS_NULL; //wPlayersリセット後に実行
+        ErrorJudge resetJudge = allReset();
+        if ( !resetJudge.equals(ErrorJudge.NONE) ) return resetJudge;
 
         displayManager.setTaskBarVisible(false);
         taskManager.setMaxTasks(numberOfTasks * (wPlayers.size() - numberOfImposter));
@@ -233,6 +237,17 @@ public class Game {
         wasStarted = true;
 
         return ErrorJudge.NONE;
+    }
+
+    private ErrorJudge allReset() {
+
+        resetManagers();
+        resetStates();
+        if (!reloadConfig()) return ErrorJudge.CONFIG_NULL;
+        if (!resetWPlayers()) return ErrorJudge.MANAGER_NULL; //Managerリセット後に実行
+        if (!setImposters()) return ErrorJudge.WPLAYERS_NULL; //wPlayersリセット後に実行
+        return ErrorJudge.NONE;
+
     }
 
     private boolean reloadConfig() {
@@ -283,6 +298,11 @@ public class Game {
         return true;
     }
 
+    private void resetCadaver() {
+        cadavers.values().forEach(Cadaver::removeBlock);
+        cadavers.clear();
+    }
+
     private Boolean setImposters() {
 
         if (wPlayers.isEmpty()) return false;
@@ -311,6 +331,14 @@ public class Game {
             currentState = state;
             currentState.onActive();
         }
+    }
+
+    public void playerDied(Player player) {
+        WPlayer wPlayer = getWPlayer(player.getUniqueId());
+
+        wPlayer.setDied(true);
+        createCadaver(player);
+        player.setGameMode(GameMode.SPECTATOR);
     }
 
     public boolean votePlayer(UUID voter, UUID target) {
@@ -355,20 +383,21 @@ public class Game {
     public void confirmGame() {
 
         WinnerJudge winnerJudge = confirmTask();
-        if (winnerJudge == WinnerJudge.NONE) return;
 
         if (winnerJudge == WinnerJudge.CLUE_WIN) {
             displayManager.showIssue(true);
+            gameStop();
         } else {
             winnerJudge = confirmNoOfPlayers();
 
             if (winnerJudge == WinnerJudge.CLUE_WIN) {
                 displayManager.showIssue(true);
+                gameStop();
             } else if (winnerJudge == WinnerJudge.IMPOSTER_WIN) {
                 displayManager.showIssue(false);
+                gameStop();
             }
         }
-        stop();
 
     }
 
@@ -377,9 +406,7 @@ public class Game {
 
     public void changeScene(GameState state) {
         GameState state1 = state;
-        this.joinedPlayers.forEach(p->{
-            p.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, limit +(25), 100));
-        });
+        displayManager.allBlindness(limit +(25));
 
         task = new BukkitRunnable() {
             @Override
@@ -392,23 +419,24 @@ public class Game {
         task.runTaskLater(plugin, limit);
     }
 
-    public void ejectPlayer(String uuid) {
+    public void ejectPlayer(UUID uuid) {
         Player player = plugin.getServer().getPlayer(uuid);
-        this.joinedPlayers.forEach(p -> p.sendMessage(Messages.message("002", player.getDisplayName())));
+        displayManager.allSendMessage("002", player.getDisplayName());
+        displayManager.log(Messages.message("002", player.getDisplayName()));
+
         player.setGameMode(GameMode.SPECTATOR);
-        plugin.getLogger().info(Messages.message("002", player.getDisplayName()));
     }
 
     public void voteSkipped() {
-        this.joinedPlayers.forEach(player -> player.sendMessage("Lobby"));
-        this.joinedPlayers.forEach(p -> p.sendMessage(Messages.message("006")));
-        plugin.getLogger().info(Messages.message("006"));
+        displayManager.allSendMessage("006");
+        displayManager.log(Messages.message("006"));
     }
 
-    private void stop() {
+    public void gameStop() {
         wasStarted = false;
         currentState.onInactive();
         displayManager.setTaskBarVisible(false);
+        resetCadaver();
 
         this.joinedPlayers.forEach(p -> {
             p.setGameMode(GameMode.ADVENTURE);

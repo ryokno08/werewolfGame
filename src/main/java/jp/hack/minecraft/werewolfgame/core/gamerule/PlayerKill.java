@@ -2,6 +2,7 @@ package jp.hack.minecraft.werewolfgame.core.gamerule;
 
 import jp.hack.minecraft.werewolfgame.Game;
 import jp.hack.minecraft.werewolfgame.GameConfigurator;
+import jp.hack.minecraft.werewolfgame.core.Cadaver;
 import jp.hack.minecraft.werewolfgame.core.WPlayer;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -19,13 +20,21 @@ public class PlayerKill {
         this.plugin = plugin;
     }
 
-    public void OnPlayerAttack(EntityDamageByEntityEvent e) {
+    public void onPlayerAttack(EntityDamageByEntityEvent e) {
+        if (e == null) return;
         Game game = ((GameConfigurator)plugin).getGame();
 
         Player entity = (Player) e.getEntity();
         Player attacker = (Player) e.getDamager();
         WPlayer wEntity = game.getWPlayer(entity.getUniqueId());
         WPlayer wAttacker = game.getWPlayer(attacker.getUniqueId());
+
+        Location entityLocation = entity.getLocation();
+        attacker.teleport( entityLocation.add(0, 0.5, 0) );
+        attacker.spawnParticle(Particle.REDSTONE, attacker.getLocation(), 30, 2.0, 3.0, 2.0);
+        game.getDisplayManager().showDeath(entity, "By " + attacker.getDisplayName());
+
+        game.playerDied(entity);
 
         wAttacker.setKilling(true);
         wEntity.setKilling(true);
@@ -38,16 +47,8 @@ public class PlayerKill {
             }
         }.runTaskLater(plugin, 10);
 
-        Location entityLocation = entity.getLocation();
-
-        entityLocation.getBlock().setType( Material.SKULL );
-        attacker.teleport( entityLocation.add(0, 0.5, 0) );
-
-        entity.setGameMode(GameMode.SPECTATOR);
-        attacker.spawnParticle(Particle.REDSTONE, attacker.getLocation(), 30, 2.0, 3.0, 2.0);
-        game.getDisplayManager().showDeath(entity, "By " + attacker.getDisplayName());
-        wEntity.setDied(true);
-
         game.confirmGame();
+
+        
     }
 }

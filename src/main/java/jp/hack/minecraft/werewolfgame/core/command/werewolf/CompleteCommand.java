@@ -26,7 +26,7 @@ public class CompleteCommand extends CommandMaster {
 
     @Override
     public String getPermission() {
-        return null;
+        return "werewolf.admin";
     }
 
     @Override

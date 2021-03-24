@@ -25,7 +25,7 @@ public class SetMeetingCommand extends CommandMaster {
 
     @Override
     public String getPermission() {
-        return null;
+        return "werewolf.admin";
     }
 
     @Override

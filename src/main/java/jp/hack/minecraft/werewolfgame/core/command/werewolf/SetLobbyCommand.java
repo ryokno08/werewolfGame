@@ -25,7 +25,7 @@ public class SetLobbyCommand extends CommandMaster {
 
     @Override
     public String getPermission() {
-        return null;
+        return "werewolf.admin";
     }
 
     @Override

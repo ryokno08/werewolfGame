@@ -20,14 +20,15 @@ import org.bukkit.scheduler.BukkitScheduler;
 
 public class GameEventManager implements Listener {
     private JavaPlugin plugin;
+    private Game game;
 
     public GameEventManager(JavaPlugin Plugin) {
         plugin = Plugin;
+        game = ((GameConfigurator) plugin).getGame();
     }
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
-        Game game = ((GameConfigurator) plugin).getGame();
         if (game == null) return;
         if (!game.wasStarted()) return;
 
@@ -50,7 +51,6 @@ public class GameEventManager implements Listener {
 
     @EventHandler
     public void onPlayerChat(AsyncPlayerChatEvent e) {
-        Game game = ((GameConfigurator) plugin).getGame();
         if (game == null) return;
         if (!game.wasStarted()) return;
 
@@ -65,17 +65,15 @@ public class GameEventManager implements Listener {
 
     @EventHandler
     public void onPlayerPickItem(EntityPickupItemEvent event) {
-        Game game = ((GameConfigurator) plugin).getGame();
         if (game == null) return;
         if (!game.wasStarted()) return;
-        if (!(event.getEntity() instanceof Player))
+        if (!(event.getEntity() instanceof Player)) return;
 
         event.setCancelled(true);
     }
 
     @EventHandler
     public void onPlayerDropItem(PlayerDropItemEvent event) {
-        Game game = ((GameConfigurator) plugin).getGame();
         if (game == null) return;
         if (!game.wasStarted()) return;
 
@@ -84,7 +82,6 @@ public class GameEventManager implements Listener {
 
     @EventHandler
     public void onPlayerMove(PlayerMoveEvent e) {
-        Game game = ((GameConfigurator) plugin).getGame();
         if (game == null) return;
         if (!game.wasStarted()) return;
 
@@ -95,12 +92,11 @@ public class GameEventManager implements Listener {
     }
 
     @EventHandler
-    public void onPlayerQuit(PlayerQuitEvent e) {
-        Game game = ((GameConfigurator) plugin).getGame();
+    public void onPlayerQuit(PlayerQuitEvent event) {
         if (game == null) return;
         if (!game.wasStarted()) return;
 
-        Player player = e.getPlayer();
+        Player player = event.getPlayer();
         WPlayer wPlayer = game.getWPlayer(player.getUniqueId());
         wPlayer.setDied(true);
 
@@ -111,7 +107,6 @@ public class GameEventManager implements Listener {
     public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
         e.setCancelled(true);
 
-        Game game = ((GameConfigurator) plugin).getGame();
         if (game == null) return;
         if (!game.wasStarted()) return;
         if ( !(game.getCurrentState() instanceof PlayingState) ) return;
@@ -120,16 +115,16 @@ public class GameEventManager implements Listener {
             Player attacker = (Player) e.getDamager();
             Player entity = (Player) e.getEntity();
 
-            if ( game.getPlayerRole( entity.getUniqueId() ) .equals(Role.CLUE_MATE))
-                if ( game.getPlayerRole( attacker.getUniqueId() ) .equals(Role.IMPOSTER)) {
-                    if (attacker.getInventory().getItemInMainHand().getType().equals(game.getItemForKill().getType())) {
+            if ( Role.CLUE_MATE.equals(game.getPlayerRole( entity.getUniqueId() )) )
+                if ( Role.IMPOSTER.equals(game.getPlayerRole( attacker.getUniqueId() )) ) {
+                    if ( attacker.getInventory().getItemInMainHand().getType().equals(game.getItemForKill().getType()) ) {
 
                         System.out.println("[!KILL]" + attacker.getDisplayName() + " killed " + entity.getDisplayName());
-
-                        PlayerKill playerKill = new PlayerKill(plugin);
-                        playerKill.OnPlayerAttack(e);
+                        new PlayerKill(plugin).onPlayerAttack(e);
                     }
                 }
         }
     }
+
+
 }

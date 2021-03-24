@@ -35,7 +35,7 @@ public class LobbyState extends GameState {
     @Override
     public void onActive() {
         super.onActive();
-        plugin.getLogger().info("LobbyStateに切り替わりました");
+        game.getDisplayManager().log("LobbyStateに切り替わりました");
 
         counter = 0;
         if (task == null) {

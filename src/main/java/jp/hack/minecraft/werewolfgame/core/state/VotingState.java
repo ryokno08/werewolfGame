@@ -72,13 +72,13 @@ public class VotingState extends GameState {
                             if (SortedResults.get(0).getKey().equals("Skip")) {
                                 game.voteSkipped();
                             } else {
-                                game.ejectPlayer(SortedResults.get(0).getKey());
+                                game.ejectPlayer(UUID.fromString(SortedResults.get(0).getKey()));
                             }
                         } else if (!SortedResults.get(0).getValue().equals(SortedResults.get(1).getValue())) {
                             if (SortedResults.get(0).getKey().equals("Skip")) {
                                 game.voteSkipped();
                             } else {
-                                game.ejectPlayer(SortedResults.get(0).getKey());
+                                game.ejectPlayer(UUID.fromString(SortedResults.get(0).getKey()));
                             }
                         }
                     }

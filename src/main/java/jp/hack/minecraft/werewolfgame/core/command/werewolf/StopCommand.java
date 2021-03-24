@@ -2,36 +2,34 @@ package jp.hack.minecraft.werewolfgame.core.command.werewolf;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
+import jp.hack.minecraft.werewolfgame.Game;
+import jp.hack.minecraft.werewolfgame.GameConfigurator;
 import jp.hack.minecraft.werewolfgame.core.command.CommandManager;
 import jp.hack.minecraft.werewolfgame.core.command.CommandMaster;
-import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 
-public class HelpCommand extends CommandMaster {
+public class StopCommand extends CommandMaster {
 
-    public HelpCommand(CommandManager manager) {
+    public StopCommand(CommandManager manager) {
         super(manager);
     }
 
     @Override
     public String getName() {
-        return "help";
+        return "stop";
     }
 
     @Override
     public String getPermission() {
-        return null;
+        return "werewolf.admin";
     }
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        sender.sendMessage(ChatColor.GREEN+"----- 共通コマンド -----");
-        sender.sendMessage("・/werewolf help   : このメニューを開く");
-        sender.sendMessage("・/werewolf report : プレイヤーを召集する");
-        sender.sendMessage("・/werewolf vote <name/skip>  : プレイヤーに投票する／スキップする");
+        Game game = ((GameConfigurator) manager.plugin).getGame();
+        game.gameStop();
         return true;
     }
 
