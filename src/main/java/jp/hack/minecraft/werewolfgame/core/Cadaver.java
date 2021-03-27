@@ -6,8 +6,8 @@ import org.bukkit.SkullType;
 import org.bukkit.block.Block;
 import org.bukkit.block.Skull;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.SkullMeta;
+
+import java.util.UUID;
 
 public class Cadaver {
     private Player player;
@@ -21,6 +21,14 @@ public class Cadaver {
         Skull skull = (Skull) cadaverBlock.getState();
         skull.setSkullType(SkullType.PLAYER);
         skull.setOwningPlayer(player);
+    }
+
+    public Player getPlayer() {
+        return player;
+    }
+
+    public Block getCadaverBlock() {
+        return cadaverBlock;
     }
 
     public void removeBlock() {

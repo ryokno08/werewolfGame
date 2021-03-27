@@ -59,8 +59,7 @@ public class ReportCommand extends CommandMaster {
             return true;
         } else {
             sender.sendMessage(ChatColor.LIGHT_PURPLE + "＊リポートを消費しました");
-            wPlayer.setReport(true);
-            game.changeState(game.getMeetingState());
+            game.report(player);
         }
         return true;
     }

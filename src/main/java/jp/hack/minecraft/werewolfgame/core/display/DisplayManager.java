@@ -3,9 +3,7 @@ package jp.hack.minecraft.werewolfgame.core.display;
 import jp.hack.minecraft.werewolfgame.Game;
 import jp.hack.minecraft.werewolfgame.core.WPlayer;
 import jp.hack.minecraft.werewolfgame.util.Messages;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Color;
+import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
@@ -42,8 +40,24 @@ public class DisplayManager {
             p.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, duration, 100));
         });
     }
+    public void allMakeSound(Sound sound, SoundCategory soundCategory, float volume, float pitch) {
+        game.getJoinedPlayers().forEach(player -> player.playSound(player.getLocation(), sound, soundCategory, volume, pitch));
+    }
     public void allSendMessage(String code, String... args) {
         game.getJoinedPlayers().forEach(p->p.sendMessage(Messages.message(code, (Object) args)));
+    }
+    public void sendMessage(Player player, String code, String... args) {
+        player.sendMessage(Messages.message(code, (Object) args));
+    }
+    public void allSendTitle(String title) {
+        game.getJoinedPlayers().forEach(player -> {
+            player.sendTitle(title, "", 10, 2*20, 10);
+        });
+    }
+    public void allSendTitle(String title, String subTitle) {
+        game.getJoinedPlayers().forEach(player -> {
+            player.sendTitle(title, subTitle, 10, 2*20, 10);
+        });
     }
     public void sendTitle(Player player, String title) {
         player.sendTitle(title, "", 10, 2*20, 10);

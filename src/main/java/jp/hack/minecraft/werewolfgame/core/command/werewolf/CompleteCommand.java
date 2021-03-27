@@ -61,9 +61,7 @@ public class CompleteCommand extends CommandMaster {
             return true;
         }
 
-        game.taskCompleted(player.getUniqueId(), no);
-
-        sender.sendMessage(ChatColor.GREEN + "" + no + "番のタスク状況がtrueに変更されました。");
+        game.taskCompleted(player, no);
         return true;
     }
 

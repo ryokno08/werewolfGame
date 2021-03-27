@@ -10,10 +10,7 @@ import jp.hack.minecraft.werewolfgame.core.display.DisplayManager;
 import jp.hack.minecraft.werewolfgame.core.state.*;
 import jp.hack.minecraft.werewolfgame.util.LocationConfiguration;
 import jp.hack.minecraft.werewolfgame.util.Messages;
-import org.bukkit.Color;
-import org.bukkit.GameMode;
-import org.bukkit.Location;
-import org.bukkit.Material;
+import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -50,9 +47,11 @@ public class Game {
     private int numberOfImposter = 1;
     private int numberOfTasks = 3;
     private int limitOfVoting = 60;
+    private double reportDistance = 5.0;
     private Location lobbyPos;
     private Location meetingPos;
     private ItemStack itemForKill = new ItemStack(Material.IRON_SWORD);
+    private ItemStack itemForReport = new ItemStack(Material.COMPASS);
 
     //ゲームの初期状態はロビーでスタート
     private LobbyState lobbyState;
@@ -132,6 +131,14 @@ public class Game {
         this.limitOfVoting = limitOfVoting;
     }
 
+    public double getReportDistance() {
+        return reportDistance;
+    }
+
+    public void setReportDistance(int reportDistance) {
+        this.reportDistance = reportDistance;
+    }
+
     public Location getLobbyPos() {
         return lobbyPos;
     }
@@ -160,6 +167,14 @@ public class Game {
         this.itemForKill = itemForKill;
     }
 
+    public ItemStack getItemForReport() {
+        return itemForReport;
+    }
+
+    public void setItemForReport(ItemStack itemForReport) {
+        this.itemForReport = itemForReport;
+    }
+
     public Role getPlayerRole(UUID uuid) {
         return getWPlayer(uuid).getRole();
     }
@@ -184,8 +199,8 @@ public class Game {
         return taskManager;
     }
 
-    public void taskCompleted(UUID uuid, int no) {
-        taskManager.onTaskFinished(getWPlayer(uuid), no);
+    public void taskCompleted(Player player, int no) {
+        taskManager.onTaskFinished(player, no);
     }
 
     public void setCurrentState(GameState currentState) {
@@ -325,12 +340,31 @@ public class Game {
     public void changeState(GameState state) {
         if (currentState == state) return;
         currentState.onInactive();
-        if (currentState != votingState) {
+        if (currentState != meetingState) {
             changeScene(state);
         } else {
             currentState = state;
             currentState.onActive();
         }
+    }
+
+    public void report(Player reportedPlayer) {
+        WPlayer reportedWPlayer = getWPlayer(reportedPlayer.getUniqueId());
+
+        reportedWPlayer.setReport(true);
+        displayManager.allSendTitle(ChatColor.GREEN + Messages.message("008"), reportedPlayer.getDisplayName());
+        displayManager.allMakeSound(Sound.ENTITY_LIGHTNING_THUNDER, SoundCategory.MASTER, (float)1.0, (float)1.0);
+        changeState(meetingState);
+    }
+
+    public void report(Player reportedPlayer, Player diedPlayer) {
+        cadavers.values().forEach(Cadaver::removeBlock);
+        cadavers.clear();
+
+        displayManager.allSendTitle(ChatColor.BOLD.toString() + ChatColor.LIGHT_PURPLE.toString() + diedPlayer.getDisplayName(), Messages.message("004"));
+        displayManager.allSendMessage(Messages.message("007", reportedPlayer.getDisplayName()));
+        displayManager.allMakeSound(Sound.ENTITY_ZOMBIE_VILLAGER_AMBIENT, SoundCategory.MASTER, (float)1.0, (float)0.3);
+        changeState(meetingState);
     }
 
     public void playerDied(Player player) {
@@ -381,7 +415,6 @@ public class Game {
     }
 
     public void confirmGame() {
-
         WinnerJudge winnerJudge = confirmTask();
 
         if (winnerJudge == WinnerJudge.CLUE_WIN) {
@@ -398,7 +431,6 @@ public class Game {
                 gameStop();
             }
         }
-
     }
 
     private BukkitRunnable task;

@@ -9,9 +9,11 @@ import jp.hack.minecraft.werewolfgame.core.state.PlayingState;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.player.*;
@@ -22,13 +24,14 @@ public class GameEventManager implements Listener {
     private JavaPlugin plugin;
     private Game game;
 
-    public GameEventManager(JavaPlugin Plugin) {
-        plugin = Plugin;
-        game = ((GameConfigurator) plugin).getGame();
+    public GameEventManager(JavaPlugin plugin) {
+        this.plugin = plugin;
     }
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
+        this.game = ((GameConfigurator)this.plugin).getGame();
+
         if (game == null) return;
         if (!game.wasStarted()) return;
 
@@ -51,6 +54,8 @@ public class GameEventManager implements Listener {
 
     @EventHandler
     public void onPlayerChat(AsyncPlayerChatEvent e) {
+        this.game = ((GameConfigurator)this.plugin).getGame();
+
         if (game == null) return;
         if (!game.wasStarted()) return;
 
@@ -65,6 +70,8 @@ public class GameEventManager implements Listener {
 
     @EventHandler
     public void onPlayerPickItem(EntityPickupItemEvent event) {
+        this.game = ((GameConfigurator)this.plugin).getGame();
+
         if (game == null) return;
         if (!game.wasStarted()) return;
         if (!(event.getEntity() instanceof Player)) return;
@@ -74,6 +81,8 @@ public class GameEventManager implements Listener {
 
     @EventHandler
     public void onPlayerDropItem(PlayerDropItemEvent event) {
+        this.game = ((GameConfigurator)this.plugin).getGame();
+
         if (game == null) return;
         if (!game.wasStarted()) return;
 
@@ -82,6 +91,8 @@ public class GameEventManager implements Listener {
 
     @EventHandler
     public void onPlayerMove(PlayerMoveEvent e) {
+        this.game = ((GameConfigurator)this.plugin).getGame();
+
         if (game == null) return;
         if (!game.wasStarted()) return;
 
@@ -93,6 +104,8 @@ public class GameEventManager implements Listener {
 
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event) {
+        this.game = ((GameConfigurator)this.plugin).getGame();
+
         if (game == null) return;
         if (!game.wasStarted()) return;
 
@@ -107,9 +120,11 @@ public class GameEventManager implements Listener {
     public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
         e.setCancelled(true);
 
+        this.game = ((GameConfigurator)this.plugin).getGame();
         if (game == null) return;
         if (!game.wasStarted()) return;
         if ( !(game.getCurrentState() instanceof PlayingState) ) return;
+
 
         if (e.getDamager() instanceof Player && e.getEntity() instanceof Player) {
             Player attacker = (Player) e.getDamager();
@@ -124,6 +139,29 @@ public class GameEventManager implements Listener {
                     }
                 }
         }
+    }
+
+    @EventHandler
+    public void onPlayerItemClickEvent(PlayerInteractEvent event) {
+        this.game = ((GameConfigurator)this.plugin).getGame();
+
+        if (game == null) return;
+        if (!game.wasStarted()) return;
+        if ( !(game.getCurrentState() instanceof PlayingState) ) return;
+
+        Player player = event.getPlayer();
+        Action action = event.getAction();
+        if ( !( player.getInventory().getItemInMainHand().getType().equals(game.getItemForReport().getType()) ) ) return;
+        if ( !(action.equals(Action.RIGHT_CLICK_AIR) || action.equals(Action.RIGHT_CLICK_BLOCK)) ) return;
+
+        Location playerLoc = player.getLocation();
+
+        game.getCadavers().values().forEach(cadaver -> {
+            Location cadaverLoc = cadaver.getCadaverBlock().getLocation();
+            if (cadaverLoc.distance(playerLoc) <= game.getReportDistance()) {
+                game.report( player, cadaver.getPlayer() );
+            }
+        });
     }
 
 

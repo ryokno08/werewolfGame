@@ -10,16 +10,18 @@ public class Messages {
     private HashMap<String, String> errors = new HashMap<>();
 
     {
-        messages.put("001", "討論開始");
+        messages.put("001", "議論開始");
         messages.put("002", "%sが追放されました");
         messages.put("003", "ゲーム開始まで%d秒");
-        messages.put("004", "%sの死体が発見されました");
+        messages.put("004", "の死体が発見されました");
         messages.put("005", "あなたは%sです");
         messages.put("006", "誰も追放されませんでした");
+        messages.put("007", "死体の発見者：%s");
+        messages.put("008", "リポートされました");
 
         errors.put("you.notPlayer", "あなたはプレイヤーではないため実行できません。早くサーバーに入って");
         errors.put("you.notJoinYet", "あなたはゲームに参加していないため、実行できません");
-        errors.put("you.notClueMate", "あんたはクルーメイトではありません。タスクはできないよ");
+        errors.put("you.notClueMate", "あなたはクルーメイトではありません。タスクはできません");
         errors.put("you.alreadyReported", "リポートは一回のみすることができます");
         errors.put("you.cannotCommandNow", "このコマンドは現在実行できません");
 

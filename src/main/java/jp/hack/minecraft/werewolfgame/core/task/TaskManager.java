@@ -3,6 +3,7 @@ package jp.hack.minecraft.werewolfgame.core.task;
 import jp.hack.minecraft.werewolfgame.Game;
 import jp.hack.minecraft.werewolfgame.core.WPlayer;
 import jp.hack.minecraft.werewolfgame.core.display.DisplayManager;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -39,16 +40,17 @@ public class TaskManager {
         finishedTask = count;
     }
 
-    public void onTaskFinished(WPlayer wPlayer, int no) {
+    public void onTaskFinished(Player player, int no) {
 
+        WPlayer wPlayer = game.getWPlayer(player.getUniqueId());
         List<Task> taskList = wPlayer.getTasks();
 
         if (no > taskList.size()-1 || no < 0) {
-            System.out.println("Unknown data");
+            player.sendMessage("存在しないタスクです");
             return;
         }
         taskList.get(no).finished();
-        System.out.println("taskNo." + no + ": " + taskList.get(no).isFinished());
+        player.sendMessage(ChatColor.GREEN.toString() + no + "番目のタスクが終わりました");
 
         updateFinishedTask();
         game.confirmGame();
