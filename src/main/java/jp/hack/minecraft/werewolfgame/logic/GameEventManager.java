@@ -6,9 +6,13 @@ import jp.hack.minecraft.werewolfgame.core.Role;
 import jp.hack.minecraft.werewolfgame.core.WPlayer;
 import jp.hack.minecraft.werewolfgame.core.gamerule.PlayerKill;
 import jp.hack.minecraft.werewolfgame.core.state.PlayingState;
+import me.mattstudios.mfgui.gui.components.ItemBuilder;
+import me.mattstudios.mfgui.gui.guis.Gui;
+import me.mattstudios.mfgui.gui.guis.GuiItem;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
+import org.bukkit.Material;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -17,8 +21,14 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.player.*;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitScheduler;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 public class GameEventManager implements Listener {
     private JavaPlugin plugin;
@@ -30,7 +40,7 @@ public class GameEventManager implements Listener {
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
-        this.game = ((GameConfigurator)this.plugin).getGame();
+        this.game = ((GameConfigurator) this.plugin).getGame();
 
         if (game == null) return;
         if (!game.wasStarted()) return;
@@ -54,7 +64,7 @@ public class GameEventManager implements Listener {
 
     @EventHandler
     public void onPlayerChat(AsyncPlayerChatEvent e) {
-        this.game = ((GameConfigurator)this.plugin).getGame();
+        this.game = ((GameConfigurator) this.plugin).getGame();
 
         if (game == null) return;
         if (!game.wasStarted()) return;
@@ -64,13 +74,13 @@ public class GameEventManager implements Listener {
         if (game.canSpeak()) return; //　現在喋ることが許されているか取得し判断する。許されていたらreturn
 
         e.setCancelled(true);
-        p.sendMessage(ChatColor.RED+"現在、チャットで会話することはできません。");
+        p.sendMessage(ChatColor.RED + "現在、チャットで会話することはできません。");
 
     }
 
     @EventHandler
     public void onPlayerPickItem(EntityPickupItemEvent event) {
-        this.game = ((GameConfigurator)this.plugin).getGame();
+        this.game = ((GameConfigurator) this.plugin).getGame();
 
         if (game == null) return;
         if (!game.wasStarted()) return;
@@ -81,7 +91,7 @@ public class GameEventManager implements Listener {
 
     @EventHandler
     public void onPlayerDropItem(PlayerDropItemEvent event) {
-        this.game = ((GameConfigurator)this.plugin).getGame();
+        this.game = ((GameConfigurator) this.plugin).getGame();
 
         if (game == null) return;
         if (!game.wasStarted()) return;
@@ -91,12 +101,14 @@ public class GameEventManager implements Listener {
 
     @EventHandler
     public void onPlayerMove(PlayerMoveEvent e) {
-        this.game = ((GameConfigurator)this.plugin).getGame();
+        this.game = ((GameConfigurator) this.plugin).getGame();
 
         if (game == null) return;
         if (!game.wasStarted()) return;
 
-        if (e.getFrom().getX() == e.getTo().getX() && e.getFrom().getY() == e.getTo().getY() && e.getFrom().getZ() == e.getTo().getZ())
+        if (game.getWPlayer(e.getPlayer().getUniqueId()).isDied()) return;
+
+        if (e.getFrom().getX() == e.getTo().getX() && e.getFrom().getZ() == e.getTo().getZ())
             return;
         if (!game.canMove()) e.setCancelled(true);
         if (game.getWPlayer(e.getPlayer().getUniqueId()).isKilling()) e.setCancelled(true);
@@ -104,7 +116,7 @@ public class GameEventManager implements Listener {
 
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event) {
-        this.game = ((GameConfigurator)this.plugin).getGame();
+        this.game = ((GameConfigurator) this.plugin).getGame();
 
         if (game == null) return;
         if (!game.wasStarted()) return;
@@ -120,19 +132,19 @@ public class GameEventManager implements Listener {
     public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
         e.setCancelled(true);
 
-        this.game = ((GameConfigurator)this.plugin).getGame();
+        this.game = ((GameConfigurator) this.plugin).getGame();
         if (game == null) return;
         if (!game.wasStarted()) return;
-        if ( !(game.getCurrentState() instanceof PlayingState) ) return;
+        if (!(game.getCurrentState() instanceof PlayingState)) return;
 
 
         if (e.getDamager() instanceof Player && e.getEntity() instanceof Player) {
             Player attacker = (Player) e.getDamager();
             Player entity = (Player) e.getEntity();
 
-            if ( Role.CLUE_MATE.equals(game.getPlayerRole( entity.getUniqueId() )) )
-                if ( Role.IMPOSTER.equals(game.getPlayerRole( attacker.getUniqueId() )) ) {
-                    if ( attacker.getInventory().getItemInMainHand().getType().equals(game.getItemForKill().getType()) ) {
+            if (Role.CLUE_MATE.equals(game.getPlayerRole(entity.getUniqueId())))
+                if (Role.IMPOSTER.equals(game.getPlayerRole(attacker.getUniqueId()))) {
+                    if (attacker.getInventory().getItemInMainHand().getType().equals(game.getItemForKill().getType())) {
 
                         System.out.println("[!KILL]" + attacker.getDisplayName() + " killed " + entity.getDisplayName());
                         new PlayerKill(plugin).onPlayerAttack(e);
@@ -143,26 +155,56 @@ public class GameEventManager implements Listener {
 
     @EventHandler
     public void onPlayerItemClickEvent(PlayerInteractEvent event) {
-        this.game = ((GameConfigurator)this.plugin).getGame();
+        this.game = ((GameConfigurator) this.plugin).getGame();
 
         if (game == null) return;
         if (!game.wasStarted()) return;
-        if ( !(game.getCurrentState() instanceof PlayingState) ) return;
+        if (!(game.getCurrentState() instanceof PlayingState)) return;
 
         Player player = event.getPlayer();
         Action action = event.getAction();
-        if ( !( player.getInventory().getItemInMainHand().getType().equals(game.getItemForReport().getType()) ) ) return;
-        if ( !(action.equals(Action.RIGHT_CLICK_AIR) || action.equals(Action.RIGHT_CLICK_BLOCK)) ) return;
+        ;
+        ItemStack item = player.getInventory().getItemInMainHand();
+        if (item.getType() == game.getItemForReport().getType()) {
+            if (!(action.equals(Action.RIGHT_CLICK_AIR) || action.equals(Action.RIGHT_CLICK_BLOCK))) return;
 
-        Location playerLoc = player.getLocation();
+            Location playerLoc = player.getLocation();
 
-        game.getCadavers().values().forEach(cadaver -> {
-            Location cadaverLoc = cadaver.getCadaverBlock().getLocation();
-            if (cadaverLoc.distance(playerLoc) <= game.getReportDistance()) {
-                game.report( player, cadaver.getPlayer() );
+            game.getCadavers().values().forEach(cadaver -> {
+                Location cadaverLoc = cadaver.getCadaverBlock().getLocation();
+                if (cadaverLoc.distance(playerLoc) <= game.getReportDistance()) {
+                    game.report(player, cadaver.getPlayer());
+                }
+            });
+        }
+        if (item.getType() == Material.BOOK) {
+            if (!item.getItemMeta().getDisplayName().equals("投票")) return;
+
+            Gui voteGui = new Gui(3, "投票先を選んでください");
+            List<GuiItem> heads = new ArrayList<>();
+            for (Player headPlayer : plugin.getServer().getOnlinePlayers()) {
+                UUID uuid = headPlayer.getUniqueId();
+
+                ItemStack skullStack = new ItemStack(Material.SKULL_ITEM, 1, (short) 3);
+                SkullMeta skull = (SkullMeta) skullStack.getItemMeta();
+                skull.setDisplayName(player.getName());
+                skull.setOwningPlayer(player);
+                skullStack.setItemMeta(skull);
+
+                ItemBuilder skullBuilder = ItemBuilder.from(skullStack);
+                heads.add(
+                        skullBuilder.asGuiItem(e -> {
+                            e.setCancelled(true);
+                            plugin.getLogger().info("Vote to " + uuid);
+                        })
+                );
             }
-        });
-    }
+            plugin.getLogger().info(String.valueOf(heads.size()));
+            heads.forEach(i -> voteGui.addItem(i));
 
+            voteGui.open(player);
+            event.setCancelled(true);
+        }
+    }
 
 }
