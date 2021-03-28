@@ -1,27 +1,26 @@
 package jp.hack.minecraft.werewolfgame.core;
 
 import org.bukkit.Color;
+import org.bukkit.DyeColor;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 
 public class Colors {
-    private final static List<Color> colors = new ArrayList<>();
+    private final static Map<String, Color> colors = new HashMap<>();
 
-    public static List<Color> values() {
+    public static Map<String, Color> values() {
         colors.clear();
 
-        colors.add(Color.BLUE);
-        colors.add(Color.OLIVE);
-        colors.add(Color.ORANGE);
-        colors.add(Color.PURPLE);
-        colors.add(Color.WHITE);
-        colors.add(Color.AQUA);
-        colors.add(Color.BLACK);
-        colors.add(Color.GREEN);
-        colors.add(Color.YELLOW);
-        colors.add(Color.LIME);
+        colors.put("SILVER", Color.SILVER);
+        colors.put("GRAY", Color.GRAY);
+        colors.put("BLUE", Color.BLUE);
+        colors.put("ORANGE", Color.ORANGE);
+        colors.put("PURPLE", Color.PURPLE);
+        colors.put("WHITE", Color.WHITE);
+        colors.put("BLACK", Color.BLACK);
+        colors.put("GREEN", Color.GREEN);
+        colors.put("YELLOW", Color.YELLOW);
+        colors.put("LIME", Color.LIME);
 
         return colors;
     }

@@ -60,7 +60,12 @@ public class TaskManager {
     public void taskBarUpdate() {
 
         DisplayManager manager = game.getDisplayManager();
-        manager.setTask( (float) finishedTask / (float) maxTasks );
+        float progress = (float) finishedTask / (float) maxTasks;
+        if (progress < 0.0 || progress > 1.0) {
+            manager.setTask( (float) 0.0);
+            return;
+        }
+        //manager.setTask( progress );
 
     }
 

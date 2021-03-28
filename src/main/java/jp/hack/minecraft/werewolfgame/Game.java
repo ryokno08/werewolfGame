@@ -295,15 +295,16 @@ public class Game {
 
         wPlayers.clear();
         setJoinedPlayers(new ArrayList<>(plugin.getServer().getOnlinePlayers()));
-        List<Color> colors = new ArrayList<>(Colors.values());
+        Map<String, Color> colors = new HashMap<>(Colors.values());
 
         for (Player player : joinedPlayers) {
             WPlayer wPlayer = new WPlayer(player.getUniqueId());
             this.putWPlayer(wPlayer);
 
             int random = new Random().nextInt(colors.size());
-            wPlayer.setColor(colors.get(random));
-            colors.remove(random);
+            Map.Entry<String, Color> color = new ArrayList<>(colors.entrySet()).get(random);
+            wPlayer.setColor(color.getKey(), color.getValue());
+            colors.remove(color.getKey());
 
             player.getInventory().clear();
             displayManager.resetColorArmor(player);

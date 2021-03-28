@@ -134,9 +134,9 @@ public class DisplayManager {
         resetColorArmor(player);
     }
 
-    public void changeWPlayerColor(Player player, Color color) {
+    public void changeWPlayerColor(Player player, String colorName, Color color) {
         WPlayer wPlayer = game.getWPlayer(player.getUniqueId());
-        wPlayer.setColor(color);
+        wPlayer.setColor(colorName, color);
 
         resetColorArmor(player);
     }

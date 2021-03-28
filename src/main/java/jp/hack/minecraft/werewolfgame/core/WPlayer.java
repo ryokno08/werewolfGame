@@ -11,6 +11,7 @@ public class WPlayer {
     private final UUID uuid;
     private UUID votedPlayerUUID;
     private Color color;
+    private String colorName;
     private Role role;
     private List<Task> tasks = new ArrayList<>();
 
@@ -44,8 +45,13 @@ public class WPlayer {
         return color;
     }
 
-    public void setColor(Color color) {
+    public void setColor(String colorName, Color color) {
+        this.colorName = colorName;
         this.color = color;
+    }
+
+    public String getColorName() {
+        return colorName;
     }
 
     public void clearTasks() {

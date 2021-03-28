@@ -53,7 +53,7 @@ public class ColorCommand extends CommandMaster {
 
         Color color;
         try {
-            color = Colors.values().stream().filter(v->v.toString().equals(args[1])).findFirst().get();
+            color = Colors.values().values().stream().filter(v->v.toString().equals(args[1])).findFirst().get();
         } catch (NullPointerException e) {
             sender.sendMessage(Messages.error("command.illegalArgument"));
             e.printStackTrace();
@@ -61,7 +61,7 @@ public class ColorCommand extends CommandMaster {
         }
 
         Player player = (Player) sender;
-        game.getDisplayManager().changeWPlayerColor(player, color);
+        game.getDisplayManager().changeWPlayerColor(player, args[1], color);
         sender.sendMessage(ChatColor.GREEN + "色を変更しました");
         return true;
 
@@ -70,6 +70,6 @@ public class ColorCommand extends CommandMaster {
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
         // return subCommands.keySet().stream().filter(s -> s.startsWith(args[0])).collect(Collectors.toList());
-        return Colors.values().stream().map(Color::toString).collect(Collectors.toList());
+        return Colors.values().values().stream().map(Color::toString).collect(Collectors.toList());
     }
 }
