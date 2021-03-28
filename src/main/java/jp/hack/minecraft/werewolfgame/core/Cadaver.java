@@ -1,11 +1,14 @@
 package jp.hack.minecraft.werewolfgame.core;
 
+import org.bukkit.DyeColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.SkullType;
 import org.bukkit.block.Block;
 import org.bukkit.block.Skull;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.material.Dye;
 
 import java.util.UUID;
 
@@ -13,14 +16,19 @@ public class Cadaver {
     private Player player;
     private Block cadaverBlock;
 
-    public Cadaver(Player player) {
+    public Cadaver(Player player, WPlayer wPlayer) {
         this.player = player;
-        cadaverBlock = player.getLocation().getBlock();
+        cadaverBlock = player.getLocation().add(0,1,0).getBlock();
+        Block woolBlock = player.getLocation().add(0,0,0).getBlock();
+
+        woolBlock.setType(Material.WOOL);
+        woolBlock.setData(DyeColor.getByColor(wPlayer.getColor()).getWoolData());
         cadaverBlock.setType(Material.SKULL);
 
         Skull skull = (Skull) cadaverBlock.getState();
         skull.setSkullType(SkullType.PLAYER);
         skull.setOwningPlayer(player);
+        skull.update();
     }
 
     public Player getPlayer() {
