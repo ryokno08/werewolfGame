@@ -15,11 +15,12 @@ import java.util.UUID;
 public class Cadaver {
     private Player player;
     private Block cadaverBlock;
+    private Block woolBlock;
 
     public Cadaver(Player player, WPlayer wPlayer) {
         this.player = player;
         cadaverBlock = player.getLocation().add(0,1,0).getBlock();
-        Block woolBlock = player.getLocation().add(0,0,0).getBlock();
+        woolBlock = player.getLocation().getBlock();
 
         woolBlock.setType(Material.WOOL);
         woolBlock.setData(DyeColor.getByColor(wPlayer.getColor()).getWoolData());
@@ -41,5 +42,6 @@ public class Cadaver {
 
     public void removeBlock() {
         cadaverBlock.setType(Material.AIR);
+        woolBlock.setType(Material.AIR);
     }
 }
