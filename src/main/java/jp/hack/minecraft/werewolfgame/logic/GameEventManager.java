@@ -166,12 +166,8 @@ public class GameEventManager implements Listener {
         if (!game.wasStarted()) return;
         Player player = event.getPlayer();
         Action action = event.getAction();
-<<<<<<< HEAD
         if (!(action.equals(Action.RIGHT_CLICK_AIR) || action.equals(Action.RIGHT_CLICK_BLOCK))) return;
 
-        ItemStack item = player.getInventory().getItemInMainHand();
-        if (item == game.getItemForReport()) {
-=======
         ItemStack item = player.getInventory().getItemInMainHand();
 
         if (game.getCurrentState() instanceof VotingState) {
@@ -218,8 +214,6 @@ public class GameEventManager implements Listener {
         if (!(game.getCurrentState() instanceof PlayingState)) return;
 
         if (item.getType() == game.getItemForReport().getType()) {
-            if (!(action.equals(Action.RIGHT_CLICK_AIR) || action.equals(Action.RIGHT_CLICK_BLOCK))) return;
->>>>>>> 44930f9758e388532c64533d2355fa099612d24b
 
             Location playerLoc = player.getLocation();
 
@@ -230,38 +224,6 @@ public class GameEventManager implements Listener {
                 }
             });
         }
-<<<<<<< HEAD
-
-        if (item.getType() == Material.BOOK) {
-            if (!item.getItemMeta().getDisplayName().equals("投票")) return;
-
-            Gui voteGui = new Gui(3, "投票先を選んでください");
-            List<GuiItem> heads = new ArrayList<>();
-            for (Player headPlayer : plugin.getServer().getOnlinePlayers()) {
-                UUID uuid = headPlayer.getUniqueId();
-
-                ItemStack skullStack = new ItemStack(Material.SKULL_ITEM, 1, (short) 3);
-                SkullMeta skull = (SkullMeta) skullStack.getItemMeta();
-                skull.setDisplayName(player.getName());
-                skull.setOwningPlayer(player);
-                skullStack.setItemMeta(skull);
-
-                ItemBuilder skullBuilder = ItemBuilder.from(skullStack);
-                heads.add(
-                        skullBuilder.asGuiItem(e -> {
-                            e.setCancelled(true);
-                            plugin.getLogger().info("Vote to " + uuid);
-                        })
-                );
-            }
-            plugin.getLogger().info(String.valueOf(heads.size()));
-            heads.forEach(i -> voteGui.addItem(i));
-
-            voteGui.open(player);
-            event.setCancelled(true);
-        }
-=======
->>>>>>> 44930f9758e388532c64533d2355fa099612d24b
     }
 
 }
