@@ -14,6 +14,8 @@ import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.Location;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -48,16 +50,16 @@ public class GameEventManager implements Listener {
         Player p = event.getPlayer();
         WPlayer wPlayer = game.getWPlayer(p.getUniqueId());
 
-        if (wPlayer.isDied()) {
-            p.setGameMode(GameMode.SPECTATOR);
-            game.getDisplayManager().showDeath(p, "because of you");
-        }
-
-        BukkitScheduler scheduler = Bukkit.getServer().getScheduler();
+        BukkitScheduler scheduler = plugin.getServer().getScheduler();
         scheduler.scheduleSyncDelayedTask(plugin, () -> {
             // デフォルト値の設定
             // if(lobbyLocation == null)  lobbyLocation = new Location(player.getWorld(),182,5,-134);
             if (game.getLobbyPos() != null) p.teleport(game.getLobbyPos());
+
+            if (wPlayer.isDied()) {
+                p.setGameMode(GameMode.SPECTATOR);
+                game.getDisplayManager().showDeath(p, "because of you");
+            }
         }, 1);
     }
 
@@ -142,7 +144,7 @@ public class GameEventManager implements Listener {
             Player attacker = (Player) e.getDamager();
             Player entity = (Player) e.getEntity();
 
-            if (Role.CLUE_MATE.equals(game.getPlayerRole(entity.getUniqueId())))
+            if (Role.CLUE_MATE.equals(game.getPlayerRole(entity.getUniqueId()))) {
                 if (Role.IMPOSTER.equals(game.getPlayerRole(attacker.getUniqueId()))) {
                     if (attacker.getInventory().getItemInMainHand().getType().equals(game.getItemForKill().getType())) {
 
@@ -150,6 +152,7 @@ public class GameEventManager implements Listener {
                         new PlayerKill(plugin).onPlayerAttack(e);
                     }
                 }
+            }
         }
     }
 
@@ -163,10 +166,10 @@ public class GameEventManager implements Listener {
 
         Player player = event.getPlayer();
         Action action = event.getAction();
-        ;
+        if (!(action.equals(Action.RIGHT_CLICK_AIR) || action.equals(Action.RIGHT_CLICK_BLOCK))) return;
+
         ItemStack item = player.getInventory().getItemInMainHand();
-        if (item.getType() == game.getItemForReport().getType()) {
-            if (!(action.equals(Action.RIGHT_CLICK_AIR) || action.equals(Action.RIGHT_CLICK_BLOCK))) return;
+        if (item == game.getItemForReport()) {
 
             Location playerLoc = player.getLocation();
 
@@ -177,6 +180,7 @@ public class GameEventManager implements Listener {
                 }
             });
         }
+
         if (item.getType() == Material.BOOK) {
             if (!item.getItemMeta().getDisplayName().equals("投票")) return;
 

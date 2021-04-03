@@ -1,5 +1,6 @@
 package jp.hack.minecraft.werewolfgame.core.display;
 
+import jp.hack.minecraft.werewolfgame.Game;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Color;
@@ -16,23 +17,13 @@ import java.util.*;
 public class WPlayerInventory {
     private final Map<Integer, ItemStack> clueInv = new HashMap<>();
     private final Map<Integer, ItemStack> imposterInv = new HashMap<>();
-    private ItemStack compass = new ItemStack(Material.COMPASS);
-    private ItemStack sword = new ItemStack(Material.IRON_SWORD);
-    private final String COMPASS_NAME = ChatColor.RED + "REPORT";
-    private final String SWORD_NAME = ChatColor.RED + "KILL";
 
-    public WPlayerInventory() {
+    public WPlayerInventory(ItemStack report, ItemStack kill) {
 
-        ItemMeta itemMeta = compass.getItemMeta();
-        itemMeta.setDisplayName(COMPASS_NAME);
-        compass.setItemMeta(itemMeta);
-        clueInv.put(0, new ItemStack(compass));
+        clueInv.put(0, new ItemStack(report));
 
-        itemMeta = sword.getItemMeta();
-        itemMeta.setDisplayName(SWORD_NAME);
-        sword.setItemMeta(itemMeta);
-        imposterInv.put(0, new ItemStack(compass));
-        imposterInv.put(4, new ItemStack(sword));
+        imposterInv.put(0, new ItemStack(report));
+        imposterInv.put(4, new ItemStack(kill));
 
     }
 

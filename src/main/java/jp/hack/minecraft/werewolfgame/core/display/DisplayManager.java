@@ -29,7 +29,7 @@ public class DisplayManager {
         taskBar = new TaskBar();
         taskBar.setVisible(false);
         voteBoard = new VoteBoard();
-        wPlayerInventory = new WPlayerInventory();
+        wPlayerInventory = new WPlayerInventory(game.getItemForReport(), game.getItemForKill());
     }
 
     public void log(String log) {
