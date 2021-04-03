@@ -55,6 +55,7 @@ public class Game {
     private Location meetingPos;
     private ItemStack itemForKill = new ItemStack(Material.IRON_SWORD);
     private ItemStack itemForReport = new ItemStack(Material.COMPASS);
+    private ItemStack itemForVote = new ItemStack(Material.BOOK);
 
     //ゲームの初期状態はロビーでスタート
     private LobbyState lobbyState;
@@ -180,6 +181,14 @@ public class Game {
         return itemForReport;
     }
 
+    public ItemStack getItemForVote() {
+        return itemForVote;
+    }
+
+    public void setItemForVote(ItemStack itemForVote) {
+        this.itemForVote = itemForVote;
+    }
+
     public Role getPlayerRole(UUID uuid) {
         return getWPlayer(uuid).getRole();
     }
@@ -219,12 +228,15 @@ public class Game {
     public LobbyState getLobbyState() {
         return lobbyState;
     }
+
     public PlayingState getPlayingState() {
         return playingState;
     }
+
     public MeetingState getMeetingState() {
         return meetingState;
     }
+
     public VotingState getVotingState() {
         return votingState;
     }
@@ -236,16 +248,13 @@ public class Game {
     }
 
 
-
-
-
     // gameStart、meetingStartはコマンドが来たとき呼び出す
     public ErrorJudge gameStart() {
 
         if (wasStarted) return ErrorJudge.ALREADY_STARTED;
 
         ErrorJudge resetJudge = allReset();
-        if ( !resetJudge.equals(ErrorJudge.NONE) ) return resetJudge;
+        if (!resetJudge.equals(ErrorJudge.NONE)) return resetJudge;
 
         displayManager.setTaskBarVisible(false);
         taskManager.setMaxTasks(numberOfTasks * (wPlayers.size() - numberOfImposter));
@@ -255,6 +264,10 @@ public class Game {
         currentState.onActive();
 
         wasStarted = true;
+
+        ItemMeta meta = itemForVote.getItemMeta();
+        meta.setDisplayName("投票");
+        itemForVote.setItemMeta(meta);
 
         return ErrorJudge.NONE;
     }
@@ -359,7 +372,7 @@ public class Game {
 
         reportedWPlayer.setReport(true);
         displayManager.allSendTitle(ChatColor.GREEN + Messages.message("008"), reportedPlayer.getDisplayName());
-        displayManager.allMakeSound(Sound.ENTITY_LIGHTNING_THUNDER, SoundCategory.MASTER, (float)1.0, (float)1.0);
+        displayManager.allMakeSound(Sound.ENTITY_LIGHTNING_THUNDER, SoundCategory.MASTER, (float) 1.0, (float) 1.0);
         changeState(meetingState);
     }
 
@@ -369,7 +382,7 @@ public class Game {
 
         displayManager.allSendTitle(ChatColor.BOLD.toString() + ChatColor.RED.toString() + diedPlayer.getDisplayName(), Messages.message("004"));
         displayManager.allSendMessage(Messages.message("007", reportedPlayer.getDisplayName()));
-        displayManager.allMakeSound(Sound.ENTITY_ZOMBIE_VILLAGER_AMBIENT, SoundCategory.MASTER, (float)1.0, (float)0.3);
+        displayManager.allMakeSound(Sound.ENTITY_ZOMBIE_VILLAGER_AMBIENT, SoundCategory.MASTER, (float) 1.0, (float) 0.3);
         changeState(meetingState);
     }
 
@@ -382,18 +395,24 @@ public class Game {
         player.setGameMode(GameMode.SPECTATOR);
     }
 
-    public boolean votePlayer(UUID voter, UUID target) {
+    public boolean voteToPlayer(UUID voter, UUID target) {
         if (currentState == votingState && !votedPlayers.containsKey(voter)) {
             votedPlayers.put(voter, target.toString());
+            plugin.getServer().getPlayer(voter).sendMessage(ChatColor.GREEN + plugin.getServer().getPlayer(target).getDisplayName() + "に投票しました");
             return true;
+        } else {
+            plugin.getServer().getPlayer(voter).sendMessage(ChatColor.RED + "投票できません");
         }
         return false;
     }
 
-    public boolean voteSkip(UUID uuid) {
+    public boolean voteToSkip(UUID uuid) {
         if (currentState == votingState && !votedPlayers.containsKey(uuid)) {
             votedPlayers.put(uuid, "Skip");
+            plugin.getServer().getPlayer(uuid).sendMessage(ChatColor.GREEN + "スキップに投票しました");
             return true;
+        } else {
+            plugin.getServer().getPlayer(uuid).sendMessage(ChatColor.RED + "投票できません");
         }
         return false;
     }
@@ -402,7 +421,7 @@ public class Game {
         int finishedTask = taskManager.getFinishedTask();
         int maxTask = taskManager.getMaxTasks();
 
-        if ( maxTask == finishedTask ) {
+        if (maxTask == finishedTask) {
             return WinnerJudge.CLUE_WIN;
         }
         return WinnerJudge.NONE;
@@ -412,10 +431,10 @@ public class Game {
         int clueMateRemains = wPlayers.values().stream().filter(p -> !p.getRole().isImposter() && !p.isDied()).collect(Collectors.toSet()).size();
         int impostorRemains = wPlayers.values().stream().filter(p -> p.getRole().isImposter() && !p.isDied()).collect(Collectors.toSet()).size();
 
-        if ( clueMateRemains <= impostorRemains ) {
+        if (clueMateRemains <= impostorRemains) {
             return WinnerJudge.IMPOSTER_WIN;
         }
-        if ( impostorRemains == 0 ) {
+        if (impostorRemains == 0) {
             return WinnerJudge.CLUE_WIN;
         }
         return WinnerJudge.NONE;
@@ -441,11 +460,11 @@ public class Game {
     }
 
     private BukkitRunnable task;
-    private final int limit = 3*20;
+    private final int limit = 3 * 20;
 
     public void changeScene(GameState state) {
         GameState state1 = state;
-        displayManager.allBlindness(limit +(25));
+        displayManager.allBlindness(limit + (25));
 
         task = new BukkitRunnable() {
             @Override

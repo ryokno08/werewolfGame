@@ -6,6 +6,7 @@ import jp.hack.minecraft.werewolfgame.core.Role;
 import jp.hack.minecraft.werewolfgame.core.WPlayer;
 import jp.hack.minecraft.werewolfgame.core.gamerule.PlayerKill;
 import jp.hack.minecraft.werewolfgame.core.state.PlayingState;
+import jp.hack.minecraft.werewolfgame.core.state.VotingState;
 import me.mattstudios.mfgui.gui.components.ItemBuilder;
 import me.mattstudios.mfgui.gui.guis.Gui;
 import me.mattstudios.mfgui.gui.guis.GuiItem;
@@ -24,6 +25,7 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitScheduler;
@@ -162,14 +164,62 @@ public class GameEventManager implements Listener {
 
         if (game == null) return;
         if (!game.wasStarted()) return;
-        if (!(game.getCurrentState() instanceof PlayingState)) return;
-
         Player player = event.getPlayer();
         Action action = event.getAction();
+<<<<<<< HEAD
         if (!(action.equals(Action.RIGHT_CLICK_AIR) || action.equals(Action.RIGHT_CLICK_BLOCK))) return;
 
         ItemStack item = player.getInventory().getItemInMainHand();
         if (item == game.getItemForReport()) {
+=======
+        ItemStack item = player.getInventory().getItemInMainHand();
+
+        if (game.getCurrentState() instanceof VotingState) {
+            if (item.getType() == game.getItemForVote().getType()) {
+                if (!item.getItemMeta().getDisplayName().equals(game.getItemForVote().getItemMeta().getDisplayName())) {
+                    return;
+                }
+                Gui voteGui = new Gui(3, "投票先を選んでください");
+                List<GuiItem> heads = new ArrayList<>();
+                for (Player headPlayer : plugin.getServer().getOnlinePlayers()) {
+                    UUID uuid = headPlayer.getUniqueId();
+
+                    ItemStack skullStack = new ItemStack(Material.SKULL_ITEM, 1, (short) 3);
+                    SkullMeta skull = (SkullMeta) skullStack.getItemMeta();
+                    skull.setDisplayName(headPlayer.getName());
+                    skull.setOwningPlayer(headPlayer);
+                    skullStack.setItemMeta(skull);
+
+                    ItemBuilder skullBuilder = ItemBuilder.from(skullStack);
+                    heads.add(
+                            skullBuilder.asGuiItem(e -> {
+                                e.setCancelled(true);
+                                game.voteToPlayer(e.getWhoClicked().getUniqueId(), uuid);
+                            })
+                    );
+                }
+                plugin.getLogger().info(String.valueOf(heads.size()));
+                heads.forEach(i -> voteGui.addItem(i));
+
+                ItemStack skipItem = new ItemStack(Material.BARRIER);
+                ItemMeta meta = skipItem.getItemMeta();
+                meta.setDisplayName("Skip");
+                skipItem.setItemMeta(meta);
+                ItemBuilder skipBuilder = ItemBuilder.from(skipItem);
+                voteGui.setItem(26, skipBuilder.asGuiItem(e -> {
+                    e.setCancelled(true);
+                    game.voteToSkip(e.getWhoClicked().getUniqueId());
+                }));
+                voteGui.open(player);
+                event.setCancelled(true);
+            }
+        }
+
+        if (!(game.getCurrentState() instanceof PlayingState)) return;
+
+        if (item.getType() == game.getItemForReport().getType()) {
+            if (!(action.equals(Action.RIGHT_CLICK_AIR) || action.equals(Action.RIGHT_CLICK_BLOCK))) return;
+>>>>>>> 44930f9758e388532c64533d2355fa099612d24b
 
             Location playerLoc = player.getLocation();
 
@@ -180,6 +230,7 @@ public class GameEventManager implements Listener {
                 }
             });
         }
+<<<<<<< HEAD
 
         if (item.getType() == Material.BOOK) {
             if (!item.getItemMeta().getDisplayName().equals("投票")) return;
@@ -209,6 +260,8 @@ public class GameEventManager implements Listener {
             voteGui.open(player);
             event.setCancelled(true);
         }
+=======
+>>>>>>> 44930f9758e388532c64533d2355fa099612d24b
     }
 
 }
