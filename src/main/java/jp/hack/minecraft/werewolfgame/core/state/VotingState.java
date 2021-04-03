@@ -46,9 +46,7 @@ public class VotingState extends GameState {
                         stopVote();
                     }
                     if (counter < limitOfVoting) {
-                        if (counter < 20) {
-                            game.getJoinedPlayers().forEach(player -> player.sendMessage("投票終了まで" + (limitOfVoting - counter) + "秒"));
-                        }
+                        game.getJoinedPlayers().forEach(player -> player.sendMessage("投票終了まで" + (limitOfVoting - counter) + "秒"));
                     } else {
 //                        for(Player p : plugin.getServer().getOnlinePlayers()){
 //                            if(!game.votedPlayers.containsKey(p.getUniqueId())){
