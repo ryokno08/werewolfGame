@@ -187,23 +187,26 @@ public class GameEventManager implements Listener {
                 }
                 Gui voteGui = new Gui(3, "投票先を選んでください");
                 List<GuiItem> heads = new ArrayList<>();
-                for (Player headPlayer : plugin.getServer().getOnlinePlayers()) {
-                    UUID uuid = headPlayer.getUniqueId();
+                game.getWPlayers().values().stream()
+                        .filter(wPlayer -> !wPlayer.isDied())
+                        .map(wPlayer -> plugin.getServer().getPlayer(wPlayer.getUuid()))
+                        .forEach(headPlayer -> {
+                            UUID uuid = headPlayer.getUniqueId();
 
-                    ItemStack skullStack = new ItemStack(Material.SKULL_ITEM, 1, (short) 3);
-                    SkullMeta skull = (SkullMeta) skullStack.getItemMeta();
-                    skull.setDisplayName(headPlayer.getName());
-                    skull.setOwningPlayer(headPlayer);
-                    skullStack.setItemMeta(skull);
+                            ItemStack skullStack = new ItemStack(Material.SKULL_ITEM, 1, (short) 3);
+                            SkullMeta skull = (SkullMeta) skullStack.getItemMeta();
+                            skull.setDisplayName(headPlayer.getName());
+                            skull.setOwningPlayer(headPlayer);
+                            skullStack.setItemMeta(skull);
 
-                    ItemBuilder skullBuilder = ItemBuilder.from(skullStack);
-                    heads.add(
-                            skullBuilder.asGuiItem(e -> {
-                                e.setCancelled(true);
-                                game.voteToPlayer(e.getWhoClicked().getUniqueId(), uuid);
-                            })
-                    );
-                }
+                            ItemBuilder skullBuilder = ItemBuilder.from(skullStack);
+                            heads.add(
+                                    skullBuilder.asGuiItem(e -> {
+                                        e.setCancelled(true);
+                                        game.voteToPlayer(e.getWhoClicked().getUniqueId(), uuid);
+                                    })
+                            );
+                        });
                 plugin.getLogger().info(String.valueOf(heads.size()));
                 heads.forEach(i -> voteGui.addItem(i));
 
