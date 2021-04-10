@@ -404,7 +404,13 @@ public class Game {
     public boolean voteToPlayer(UUID voter, UUID target) {
         if (currentState == votingState && !votedPlayers.containsKey(voter)) {
             votedPlayers.put(voter, target.toString());
-            plugin.getServer().getPlayer(voter).sendMessage(ChatColor.GREEN + plugin.getServer().getPlayer(target).getDisplayName() + "に投票しました");
+            getWPlayers().values().stream().map(wPlayer -> plugin.getServer().getPlayer(wPlayer.getUuid())).forEach(player -> {
+                if (player.getUniqueId() == voter) {
+                    player.sendMessage(ChatColor.GREEN + plugin.getServer().getPlayer(target).getDisplayName() + "に投票しました");
+                } else {
+                    player.sendMessage(ChatColor.GREEN + plugin.getServer().getPlayer(voter).getDisplayName() + "が" + plugin.getServer().getPlayer(target).getDisplayName() + "に投票しました");
+                }
+            });
             return true;
         } else {
             plugin.getServer().getPlayer(voter).sendMessage(ChatColor.RED + "投票できません");
@@ -415,7 +421,13 @@ public class Game {
     public boolean voteToSkip(UUID uuid) {
         if (currentState == votingState && !votedPlayers.containsKey(uuid)) {
             votedPlayers.put(uuid, "Skip");
-            plugin.getServer().getPlayer(uuid).sendMessage(ChatColor.GREEN + "スキップに投票しました");
+            getWPlayers().values().stream().map(wPlayer -> plugin.getServer().getPlayer(wPlayer.getUuid())).forEach(player -> {
+                if (player.getUniqueId() == uuid) {
+                    player.sendMessage(ChatColor.GREEN + "スキップに投票しました");
+                } else {
+                    player.sendMessage(ChatColor.GREEN + plugin.getServer().getPlayer(uuid).getDisplayName() + "がスキップに投票しました");
+                }
+            });
             return true;
         } else {
             plugin.getServer().getPlayer(uuid).sendMessage(ChatColor.RED + "投票できません");
