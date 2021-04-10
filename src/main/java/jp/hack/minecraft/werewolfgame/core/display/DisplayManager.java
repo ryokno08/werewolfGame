@@ -40,6 +40,9 @@ public class DisplayManager {
             p.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, duration, 100));
         });
     }
+    public void invisible(Player p) {
+        p.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 10000 * 20, 1, false, false));
+    }
     public void allMakeSound(Sound sound, SoundCategory soundCategory, float volume, float pitch) {
         game.getJoinedPlayers().forEach(player -> player.playSound(player.getLocation(), sound, soundCategory, volume, pitch));
     }

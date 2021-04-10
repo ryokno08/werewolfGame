@@ -31,6 +31,8 @@ public final class Main extends JavaPlugin implements GameConfigurator {
         configuration.load();
 
         game = new Game(this, configuration);
+        //game.initialize();
+
         players = new ArrayList<>();
         commandManager = new CommandManager(this);
         commandManager.addRootCommand(new WerewolfCommand(commandManager)); // plugin.ymlへの登録を忘れずに

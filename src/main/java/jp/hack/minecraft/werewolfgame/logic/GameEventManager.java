@@ -28,6 +28,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitScheduler;
 
 import java.util.ArrayList;
@@ -59,7 +61,7 @@ public class GameEventManager implements Listener {
             if (game.getLobbyPos() != null) p.teleport(game.getLobbyPos());
 
             if (wPlayer.isDied()) {
-                p.setGameMode(GameMode.SPECTATOR);
+                game.getDisplayManager().invisible(p);
                 game.getDisplayManager().showDeath(p, "because of you");
             }
         }, 1);
@@ -159,7 +161,7 @@ public class GameEventManager implements Listener {
     }
 
     @EventHandler
-    public void onPlayerItemClickEvent(PlayerInteractEvent event) {
+    public void onPlayerItemAction(PlayerInteractEvent event) {
         this.game = ((GameConfigurator) this.plugin).getGame();
 
         if (game == null) return;

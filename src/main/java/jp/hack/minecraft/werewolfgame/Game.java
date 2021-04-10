@@ -53,8 +53,8 @@ public class Game {
     private double reportDistance = 5.0;
     private Location lobbyPos;
     private Location meetingPos;
-    private ItemStack itemForKill = new ItemStack(Material.IRON_SWORD);
-    private ItemStack itemForReport = new ItemStack(Material.COMPASS);
+    private final ItemStack itemForKill = new ItemStack(Material.IRON_SWORD);
+    private final ItemStack itemForReport = new ItemStack(Material.COMPASS);
     private ItemStack itemForVote = new ItemStack(Material.BOOK);
 
     //ゲームの初期状態はロビーでスタート
@@ -247,7 +247,6 @@ public class Game {
         this.configuration = configuration;
     }
 
-
     // gameStart、meetingStartはコマンドが来たとき呼び出す
     public ErrorJudge gameStart() {
 
@@ -257,7 +256,7 @@ public class Game {
         if (!resetJudge.equals(ErrorJudge.NONE)) return resetJudge;
 
         displayManager.setTaskBarVisible(false);
-        taskManager.setMaxTasks(numberOfTasks * (wPlayers.size() - numberOfImposter));
+        taskManager.setSumOfTask(numberOfTasks * (wPlayers.size() - numberOfImposter));
         taskManager.taskBarUpdate();
 
         currentState = lobbyState;
@@ -272,12 +271,18 @@ public class Game {
         return ErrorJudge.NONE;
     }
 
-    private ErrorJudge allReset() {
-
+    /*public void initialize() {
         resetManagers();
         resetStates();
+        resetWPlayers();
+    }
+     */
+
+    private ErrorJudge allReset() {
+        resetManagers();
+        resetStates();
+        resetWPlayers();
         if (!reloadConfig()) return ErrorJudge.CONFIG_NULL;
-        if (!resetWPlayers()) return ErrorJudge.MANAGER_NULL; //Managerリセット後に実行
         if (!setImposters()) return ErrorJudge.WPLAYERS_NULL; //wPlayersリセット後に実行
         return ErrorJudge.NONE;
 
@@ -304,6 +309,10 @@ public class Game {
         meetingState = new MeetingState(plugin, this);
         playingState = new PlayingState(plugin, this);
         votingState = new VotingState(plugin, this);
+
+    }
+
+    private void playerSetting() {
 
     }
 
@@ -391,8 +400,7 @@ public class Game {
 
         wPlayer.setDied(true);
         createCadaver(player);
-        //player.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, -1, 1, false, false));
-        player.setGameMode(GameMode.SPECTATOR);
+        displayManager.invisible(player);
     }
 
     public boolean voteToPlayer(UUID voter, UUID target) {
@@ -419,7 +427,7 @@ public class Game {
 
     private WinnerJudge confirmTask() {
         int finishedTask = taskManager.getFinishedTask();
-        int maxTask = taskManager.getMaxTasks();
+        int maxTask = taskManager.getSumOfTask();
 
         if (maxTask == finishedTask) {
             return WinnerJudge.CLUE_WIN;

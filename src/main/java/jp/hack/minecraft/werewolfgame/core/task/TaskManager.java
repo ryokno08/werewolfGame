@@ -12,20 +12,19 @@ import java.util.List;
 public class TaskManager {
 
     private final Game game;
-    private int maxTasks;
+    private int sumOfTask;
     private int finishedTask = 0;
 
     public TaskManager(Game game) {
         this.game = game;
-        this.maxTasks = game.getNumberOfTasks();
     }
 
-    public int getMaxTasks() {
-        return maxTasks;
+    public int getSumOfTask() {
+        return sumOfTask;
     }
 
-    public void setMaxTasks(int maxTasks) {
-        this.maxTasks = maxTasks;
+    public void setSumOfTask(int sumOfTask) {
+        this.sumOfTask = sumOfTask;
     }
 
     private void updateFinishedTask() {
@@ -43,6 +42,9 @@ public class TaskManager {
     public void onTaskFinished(Player player, int no) {
 
         WPlayer wPlayer = game.getWPlayer(player.getUniqueId());
+        if (wPlayer.getRole().isImposter()) {
+            player.sendMessage("インポスターはタスクができません");
+        }
         List<Task> taskList = wPlayer.getTasks();
 
         if (no > taskList.size()-1 || no < 0) {
@@ -60,19 +62,22 @@ public class TaskManager {
     public void taskBarUpdate() {
 
         DisplayManager manager = game.getDisplayManager();
-        float progress = (float) finishedTask / (float) maxTasks;
-        if (progress < 0.0 || progress > 1.0) {
+        float progress = (float) finishedTask / (float) sumOfTask;
+        if (progress < 0.0) {
             manager.setTask( (float) 0.0);
             return;
+        } else if (progress > 1.0) {
+            manager.setTask( (float) 1.0);
+            return;
         }
-        //manager.setTask( progress );
+        manager.setTask( progress );
 
     }
 
     public void setTasks(WPlayer wPlayer) {
         wPlayer.clearTasks();
         List<Task> taskList = new ArrayList<>();
-        for (int i=0; i<maxTasks; i++) {
+        for (int i = 0; i< sumOfTask; i++) {
             taskList.add(new Task(i));
         }
         wPlayer.setTasks(taskList);
