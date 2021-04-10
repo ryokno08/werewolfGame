@@ -143,10 +143,18 @@ public class GameEventManager implements Listener {
         if (!game.wasStarted()) return;
         if (!(game.getCurrentState() instanceof PlayingState)) return;
 
-
         if (e.getDamager() instanceof Player && e.getEntity() instanceof Player) {
             Player attacker = (Player) e.getDamager();
             Player entity = (Player) e.getEntity();
+
+            WPlayer wAttacker = game.getWPlayer(attacker.getUniqueId());
+            WPlayer wEntity = game.getWPlayer(entity.getUniqueId());
+            if (wAttacker.isDied()) {
+                return;
+            }
+            if (wEntity.isDied()) {
+                game.getDisplayManager().sendMessage(entity, "you.disturbImposter");
+            }
 
             if (Role.CLUE_MATE.equals(game.getPlayerRole(entity.getUniqueId()))) {
                 if (Role.IMPOSTER.equals(game.getPlayerRole(attacker.getUniqueId()))) {

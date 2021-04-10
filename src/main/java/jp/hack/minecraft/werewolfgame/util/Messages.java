@@ -24,6 +24,7 @@ public class Messages {
         errors.put("you.notClueMate", "あなたはクルーメイトではありません。タスクはできません");
         errors.put("you.alreadyReported", "リポートは一回のみすることができます");
         errors.put("you.cannotCommandNow", "このコマンドは現在実行できません");
+        errors.put("you.disturbImposter", "インポスターの邪魔になっています！速やかに退去してください");
 
         errors.put("game.notStartYet", "まだゲームは始まっていません");
         errors.put("game.alreadyStarted", "すでにゲームは始まっています");
