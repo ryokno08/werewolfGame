@@ -279,7 +279,7 @@ public class Game {
     private ErrorJudge allReset() {
         resetManagers();
         resetStates();
-        if (resetWPlayers()) return ErrorJudge.MANAGER_NULL;
+        if (!resetWPlayers()) return ErrorJudge.MANAGER_NULL;
         if (!reloadConfig()) return ErrorJudge.CONFIG_NULL;
         if (!setImposters()) return ErrorJudge.WPLAYERS_NULL; //wPlayersリセット後に実行
         return ErrorJudge.NONE;

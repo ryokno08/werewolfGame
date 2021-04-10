@@ -176,9 +176,7 @@ public class GameEventManager implements Listener {
         if (game == null) return;
         if (!game.wasStarted()) return;
         Player player = event.getPlayer();
-        if (game.getWPlayer(player.getUniqueId()).isDied()) {
-            return;
-        }
+        if (game.getWPlayer(player.getUniqueId()).isDied()) return;
 
         Action action = event.getAction();
         if (!(action.equals(Action.RIGHT_CLICK_AIR) || action.equals(Action.RIGHT_CLICK_BLOCK))) return;
