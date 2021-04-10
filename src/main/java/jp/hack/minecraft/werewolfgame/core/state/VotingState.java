@@ -35,7 +35,10 @@ public class VotingState extends GameState {
         int limitOfVoting = game.getLimitOfVoting();
 
         game.getJoinedPlayers().forEach(player -> player.sendTitle("投票開始", "", 10, 20, 10));
-        game.getJoinedPlayers().forEach(player -> player.getInventory().addItem(game.getItemForVote()));
+        game.getWPlayers().values().stream()
+                .filter(wPlayer -> !wPlayer.isDied())
+                .map(wPlayer -> plugin.getServer().getPlayer(wPlayer.getUuid()))
+                .forEach(player -> player.getInventory().addItem(game.getItemForVote()));
         if (task == null) {
             task = new BukkitRunnable() {
                 int counter = 0;
@@ -92,6 +95,7 @@ public class VotingState extends GameState {
 
     @Override
     public void onInactive() {
+        game.getJoinedPlayers().forEach(player -> player.sendMessage("投票が終了しました"));
         game.getJoinedPlayers().forEach(player -> player.getInventory().removeItem(game.getItemForVote()));
         super.onInactive();
     }
