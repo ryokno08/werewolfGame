@@ -44,6 +44,7 @@ public class TaskManager {
         WPlayer wPlayer = game.getWPlayer(player.getUniqueId());
         if (wPlayer.getRole().isImposter()) {
             player.sendMessage("インポスターはタスクができません");
+            return;
         }
         List<Task> taskList = wPlayer.getTasks();
 
@@ -52,7 +53,7 @@ public class TaskManager {
             return;
         }
         taskList.get(no).finished();
-        player.sendMessage(ChatColor.GREEN.toString() + no + "番目のタスクが終わりました");
+        player.sendMessage(ChatColor.GREEN.toString() + no + "番目のタスク状況をtrueに変更しました");
 
         updateFinishedTask();
         game.confirmGame();
@@ -75,9 +76,11 @@ public class TaskManager {
     }
 
     public void setTasks(WPlayer wPlayer) {
+        int numberOfTask = game.getNumberOfTasks();
+
         wPlayer.clearTasks();
         List<Task> taskList = new ArrayList<>();
-        for (int i = 0; i< sumOfTask; i++) {
+        for (int i = 0; i < numberOfTask; i++) {
             taskList.add(new Task(i));
         }
         wPlayer.setTasks(taskList);

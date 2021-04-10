@@ -51,18 +51,19 @@ public class GameEventManager implements Listener {
         if (game == null) return;
         if (!game.wasStarted()) return;
 
-        Player p = event.getPlayer();
-        WPlayer wPlayer = game.getWPlayer(p.getUniqueId());
+        Player player = event.getPlayer();
+        WPlayer wPlayer = game.getWPlayer(player.getUniqueId());
 
         BukkitScheduler scheduler = plugin.getServer().getScheduler();
         scheduler.scheduleSyncDelayedTask(plugin, () -> {
             // デフォルト値の設定
             // if(lobbyLocation == null)  lobbyLocation = new Location(player.getWorld(),182,5,-134);
-            if (game.getLobbyPos() != null) p.teleport(game.getLobbyPos());
+            if (game.getLobbyPos() != null) player.teleport(game.getLobbyPos());
 
             if (wPlayer.isDied()) {
-                game.getDisplayManager().invisible(p);
-                game.getDisplayManager().showDeath(p, "because of you");
+                game.getDisplayManager().invisible(player);
+                game.getDisplayManager().takeOffArmor(player);
+                game.getDisplayManager().showDeath(player, "because of you");
             }
         }, 1);
     }
@@ -175,6 +176,11 @@ public class GameEventManager implements Listener {
         if (game == null) return;
         if (!game.wasStarted()) return;
         Player player = event.getPlayer();
+        WPlayer wPlayer = game.getWPlayer(player.getUniqueId());
+        if (wPlayer.isDied()) {
+            return;
+        }
+
         Action action = event.getAction();
         if (!(action.equals(Action.RIGHT_CLICK_AIR) || action.equals(Action.RIGHT_CLICK_BLOCK))) return;
 

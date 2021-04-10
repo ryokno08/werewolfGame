@@ -150,4 +150,8 @@ public class DisplayManager {
         ItemStack[] armor = wPlayerInventory.getColoredArmors(wPlayer.getColor());
         player.getInventory().setArmorContents(armor);
     }
+
+    public void takeOffArmor(Player player) {
+        player.getInventory().setArmorContents(null);
+    }
 }
