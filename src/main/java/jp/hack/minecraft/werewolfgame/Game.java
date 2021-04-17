@@ -247,7 +247,7 @@ public class Game {
     }
 
     public GuiLogic getGuiLogic() {
-        if (guiLogic == null) guiLogic = new GuiLogic(plugin);
+        if (guiLogic == null) guiLogic = new GuiLogic(plugin, 3, "投票先を選んでください");
         return guiLogic;
     }
 
@@ -472,7 +472,7 @@ public class Game {
 
     public void confirmGame() {
         WinnerJudge winnerJudge = confirmTask();
-
+        /*
         if (winnerJudge == WinnerJudge.CLUE_WIN) {
             displayManager.showIssue(true);
             gameStop();
@@ -487,6 +487,7 @@ public class Game {
                 gameStop();
             }
         }
+         */
     }
 
     private BukkitRunnable task;

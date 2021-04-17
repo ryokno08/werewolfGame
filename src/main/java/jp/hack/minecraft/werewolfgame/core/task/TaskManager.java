@@ -24,7 +24,11 @@ public class TaskManager {
     }
 
     public void setSumOfTask(int sumOfTask) {
-        this.sumOfTask = sumOfTask;
+        if (sumOfTask <= 0) {
+            this.sumOfTask = 1;
+        } else {
+            this.sumOfTask = sumOfTask;
+        }
     }
 
     private void updateFinishedTask() {
@@ -48,7 +52,7 @@ public class TaskManager {
         }
         List<Task> taskList = wPlayer.getTasks();
 
-        if (no > taskList.size()-1 || no < 0) {
+        if (no > taskList.size() - 1 || no < 0) {
             player.sendMessage("存在しないタスクです");
             return;
         }
@@ -64,14 +68,18 @@ public class TaskManager {
 
         DisplayManager manager = game.getDisplayManager();
         float progress = (float) finishedTask / (float) sumOfTask;
-        if (progress < 0.0) {
-            manager.setTask( (float) 0.0);
-            return;
-        } else if (progress > 1.0) {
-            manager.setTask( (float) 1.0);
+        if (sumOfTask == 0) {
+            manager.setTask((float) 1.0);
             return;
         }
-        manager.setTask( progress );
+        if (progress < 0.0) {
+            manager.setTask((float) 0.0);
+            return;
+        } else if (progress > 1.0) {
+            manager.setTask((float) 1.0);
+            return;
+        }
+        manager.setTask(progress);
 
     }
 

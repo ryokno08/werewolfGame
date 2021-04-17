@@ -43,8 +43,8 @@ public class GuiLogic {
         gui = new Gui(rows, title);
     }
 
-    public Material getItemMaterial() {
-        return item.getType();
+    public ItemStack getItem() {
+        return item;
     }
 
     public void OpenGUI(Player player, ItemStack clickedItem) {
@@ -56,14 +56,12 @@ public class GuiLogic {
             return;
         }
 
-
+        initGui();
         gui.open(player);
     }
 
     private void initGui() {
-        for (int i = 0; i < gui.getInventory().getSize(); i++) {
-            gui.setItem(i, new GuiItem(Material.AIR));
-        }
+        gui.getGuiItems().values().forEach(guiItem -> guiItem.setItemStack(new ItemStack(Material.AIR)));
 
         heads.forEach(i -> gui.addItem(i));
 
@@ -72,6 +70,7 @@ public class GuiLogic {
             e.setCancelled(true);
             game.voteToSkip(e.getWhoClicked().getUniqueId());
         }));
+        reloadHeads();
     }
 
     private void reloadHeads() {
@@ -99,19 +98,3 @@ public class GuiLogic {
                 });
     }
 }
-/*
-*
-    public ItemStack getItemForVote() {
-        return itemForVote;
-    }
-
-    public void setItemForVote(ItemStack itemForVote) {
-        this.itemForVote = itemForVote;
-    }
-    *
-    *
-        ItemMeta meta = itemForVote.getItemMeta();
-        meta.setDisplayName("投票");
-        itemForVote.setItemMeta(meta);
-        *
-        * */
