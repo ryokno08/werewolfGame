@@ -191,17 +191,25 @@ public class GameEventManager implements Listener {
         }
 
         if (!(game.getCurrentState() instanceof PlayingState)) return;
-
         if (item.getType() == game.getItemForReport().getType()) {
 
             Location playerLoc = player.getLocation();
 
+            game.getCadavers().values().stream().filter(o -> {
+                Location cadaverLoc = o.getCadaverBlock().getLocation();
+                if (cadaverLoc.distance(playerLoc) <= game.getReportDistance()) {
+                    return true;
+                }
+                return false;
+            }).findFirst().ifPresent(o -> game.report(player, o.getPlayer()));
+
+            /*
             game.getCadavers().values().forEach(cadaver -> {
                 Location cadaverLoc = cadaver.getCadaverBlock().getLocation();
                 if (cadaverLoc.distance(playerLoc) <= game.getReportDistance()) {
                     game.report(player, cadaver.getPlayer());
                 }
-            });
+            });*/
         }
     }
 
