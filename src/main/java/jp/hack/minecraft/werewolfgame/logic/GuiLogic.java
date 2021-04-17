@@ -39,6 +39,7 @@ public class GuiLogic {
         skipMeta.setDisplayName("Skip");
         skipItem.setItemMeta(skipMeta);
 
+        heads = new ArrayList<>();
 
         gui = new Gui(rows, title);
     }
@@ -74,7 +75,6 @@ public class GuiLogic {
     }
 
     private void reloadHeads() {
-        heads = new ArrayList<>();
 
         game.getWPlayers().values().stream()
                 .filter(wPlayer -> !wPlayer.isDied())
