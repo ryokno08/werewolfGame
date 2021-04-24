@@ -27,15 +27,19 @@ public final class Main extends JavaPlugin implements GameConfigurator {
 
 
 //        configuration = new LocationConfiguration(new File(getDataFolder(), "config.yml"));
-        configuration = new LocationConfiguration(this);
+        if (configuration == null)
+            configuration = new LocationConfiguration(this);
         configuration.load();
 
-        game = new Game(this, configuration);
+        if (game == null)
+            game = new Game(this, configuration);
         //game.initialize();
 
         players = new ArrayList<>();
-        commandManager = new CommandManager(this);
-        commandManager.addRootCommand(new WerewolfCommand(commandManager)); // plugin.ymlへの登録を忘れずに
+        if (commandManager == null) {
+            commandManager = new CommandManager(this);
+            commandManager.addRootCommand(new WerewolfCommand(commandManager)); // plugin.ymlへの登録を忘れずに
+        }
 
     }
 
@@ -47,20 +51,12 @@ public final class Main extends JavaPlugin implements GameConfigurator {
         if (this.configuration != null) {
             this.configuration.save();
         }
+
+        game.gameStop();
     }
 
     @Override
     public Game getGame() {
         return game;
-    }
-
-    @Override
-    public List<Player> getPlayers() {
-        return players;
-    }
-
-    @Override
-    public void setPlayers(List<Player> players) {
-        this.players = players;
     }
 }
