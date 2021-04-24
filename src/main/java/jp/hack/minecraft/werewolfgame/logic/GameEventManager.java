@@ -150,11 +150,11 @@ public class GameEventManager implements Listener {
 
             WPlayer wAttacker = game.getWPlayer(attacker.getUniqueId());
             WPlayer wEntity = game.getWPlayer(entity.getUniqueId());
-            if (wAttacker.isDied()) {
-                return;
-            }
+
+            if (wAttacker.isDied()) return;
             if (wEntity.isDied()) {
-                game.getDisplayManager().sendMessage(entity, "you.disturbImposter");
+                game.getDisplayManager().sendErrorMessage(entity, "you.disturbImposter");
+                return;
             }
 
             if (Role.CLUE_MATE.equals(game.getPlayerRole(entity.getUniqueId()))) {
@@ -196,9 +196,8 @@ public class GameEventManager implements Listener {
             if (game.getCadavers() == null) return;
             if (game.getCadavers().isEmpty()) return;
 
-<<<<<<< HEAD
             Location playerLoc = player.getLocation();
-=======
+
             game.getCadavers().values().stream().filter(o -> {
                 Location cadaverLoc = o.getCadaverBlock().getLocation();
                 if (cadaverLoc.distance(playerLoc) <= game.getReportDistance()) {
@@ -208,7 +207,6 @@ public class GameEventManager implements Listener {
             }).findFirst().ifPresent(o -> game.report(player, o.getPlayer()));
 
             /*
->>>>>>> d732f667831975f2bd5877717e65015b2df5f8d0
             game.getCadavers().values().forEach(cadaver -> {
                 Location cadaverLoc = cadaver.getCadaverBlock().getLocation();
                 if (cadaverLoc.distance(playerLoc) <= game.getReportDistance()) {

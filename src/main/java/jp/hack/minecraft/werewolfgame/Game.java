@@ -412,7 +412,7 @@ public class Game {
         wPlayer.setDied(true);
         createCadaver(player);
         displayManager.invisible(player);
-        displayManager.takeOffArmor(player);
+        displayManager.clearInventory(player);
     }
 
     public boolean voteToPlayer(UUID voter, UUID target) {
@@ -474,7 +474,6 @@ public class Game {
 
     public void confirmGame() {
         WinnerJudge winnerJudge = confirmTask();
-        /*
         if (winnerJudge == WinnerJudge.CLUE_WIN) {
             displayManager.showIssue(true);
             gameStop();
@@ -489,7 +488,6 @@ public class Game {
                 gameStop();
             }
         }
-         */
     }
 
     private BukkitRunnable task;
@@ -530,6 +528,7 @@ public class Game {
         resetCadaver();
 
         this.joinedPlayers.forEach(p -> {
+            displayManager.clear(p);
             p.setGameMode(GameMode.ADVENTURE);
             p.teleport(getLobbyPos());
         });

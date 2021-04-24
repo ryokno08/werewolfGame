@@ -43,6 +43,10 @@ public class DisplayManager {
     public void invisible(Player p) {
         p.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 10000 * 20, 1, false, false));
     }
+    public void clearEffect(Player p) {
+        p.removePotionEffect(PotionEffectType.BLINDNESS);
+        p.removePotionEffect(PotionEffectType.INVISIBILITY);
+    }
     public void allMakeSound(Sound sound, SoundCategory soundCategory, float volume, float pitch) {
         game.getJoinedPlayers().forEach(player -> player.playSound(player.getLocation(), sound, soundCategory, volume, pitch));
     }
@@ -51,6 +55,9 @@ public class DisplayManager {
     }
     public void sendMessage(Player player, String code, String... args) {
         player.sendMessage(Messages.message(code, (Object) args));
+    }
+    public void sendErrorMessage(Player player, String code, String... args) {
+        player.sendMessage(Messages.error(code, (Object)args));
     }
     public void allSendTitle(String title) {
         game.getJoinedPlayers().forEach(player -> {
@@ -153,5 +160,12 @@ public class DisplayManager {
 
     public void takeOffArmor(Player player) {
         player.getInventory().setArmorContents(null);
+    }
+    public void clearInventory(Player player) {
+        player.getInventory().clear();
+    }
+    public void clear(Player player) {
+        clearInventory(player);
+        clearEffect(player);
     }
 }
