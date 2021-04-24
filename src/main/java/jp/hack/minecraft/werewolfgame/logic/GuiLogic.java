@@ -64,18 +64,21 @@ public class GuiLogic {
     private void initGui() {
         gui.getGuiItems().values().forEach(guiItem -> guiItem.setItemStack(new ItemStack(Material.AIR)));
 
-        heads.forEach(i -> gui.addItem(i));
-
+        heads = new ArrayList<>();
         ItemBuilder skipBuilder = ItemBuilder.from(skipItem);
         gui.setItem(26, skipBuilder.asGuiItem(e -> {
             e.setCancelled(true);
             game.voteToSkip(e.getWhoClicked().getUniqueId());
             game.getScoreboardVoted().setScore(e.getWhoClicked().getUniqueId(), 1);
         }));
-        reloadHeads();
+        loadHeads();
+        for (int i = 0; i < heads.size(); i++) {
+            gui.setItem(i, heads.get(i));
+        }
+        // heads.forEach(i -> gui.setItem(i));
     }
 
-    private void reloadHeads() {
+    private void loadHeads() {
 
         game.getWPlayers().values().stream()
                 .filter(wPlayer -> !wPlayer.isDied())

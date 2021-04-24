@@ -425,6 +425,7 @@ public class Game {
                     player.sendMessage(ChatColor.GREEN + plugin.getServer().getPlayer(voter).getDisplayName() + "が" + plugin.getServer().getPlayer(target).getDisplayName() + "に投票しました");
                 }
             });
+            // checkVoteStop();
             return true;
         } else {
             plugin.getServer().getPlayer(voter).sendMessage(ChatColor.RED + "投票できません");
@@ -442,12 +443,45 @@ public class Game {
                     player.sendMessage(ChatColor.GREEN + plugin.getServer().getPlayer(uuid).getDisplayName() + "がスキップに投票しました");
                 }
             });
+            // checkVoteStop();
             return true;
         } else {
             plugin.getServer().getPlayer(uuid).sendMessage(ChatColor.RED + "投票できません");
         }
         return false;
     }
+
+//    private void checkVoteStop(){
+//        if()
+//    }
+//    private void stopVote() {
+//        Map<String, Integer> VotingResult = new HashMap<>();
+//        votedPlayers.forEach((uuid, ans) -> VotingResult.put(ans, VotingResult.getOrDefault(ans, 0) + 1));
+//
+//        List<Map.Entry<String, Integer>> SortedResults = new ArrayList<>(VotingResult.entrySet());
+//        SortedResults.sort((obj1, obj2) -> obj2.getValue().compareTo(obj1.getValue()));
+//
+//        if (VotingResult.getOrDefault("Skip", 0)
+//                > plugin.getServer().getOnlinePlayers().size() / 2) {
+//            if (SortedResults.size() < 2) {
+//                if (SortedResults.get(0).getKey().equals("Skip")) {
+//                    game.voteSkipped();
+//                } else {
+//                    game.ejectPlayer(UUID.fromString(SortedResults.get(0).getKey()));
+//                }
+//            } else if (!SortedResults.get(0).getValue().equals(SortedResults.get(1).getValue())) {
+//                if (SortedResults.get(0).getKey().equals("Skip")) {
+//                    game.voteSkipped();
+//                } else {
+//                    game.ejectPlayer(UUID.fromString(SortedResults.get(0).getKey()));
+//                }
+//            }
+//        }
+//
+//
+//        game.changeState(game.getPlayingState());
+//        this.cancel();
+//    }
 
     private WinnerJudge confirmTask() {
         int finishedTask = taskManager.getFinishedTask();
