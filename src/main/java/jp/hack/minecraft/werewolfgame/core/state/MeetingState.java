@@ -9,6 +9,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class MeetingState extends GameState {
     private BukkitTask task;
@@ -39,7 +40,10 @@ public class MeetingState extends GameState {
 
         // 設定などからロードする、ロビーにてレポートするときの半径、単位はブロック
         final float robbyRadius = 3;
-        List<Player> players = game.getJoinedPlayers();
+        List<Player> players = game.getWPlayers().values().stream()
+                .filter(wPlayer -> !wPlayer.isDied())
+                .map(wPlayer -> plugin.getServer().getPlayer(wPlayer.getUuid()))
+                .collect(Collectors.toList());
         for (int i = 0; i < players.size(); i++) {
             double rad = (2 * Math.PI / (float) players.size()) * i;
             Player p = players.get(i);

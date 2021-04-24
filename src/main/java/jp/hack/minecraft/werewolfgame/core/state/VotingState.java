@@ -38,7 +38,10 @@ public class VotingState extends GameState {
         game.getWPlayers().values().stream()
                 .filter(wPlayer -> !wPlayer.isDied())
                 .map(wPlayer -> plugin.getServer().getPlayer(wPlayer.getUuid()))
-                .forEach(player -> player.getInventory().addItem(game.getGuiLogic().getItem()));
+                .forEach(player -> {
+                    player.getInventory().addItem(game.getGuiLogic().getItem());
+                    game.getScoreboardVoted().setScore(player.getUniqueId(), 0);
+                });
         if (task == null) {
             task = new BukkitRunnable() {
                 int counter = 0;

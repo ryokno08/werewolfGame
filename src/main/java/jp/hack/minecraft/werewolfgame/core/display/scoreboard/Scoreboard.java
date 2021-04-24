@@ -3,6 +3,8 @@ package jp.hack.minecraft.werewolfgame.core.display.scoreboard;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.DisplaySlot;
 
+import java.util.UUID;
+
 public class Scoreboard {
     private final ScoreboardBukkit scoreboardBukkit;
     private final String id;
@@ -22,8 +24,8 @@ public class Scoreboard {
         return id;
     }
 
-    public void setScore(String playerName, int score) {
-        scoreboardBukkit.setScore(playerName, score);
+    public void setScore(UUID uuid, int score) {
+        scoreboardBukkit.setScore(uuid.toString(), score);
     }
 
     public void setScoreboard(Player player) {
