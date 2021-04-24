@@ -4,10 +4,12 @@ import jp.hack.minecraft.werewolfgame.core.Cadaver;
 import jp.hack.minecraft.werewolfgame.core.Colors;
 import jp.hack.minecraft.werewolfgame.core.Role;
 import jp.hack.minecraft.werewolfgame.core.display.WPlayerInventory;
+import jp.hack.minecraft.werewolfgame.core.display.scoreboard.Scoreboard;
 import jp.hack.minecraft.werewolfgame.core.task.TaskManager;
 import jp.hack.minecraft.werewolfgame.core.WPlayer;
 import jp.hack.minecraft.werewolfgame.core.display.DisplayManager;
 import jp.hack.minecraft.werewolfgame.core.state.*;
+import jp.hack.minecraft.werewolfgame.logic.GuiLogic;
 import jp.hack.minecraft.werewolfgame.util.LocationConfiguration;
 import jp.hack.minecraft.werewolfgame.util.Messages;
 import org.bukkit.*;
@@ -16,6 +18,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scoreboard.DisplaySlot;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -53,7 +56,9 @@ public class Game {
     private Location meetingPos;
     private final ItemStack itemForKill = new ItemStack(Material.IRON_SWORD);
     private final ItemStack itemForReport = new ItemStack(Material.COMPASS);
-    private ItemStack itemForVote = new ItemStack(Material.BOOK);
+
+    private final Scoreboard scoreboardPlayerList = new Scoreboard("playerList", "プレイヤー");
+    private final Scoreboard scoreboardVoted = new Scoreboard("voted", "投票済み", DisplaySlot.PLAYER_LIST);
 
     //ゲームの初期状態はロビーでスタート
     private LobbyState lobbyState;
@@ -63,6 +68,8 @@ public class Game {
     private GameState currentState;
 
     private LocationConfiguration configuration;
+
+    private GuiLogic guiLogic;
 
     // UUIDは投票者のもの Stringは投票先のUUIDもしくは"Skip"が入る
     public Map<UUID, String> votedPlayers = new HashMap<>();
@@ -181,12 +188,12 @@ public class Game {
         return itemForReport;
     }
 
-    public ItemStack getItemForVote() {
-        return itemForVote;
+    public Scoreboard getScoreboardPlayerList() {
+        return scoreboardPlayerList;
     }
 
-    public void setItemForVote(ItemStack itemForVote) {
-        this.itemForVote = itemForVote;
+    public Scoreboard getScoreboardVoted() {
+        return scoreboardVoted;
     }
 
     public Role getPlayerRole(UUID uuid) {
@@ -241,6 +248,11 @@ public class Game {
         return votingState;
     }
 
+    public GuiLogic getGuiLogic() {
+        if (guiLogic == null) guiLogic = new GuiLogic(plugin, 3, "投票先を選んでください");
+        return guiLogic;
+    }
+
 
     Game(JavaPlugin plugin, LocationConfiguration configuration) {
         this.plugin = plugin;
@@ -264,9 +276,8 @@ public class Game {
 
         wasStarted = true;
 
-        ItemMeta meta = itemForVote.getItemMeta();
-        meta.setDisplayName("投票");
-        itemForVote.setItemMeta(meta);
+        // getWPlayers().values()
+        // scoreboardVoted.setScoreboard();
 
         return ErrorJudge.NONE;
     }
@@ -463,7 +474,7 @@ public class Game {
 
     public void confirmGame() {
         WinnerJudge winnerJudge = confirmTask();
-
+        /*
         if (winnerJudge == WinnerJudge.CLUE_WIN) {
             displayManager.showIssue(true);
             gameStop();
@@ -478,6 +489,7 @@ public class Game {
                 gameStop();
             }
         }
+         */
     }
 
     private BukkitRunnable task;

@@ -184,63 +184,37 @@ public class GameEventManager implements Listener {
         ItemStack item = player.getInventory().getItemInMainHand();
 
         if (game.getCurrentState() instanceof VotingState) {
-            if (item.getType() == game.getItemForVote().getType()) {
-                if (!item.getItemMeta().getDisplayName().equals(game.getItemForVote().getItemMeta().getDisplayName())) {
-                    return;
-                }
-                Gui voteGui = new Gui(3, "投票先を選んでください");
-                List<GuiItem> heads = new ArrayList<>();
-                game.getWPlayers().values().stream()
-                        .filter(wPlayer -> !wPlayer.isDied())
-                        .map(wPlayer -> plugin.getServer().getPlayer(wPlayer.getUuid()))
-                        .forEach(headPlayer -> {
-                            UUID uuid = headPlayer.getUniqueId();
-
-                            ItemStack skullStack = new ItemStack(Material.SKULL_ITEM, 1, (short) 3);
-                            SkullMeta skull = (SkullMeta) skullStack.getItemMeta();
-                            skull.setDisplayName(headPlayer.getName());
-                            skull.setOwningPlayer(headPlayer);
-                            skullStack.setItemMeta(skull);
-
-                            ItemBuilder skullBuilder = ItemBuilder.from(skullStack);
-                            heads.add(
-                                    skullBuilder.asGuiItem(e -> {
-                                        e.setCancelled(true);
-                                        game.voteToPlayer(e.getWhoClicked().getUniqueId(), uuid);
-                                    })
-                            );
-                        });
-                plugin.getLogger().info(String.valueOf(heads.size()));
-                heads.forEach(i -> voteGui.addItem(i));
-
-                ItemStack skipItem = new ItemStack(Material.BARRIER);
-                ItemMeta meta = skipItem.getItemMeta();
-                meta.setDisplayName("Skip");
-                skipItem.setItemMeta(meta);
-                ItemBuilder skipBuilder = ItemBuilder.from(skipItem);
-                voteGui.setItem(26, skipBuilder.asGuiItem(e -> {
-                    e.setCancelled(true);
-                    game.voteToSkip(e.getWhoClicked().getUniqueId());
-                }));
-                voteGui.open(player);
+            if (item.getType() == game.getGuiLogic().getItem().getType()) {
+                game.getGuiLogic().OpenGUI(player, item);
                 event.setCancelled(true);
             }
         }
 
         if (!(game.getCurrentState() instanceof PlayingState)) return;
-
         if (item.getType() == game.getItemForReport().getType()) {
 
             if (game.getCadavers() == null) return;
             if (game.getCadavers().isEmpty()) return;
 
+<<<<<<< HEAD
             Location playerLoc = player.getLocation();
+=======
+            game.getCadavers().values().stream().filter(o -> {
+                Location cadaverLoc = o.getCadaverBlock().getLocation();
+                if (cadaverLoc.distance(playerLoc) <= game.getReportDistance()) {
+                    return true;
+                }
+                return false;
+            }).findFirst().ifPresent(o -> game.report(player, o.getPlayer()));
+
+            /*
+>>>>>>> d732f667831975f2bd5877717e65015b2df5f8d0
             game.getCadavers().values().forEach(cadaver -> {
                 Location cadaverLoc = cadaver.getCadaverBlock().getLocation();
                 if (cadaverLoc.distance(playerLoc) <= game.getReportDistance()) {
                     game.report(player, cadaver.getPlayer());
                 }
-            });
+            });*/
         }
     }
 
