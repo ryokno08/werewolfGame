@@ -92,8 +92,10 @@ public class Game {
     }
 
     public Cadaver createCadaver(Player player) {
-        Cadaver cadaver = new Cadaver(player, getWPlayer(player.getUniqueId()));
-        cadavers.put(player.getUniqueId(), cadaver);
+        UUID uuid = player.getUniqueId();
+
+        Cadaver cadaver = new Cadaver(player, getWPlayer(uuid));
+        cadavers.put(uuid, cadaver);
         return cadaver;
     }
 
@@ -388,7 +390,7 @@ public class Game {
         cadavers.clear();
 
         displayManager.allSendTitle(ChatColor.BOLD.toString() + ChatColor.RED.toString() + diedPlayer.getDisplayName(), Messages.message("004"));
-        displayManager.allSendMessage(Messages.message("007", reportedPlayer.getDisplayName()));
+        displayManager.allSendMessage("007", reportedPlayer.getDisplayName());
         displayManager.allMakeSound(Sound.ENTITY_ZOMBIE_VILLAGER_AMBIENT, SoundCategory.MASTER, (float) 1.0, (float) 0.3);
         changeState(meetingState);
     }

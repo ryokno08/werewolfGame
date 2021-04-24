@@ -231,8 +231,10 @@ public class GameEventManager implements Listener {
 
         if (item.getType() == game.getItemForReport().getType()) {
 
-            Location playerLoc = player.getLocation();
+            if (game.getCadavers() == null) return;
+            if (game.getCadavers().isEmpty()) return;
 
+            Location playerLoc = player.getLocation();
             game.getCadavers().values().forEach(cadaver -> {
                 Location cadaverLoc = cadaver.getCadaverBlock().getLocation();
                 if (cadaverLoc.distance(playerLoc) <= game.getReportDistance()) {
