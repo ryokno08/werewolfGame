@@ -12,17 +12,15 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 public class GuiLogic {
     private JavaPlugin plugin;
     private Game game;
     private ItemStack item;
     private ItemStack skipItem;
-    private Gui gui;
-    private List<GuiItem> heads;
+    private int guiRows = 3;
+    private String guiTitle = "";
 
     public GuiLogic(JavaPlugin plugin, int rows, String title) {
         this.plugin = plugin;
@@ -39,9 +37,13 @@ public class GuiLogic {
         skipMeta.setDisplayName("Skip");
         skipItem.setItemMeta(skipMeta);
 
-        heads = new ArrayList<>();
+        // heads = new ArrayList<>();
 
-        gui = new Gui(rows, title);
+        guiRows = rows;
+        guiTitle = title;
+
+        // gui = new Gui(rows, title);
+        // guis = new HashMap<>();
     }
 
     public ItemStack getItem() {
@@ -57,29 +59,30 @@ public class GuiLogic {
             return;
         }
 
-        initGui();
-        gui.open(player);
+        initGui().open(player);
     }
 
-    private void initGui() {
+    private Gui initGui() {
+        Gui gui = new Gui(guiRows, guiTitle);
         gui.getGuiItems().values().forEach(guiItem -> guiItem.setItemStack(new ItemStack(Material.AIR)));
 
-        heads = new ArrayList<>();
+        // heads = new ArrayList<>();
         ItemBuilder skipBuilder = ItemBuilder.from(skipItem);
         gui.setItem(26, skipBuilder.asGuiItem(e -> {
             e.setCancelled(true);
             game.voteToSkip(e.getWhoClicked().getUniqueId());
             game.getScoreboardVoted().setScore(e.getWhoClicked().getUniqueId(), 1);
         }));
-        loadHeads();
+        List<GuiItem> heads = loadHeads();
         for (int i = 0; i < heads.size(); i++) {
             gui.setItem(i, heads.get(i));
         }
-        // heads.forEach(i -> gui.setItem(i));
+        // heads.forEach(i -> gui.setItem(i));\
+        return gui;
     }
 
-    private void loadHeads() {
-
+    private List<GuiItem> loadHeads() {
+        List<GuiItem> heads = new ArrayList<>();
         game.getWPlayers().values().stream()
                 .filter(wPlayer -> !wPlayer.isDied())
                 .map(wPlayer -> plugin.getServer().getPlayer(wPlayer.getUuid()))
@@ -101,5 +104,6 @@ public class GuiLogic {
                             })
                     );
                 });
+        return heads;
     }
 }

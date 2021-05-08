@@ -426,6 +426,7 @@ public class Game {
                 }
             });
             // checkVoteStop();
+            onVote();
             return true;
         } else {
             plugin.getServer().getPlayer(voter).sendMessage(ChatColor.RED + "投票できません");
@@ -444,11 +445,55 @@ public class Game {
                 }
             });
             // checkVoteStop();
+            onVote();
             return true;
         } else {
             plugin.getServer().getPlayer(uuid).sendMessage(ChatColor.RED + "投票できません");
         }
         return false;
+    }
+
+    private void onVote() {
+        if (this.votedPlayers.size() >= this.getJoinedPlayers().size()) {
+            votingState.cancelTask();
+            stopVote();
+        }
+    }
+
+    public void stopVote() {
+        Map<String, Integer> VotingResult = new HashMap<>();
+        this.votedPlayers.forEach((k, v) -> VotingResult.put(v, VotingResult.getOrDefault(v, 0) + 1));
+
+        List<Map.Entry<String, Integer>> SortedResults = new ArrayList<>(VotingResult.entrySet());
+        SortedResults.sort((obj1, obj2) -> obj2.getValue().compareTo(obj1.getValue()));
+
+        plugin.getLogger().info(SortedResults.toString());
+        plugin.getLogger().info("SortedResults.size() = " + SortedResults.size());
+        plugin.getLogger().info("SortedResults.get(0).getValue() = " + SortedResults.get(0).getValue());
+        if (SortedResults.size() >= 2)
+            plugin.getLogger().info("SortedResults.get(1).getValue() = " + SortedResults.get(1).getValue());
+
+        if (VotingResult.getOrDefault("Skip", 0)
+                > this.votedPlayers.size() / 2) {
+            this.voteSkipped();
+        } else if (SortedResults.size() < 2) {
+            if (SortedResults.get(0).getKey().equals("Skip")) {
+                this.voteSkipped();
+            } else {
+                this.ejectPlayer(UUID.fromString(SortedResults.get(0).getKey()));
+            }
+        } else /* if (!SortedResults.get(0).getValue().equals(SortedResults.get(1).getValue())) */ {
+            if (SortedResults.get(0).getKey().equals("Skip")) {
+                this.voteSkipped();
+            } else {
+                this.ejectPlayer(UUID.fromString(SortedResults.get(0).getKey()));
+            }
+        }
+
+
+        this.changeState(this.getPlayingState());
+
+        votedPlayers = new HashMap<>();
     }
 
 //    private void checkVoteStop(){
@@ -547,7 +592,14 @@ public class Game {
         displayManager.allSendMessage("002", player.getDisplayName());
         displayManager.log(Messages.message("002", player.getDisplayName()));
 
-        player.setGameMode(GameMode.SPECTATOR);
+        // player.setGameMode(GameMode.SPECTATOR);
+        WPlayer wPlayer = getWPlayer(player.getUniqueId());
+
+        wPlayer.setDied(true);
+        displayManager.invisible(player);
+        displayManager.clearInventory(player);
+
+        confirmGame();
     }
 
     public void voteSkipped() {

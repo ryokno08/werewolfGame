@@ -49,21 +49,14 @@ public class VotingState extends GameState {
                 @Override
                 public void run() {
                     counter++;
-                    if (game.votedPlayers.size() >= game.getJoinedPlayers().size()) {
-                        stopVote();
-                    }
-                    if (counter < limitOfVoting) {
-                        game.getJoinedPlayers().forEach(player -> player.sendMessage("投票終了まで" + (limitOfVoting - counter) + "秒"));
+                    if (counter >= limitOfVoting) {
+                        game.stopVote();
+                        this.cancel();
                     } else {
-//                        for(Player p : plugin.getServer().getOnlinePlayers()){
-//                            if(!game.votedPlayers.containsKey(p.getUniqueId())){
-//                                game.votedPlayers.put(p.getUniqueId(), "Skip");
-//                            }
-//                        }
-                        stopVote();
+                        game.getJoinedPlayers().forEach(player -> player.sendMessage("投票終了まで" + (limitOfVoting - counter) + "秒"));
                     }
                 }
-
+/*
                 private void stopVote() {
                     Map<String, Integer> VotingResult = new HashMap<>();
                     game.votedPlayers.forEach((k, v) -> VotingResult.put(v, VotingResult.getOrDefault(v, 0) + 1));
@@ -92,6 +85,8 @@ public class VotingState extends GameState {
                     game.changeState(game.getPlayingState());
                     this.cancel();
                 }
+
+ */
             }.runTaskTimer(plugin, 0, 20);
         }
     }
@@ -106,5 +101,9 @@ public class VotingState extends GameState {
     @Override
     public void onEnd() {
         super.onEnd();
+    }
+
+    public void cancelTask() {
+        task.cancel();
     }
 }
