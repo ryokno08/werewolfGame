@@ -4,6 +4,7 @@ import jp.hack.minecraft.werewolfgame.Game;
 import jp.hack.minecraft.werewolfgame.core.WPlayer;
 import jp.hack.minecraft.werewolfgame.core.display.DisplayManager;
 import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -63,6 +64,9 @@ public class TaskManager {
 
         updateFinishedTask();
         manager.updateTaskBoard(player);
+        if ( ! wPlayer.getTasks().stream().filter(t -> !t.isFinished()) .isParallel() && wPlayer.isDied() ) {
+            manager.changeGameMode(player, GameMode.SPECTATOR);
+        }
         game.confirmGame();
 
     }
