@@ -66,7 +66,7 @@ public class MeetingState extends GameState {
                 public void run() {
                     counter++;
                     if (counter < meetingLength) {
-                        game.getJoinedPlayers().forEach(player -> player.sendMessage("投票まで" + (meetingLength - counter) + "秒"));
+                        game.getDisplayManager().allSendActionBarMessage("投票まで" + (meetingLength - counter) + "秒");
                     } else {
                         game.changeState(game.getVotingState());
                         this.cancel();

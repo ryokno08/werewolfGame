@@ -129,8 +129,7 @@ public class GameEventManager implements Listener {
         if (!game.wasStarted()) return;
 
         Player player = event.getPlayer();
-        WPlayer wPlayer = game.getWPlayer(player.getUniqueId());
-        wPlayer.setDied(true);
+        game.removePlayer(player);
 
         game.confirmGame();
     }

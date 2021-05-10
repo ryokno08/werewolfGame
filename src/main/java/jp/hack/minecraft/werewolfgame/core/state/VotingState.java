@@ -1,12 +1,9 @@
 package jp.hack.minecraft.werewolfgame.core.state;
 
 import jp.hack.minecraft.werewolfgame.Game;
-import jp.hack.minecraft.werewolfgame.GameConfigurator;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
-
-import java.util.*;
 
 public class VotingState extends GameState {
     private BukkitTask task;
@@ -40,7 +37,7 @@ public class VotingState extends GameState {
                 .map(wPlayer -> plugin.getServer().getPlayer(wPlayer.getUuid()))
                 .forEach(player -> {
                     player.getInventory().addItem(game.getGuiLogic().getItem());
-                    game.getScoreboardVoted().setScore(player.getUniqueId(), 0);
+                    game.getVotingBoard().setScore(player.getDisplayName(), 0);
                 });
         if (task == null) {
             task = new BukkitRunnable() {
@@ -53,7 +50,7 @@ public class VotingState extends GameState {
                         game.stopVote();
                         this.cancel();
                     } else {
-                        game.getJoinedPlayers().forEach(player -> player.sendMessage("投票終了まで" + (limitOfVoting - counter) + "秒"));
+                        game.getDisplayManager().allSendActionBarMessage("投票終了まで" + (limitOfVoting - counter) + "秒");
                     }
                 }
 /*

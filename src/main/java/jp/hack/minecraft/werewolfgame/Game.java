@@ -3,8 +3,9 @@ package jp.hack.minecraft.werewolfgame;
 import jp.hack.minecraft.werewolfgame.core.Cadaver;
 import jp.hack.minecraft.werewolfgame.core.Colors;
 import jp.hack.minecraft.werewolfgame.core.Role;
+import jp.hack.minecraft.werewolfgame.core.display.Scoreboard;
+import jp.hack.minecraft.werewolfgame.core.display.TaskBoard;
 import jp.hack.minecraft.werewolfgame.core.display.WPlayerInventory;
-import jp.hack.minecraft.werewolfgame.core.display.scoreboard.Scoreboard;
 import jp.hack.minecraft.werewolfgame.core.task.TaskManager;
 import jp.hack.minecraft.werewolfgame.core.WPlayer;
 import jp.hack.minecraft.werewolfgame.core.display.DisplayManager;
@@ -46,6 +47,8 @@ public class Game {
     private DisplayManager displayManager;
     private TaskManager taskManager;
     private WPlayerInventory wPlayerInventory;
+    private Scoreboard votingBoard;
+    private TaskBoard taskBoard;
 
     private Boolean wasStarted = false;
     private int numberOfImposter = 1;
@@ -57,8 +60,6 @@ public class Game {
     private final ItemStack itemForKill = new ItemStack(Material.IRON_SWORD);
     private final ItemStack itemForReport = new ItemStack(Material.COMPASS);
 
-    private final Scoreboard scoreboardPlayerList = new Scoreboard("playerList", "プレイヤー");
-    private final Scoreboard scoreboardVoted = new Scoreboard("voted", "投票済み", DisplaySlot.PLAYER_LIST);
 
     //ゲームの初期状態はロビーでスタート
     private LobbyState lobbyState;
@@ -188,14 +189,6 @@ public class Game {
         return itemForReport;
     }
 
-    public Scoreboard getScoreboardPlayerList() {
-        return scoreboardPlayerList;
-    }
-
-    public Scoreboard getScoreboardVoted() {
-        return scoreboardVoted;
-    }
-
     public Role getPlayerRole(UUID uuid) {
         return getWPlayer(uuid).getRole();
     }
@@ -248,11 +241,19 @@ public class Game {
         return votingState;
     }
 
+
     public GuiLogic getGuiLogic() {
         if (guiLogic == null) guiLogic = new GuiLogic(plugin, 3, "投票先を選んでください");
         return guiLogic;
     }
 
+    public Scoreboard getVotingBoard() {
+        return votingBoard;
+    }
+
+    public TaskBoard getTaskBoard() {
+        return taskBoard;
+    }
 
     Game(JavaPlugin plugin, LocationConfiguration configuration) {
         this.plugin = plugin;
@@ -270,6 +271,11 @@ public class Game {
         displayManager.setTaskBarVisible(false);
         taskManager.setSumOfTask(numberOfTasks * (wPlayers.size() - numberOfImposter));
         taskManager.taskBarUpdate();
+
+        votingBoard = new Scoreboard(plugin);
+        votingBoard.setObjective("投票", "dummy", DisplaySlot.SIDEBAR);
+        taskBoard = new TaskBoard(plugin);
+        taskBoard.resetAll();
 
         currentState = lobbyState;
         currentState.onActive();
@@ -404,6 +410,11 @@ public class Game {
         displayManager.allSendMessage("007", reportedPlayer.getDisplayName());
         displayManager.allMakeSound(Sound.ENTITY_ZOMBIE_VILLAGER_AMBIENT, SoundCategory.MASTER, (float) 1.0, (float) 0.3);
         changeState(meetingState);
+    }
+
+    public void removePlayer(Player player) {
+        joinedPlayers.remove(player);
+        wPlayers.remove(player.getUniqueId());
     }
 
     public void playerDied(Player player) {

@@ -45,21 +45,24 @@ public class TaskManager {
 
     public void onTaskFinished(Player player, int no) {
 
+        DisplayManager manager = game.getDisplayManager();
         WPlayer wPlayer = game.getWPlayer(player.getUniqueId());
+
         if (wPlayer.getRole().isImposter()) {
-            player.sendMessage("インポスターはタスクができません");
+            manager.sendErrorMessage(player, "you.notClueMate");
             return;
         }
         List<Task> taskList = wPlayer.getTasks();
 
         if (no > taskList.size() - 1 || no < 0) {
-            player.sendMessage("存在しないタスクです");
+            manager.sendErrorMessage(player, "command.undefinedTask");
             return;
         }
         taskList.get(no).finished();
-        player.sendMessage(ChatColor.GREEN.toString() + no + "番目のタスク状況をtrueに変更しました");
+        manager.sendMessage(player, "009", no);
 
         updateFinishedTask();
+        manager.updateTaskBoard(player);
         game.confirmGame();
 
     }

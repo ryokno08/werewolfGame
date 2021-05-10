@@ -3,6 +3,8 @@ package jp.hack.minecraft.werewolfgame.core.display;
 import jp.hack.minecraft.werewolfgame.Game;
 import jp.hack.minecraft.werewolfgame.core.WPlayer;
 import jp.hack.minecraft.werewolfgame.util.Messages;
+import net.md_5.bungee.api.ChatMessageType;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -15,7 +17,6 @@ import java.util.Map;
 public class DisplayManager {
     private Game game;
     private TaskBar taskBar;
-    private VoteBoard voteBoard;
     private WPlayerInventory wPlayerInventory;
 
     final String IMPOSTER_MESSAGE = ChatColor.RED + "インポスター";
@@ -28,7 +29,6 @@ public class DisplayManager {
         this.game = game;
         taskBar = new TaskBar();
         taskBar.setVisible(false);
-        voteBoard = new VoteBoard();
         wPlayerInventory = new WPlayerInventory(game.getItemForReport(), game.getItemForKill());
     }
 
@@ -53,11 +53,15 @@ public class DisplayManager {
     public void allSendMessage(String code, String... args) {
         game.getJoinedPlayers().forEach(p->p.sendMessage(Messages.message(code, (Object) args)));
     }
-    public void sendMessage(Player player, String code, String... args) {
-        player.sendMessage(Messages.message(code, (Object) args));
+    public void sendMessage(Player player, String code, Object args) {
+        player.sendMessage(Messages.message(code, args));
     }
-    public void sendErrorMessage(Player player, String code, String... args) {
-        player.sendMessage(Messages.error(code, (Object)args));
+    public void sendErrorMessage(Player player, String code, Object... args) {
+        player.sendMessage(Messages.error(code, args));
+    }
+    public void allSendActionBarMessage(String text) {
+        TextComponent component = new TextComponent(text);
+        game.getJoinedPlayers().forEach(p -> p.spigot().sendMessage(ChatMessageType.ACTION_BAR, component));
     }
     public void allSendTitle(String title) {
         game.getJoinedPlayers().forEach(player -> {
@@ -167,5 +171,9 @@ public class DisplayManager {
     public void clear(Player player) {
         clearInventory(player);
         clearEffect(player);
+    }
+
+    public void updateTaskBoard(Player player) {
+        game.getTaskBoard().update(player);
     }
 }
