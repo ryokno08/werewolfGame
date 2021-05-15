@@ -101,6 +101,7 @@ public class GuiLogic {
                                 e.setCancelled(true);
                                 game.voteToPlayer(e.getWhoClicked().getUniqueId(), uuid);
                                 game.getVotingBoard().getScores().put(e.getWhoClicked().getName(), 1);
+                                e.getWhoClicked().closeInventory();
                             })
                     );
                 });

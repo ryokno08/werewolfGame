@@ -90,8 +90,6 @@ public class VotingState extends GameState {
 
     @Override
     public void onInactive() {
-        game.getJoinedPlayers().forEach(player -> player.sendMessage("投票が終了しました"));
-        game.getJoinedPlayers().forEach(player -> player.getInventory().removeItem(game.getGuiLogic().getItem()));
         super.onInactive();
     }
 

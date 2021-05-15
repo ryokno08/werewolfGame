@@ -464,7 +464,7 @@ public class Game {
     }
 
     private void onVote() {
-        if (this.votedPlayers.size() >= this.getWPlayers().values().stream().map(wPlayer -> !wPlayer.isDied()).toArray().length) {
+        if (this.votedPlayers.size() >= this.getWPlayers().values().stream().filter(wPlayer -> !wPlayer.isDied()).toArray().length) {
             votingState.cancelTask();
             stopVote();
         }
@@ -500,6 +500,9 @@ public class Game {
             }
         }
 
+
+        getJoinedPlayers().forEach(player -> player.sendMessage("投票が終了しました"));
+        getJoinedPlayers().forEach(player -> player.getInventory().removeItem(getGuiLogic().getItem()));
 
         this.changeState(this.getPlayingState());
 
