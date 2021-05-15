@@ -6,39 +6,47 @@ import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Score;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+
 public class Scoreboard {
     final JavaPlugin plugin;
-    final org.bukkit.scoreboard.Scoreboard scoreboard;
-    Objective objective;
+    private final String name;
+    private final String criteria;
+    private final DisplaySlot slot;
+    private final Map<String, Integer> scores = new HashMap<>();
+    private final Map<UUID, org.bukkit.scoreboard.Scoreboard> eachBoards = new HashMap<>();
 
-    public Scoreboard(JavaPlugin plugin) {
+    public Scoreboard(JavaPlugin plugin, String name, DisplaySlot slot) {
         this.plugin = plugin;
-        scoreboard = plugin.getServer().getScoreboardManager().getNewScoreboard();
-    }
-
-    public void setObjective(String name, String criteria, DisplaySlot slot) {
-        objective = scoreboard.registerNewObjective(name, criteria);
-        objective.setDisplaySlot(slot);
+        this.name = name;
+        this.criteria = "dummy";
+        this.slot = slot;
     }
 
     public void setPlayer(Player player) {
-        player.setScoreboard(scoreboard);
+        org.bukkit.scoreboard.Scoreboard scoreboard = getNewBoard();
+        eachBoards.put(player.getUniqueId(), scoreboard);
+        player.setScoreboard(getNewBoard());
     }
 
-    public Objective getObjective() {
-        return objective;
-    }
+    private org.bukkit.scoreboard.Scoreboard getNewBoard() {
+        org.bukkit.scoreboard.Scoreboard scoreboard = plugin.getServer().getScoreboardManager().getNewScoreboard();
+        Objective objective = scoreboard.registerNewObjective(name, criteria);
+        objective.setDisplaySlot(slot);
+        scores.entrySet().forEach(v-> {
+            objective.getScore(v.getKey()).setScore(v.getValue());
+        });
 
-    public org.bukkit.scoreboard.Scoreboard getScoreboard() {
         return scoreboard;
     }
 
-    public void setScore(String name, int value) {
-        Score score = objective.getScore(name);
-        score.setScore(value);
+    public Map<String, Integer> getScores() {
+        return scores;
     }
 
-    public void removeScore(Player player, String name) {
-        player.getScoreboard().resetScores(name);
+    public void removeScore(Player player, String entry) {
+        eachBoards.get(player.getUniqueId()).resetScores(entry);
     }
 }

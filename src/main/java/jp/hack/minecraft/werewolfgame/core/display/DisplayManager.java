@@ -50,11 +50,20 @@ public class DisplayManager {
     public void allMakeSound(Sound sound, SoundCategory soundCategory, float volume, float pitch) {
         game.getJoinedPlayers().forEach(player -> player.playSound(player.getLocation(), sound, soundCategory, volume, pitch));
     }
-    public void allSendMessage(String code, String... args) {
-        game.getJoinedPlayers().forEach(p->p.sendMessage(Messages.message(code, (Object) args)));
+    public void allSendMessage(String code, String arg) {
+        game.getJoinedPlayers().forEach(p->p.sendMessage(Messages.message(code) + arg));
     }
-    public void sendMessage(Player player, String code, Object args) {
+    public void allSendMessage(String code, Object... args) {
+        game.getJoinedPlayers().forEach(p->p.sendMessage(Messages.message(code, args)));
+    }
+    public void allSendMessage(String code) {
+        game.getJoinedPlayers().forEach(p->p.sendMessage(Messages.message(code)));
+    }
+    public void sendMessage(Player player, String code, Integer args) {
         player.sendMessage(Messages.message(code, args));
+    }
+    public void sendMessage(Player player, String code) {
+        player.sendMessage(Messages.message(code));
     }
     public void sendErrorMessage(Player player, String code, Object... args) {
         player.sendMessage(Messages.error(code, args));

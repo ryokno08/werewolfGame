@@ -272,8 +272,7 @@ public class Game {
         taskManager.setSumOfTask(numberOfTasks * (wPlayers.size() - numberOfImposter));
         taskManager.taskBarUpdate();
 
-        votingBoard = new Scoreboard(plugin);
-        votingBoard.setObjective("投票", "dummy", DisplaySlot.SIDEBAR);
+        votingBoard = new Scoreboard(plugin, "投票", DisplaySlot.SIDEBAR);
         taskBoard = new TaskBoard(plugin);
         taskBoard.resetAll();
 
@@ -407,7 +406,7 @@ public class Game {
         cadavers.clear();
 
         displayManager.allSendTitle(ChatColor.BOLD.toString() + ChatColor.RED.toString() + diedPlayer.getDisplayName(), Messages.message("004"));
-        displayManager.allSendMessage("007", reportedPlayer.getDisplayName());
+        displayManager.allSendMessage("007" + reportedPlayer.getDisplayName());
         displayManager.allMakeSound(Sound.ENTITY_ZOMBIE_VILLAGER_AMBIENT, SoundCategory.MASTER, (float) 1.0, (float) 0.3);
         changeState(meetingState);
     }
@@ -601,7 +600,7 @@ public class Game {
     public void ejectPlayer(UUID uuid) {
         Player player = plugin.getServer().getPlayer(uuid);
         displayManager.allSendMessage("002", player.getDisplayName());
-        displayManager.log(Messages.message("002", player.getDisplayName()));
+        displayManager.log(Messages.message("002") + player.getDisplayName());
 
         // player.setGameMode(GameMode.SPECTATOR);
         WPlayer wPlayer = getWPlayer(player.getUniqueId());

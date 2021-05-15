@@ -71,7 +71,7 @@ public class GuiLogic {
         gui.setItem(26, skipBuilder.asGuiItem(e -> {
             e.setCancelled(true);
             game.voteToSkip(e.getWhoClicked().getUniqueId());
-            game.getVotingBoard().setScore(e.getWhoClicked().getName(), 1);
+            game.getVotingBoard().getScores().put(e.getWhoClicked().getName(), 1);
         }));
         List<GuiItem> heads = loadHeads();
         for (int i = 0; i < heads.size(); i++) {
@@ -100,7 +100,7 @@ public class GuiLogic {
                             skullBuilder.asGuiItem(e -> {
                                 e.setCancelled(true);
                                 game.voteToPlayer(e.getWhoClicked().getUniqueId(), uuid);
-                                game.getVotingBoard().setScore(e.getWhoClicked().getName(), 1);
+                                game.getVotingBoard().getScores().put(e.getWhoClicked().getName(), 1);
                             })
                     );
                 });

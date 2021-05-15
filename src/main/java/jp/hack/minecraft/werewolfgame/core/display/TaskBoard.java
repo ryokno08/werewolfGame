@@ -8,20 +8,20 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scoreboard.DisplaySlot;
 
+import javax.print.attribute.standard.MediaSize;
 import java.util.*;
 
 public class TaskBoard extends Scoreboard {
     private final String TASK = "Task";
 
     public TaskBoard(JavaPlugin plugin) {
-        super(plugin);
+        super(plugin, "TaskList", DisplaySlot.SIDEBAR);
     }
 
     public void resetAll() {
-        super.setObjective("TaskList", "dummy", DisplaySlot.SIDEBAR);
         Game game = ((GameConfigurator) plugin).getGame();
         for (int i = 0; i < game.getNumberOfTasks(); i++) {
-            super.setScore(TASK + i, 1);
+            super.getScores().put(TASK + i, i);
         }
         for (Player player : game.getJoinedPlayers()) {
             super.setPlayer(player);
@@ -35,7 +35,7 @@ public class TaskBoard extends Scoreboard {
         org.bukkit.scoreboard.Scoreboard playerTaskBoard = player.getScoreboard();
 
         for (int i=0; i<tasks.size(); i++) {
-            if (!!! playerTaskBoard.getScores(TASK + i).isEmpty()) {
+            if (! playerTaskBoard.getScores(TASK + i).isEmpty()) {
                 if (tasks.get(i).isFinished()) {
                     playerTaskBoard.resetScores(TASK + i);
                 }

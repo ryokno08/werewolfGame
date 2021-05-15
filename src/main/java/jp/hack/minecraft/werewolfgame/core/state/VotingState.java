@@ -37,7 +37,7 @@ public class VotingState extends GameState {
                 .map(wPlayer -> plugin.getServer().getPlayer(wPlayer.getUuid()))
                 .forEach(player -> {
                     player.getInventory().addItem(game.getGuiLogic().getItem());
-                    game.getVotingBoard().setScore(player.getDisplayName(), 0);
+                    game.getVotingBoard().getScores().put(player.getDisplayName(), 0);
                 });
         if (task == null) {
             task = new BukkitRunnable() {
