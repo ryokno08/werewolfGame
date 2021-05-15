@@ -43,9 +43,6 @@ public class DisplayManager {
     public void invisible(Player p) {
         p.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 10000 * 20, 1, false, false));
     }
-    public void changeGameMode(Player player, GameMode gameMode) {
-        player.setGameMode(gameMode);
-    }
     public void clearEffect(Player p) {
         p.removePotionEffect(PotionEffectType.BLINDNESS);
         p.removePotionEffect(PotionEffectType.INVISIBILITY);
