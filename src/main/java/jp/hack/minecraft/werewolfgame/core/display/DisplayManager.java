@@ -56,7 +56,7 @@ public class DisplayManager {
     public void allSendMessage(String code) {
         game.getJoinedPlayers().forEach(p->p.sendMessage(Messages.message(code)));
     }
-    public void sendMessage(Player player, String code, Integer args) {
+    public void sendMessage(Player player, String code, Object args) {
         player.sendMessage(Messages.message(code, args));
     }
     public void sendMessage(Player player, String code) {

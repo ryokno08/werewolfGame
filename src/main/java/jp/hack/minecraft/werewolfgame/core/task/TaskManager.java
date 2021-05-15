@@ -64,7 +64,7 @@ public class TaskManager {
 
         updateFinishedTask();
         manager.updateTaskBoard(player);
-        if ( !wPlayer.getTasks().stream().filter(t -> !t.isFinished()) .isParallel() && wPlayer.isDied() ) {
+        if ( wPlayer.getTasks().stream().allMatch(Task::isFinished) && wPlayer.isDied() ) {
             player.setGameMode(GameMode.SPECTATOR);
         }
         game.confirmGame();

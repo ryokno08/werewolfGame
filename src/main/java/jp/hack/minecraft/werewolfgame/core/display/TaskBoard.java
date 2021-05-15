@@ -8,7 +8,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scoreboard.DisplaySlot;
 
-import javax.print.attribute.standard.MediaSize;
 import java.util.*;
 
 public class TaskBoard extends Scoreboard {

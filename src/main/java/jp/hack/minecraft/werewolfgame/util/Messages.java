@@ -13,7 +13,7 @@ public class Messages {
         messages.put("001", "議論開始");
         messages.put("002", "%sが追放されました");
         messages.put("003", "ゲーム開始まで%d秒");
-        messages.put("004", "の死体が発見されました");
+        messages.put("004", "%sの死体が発見されました");
         messages.put("005", "あなたは%sです");
         messages.put("006", "誰も追放されませんでした");
         messages.put("007", "死体の発見者：%s");
