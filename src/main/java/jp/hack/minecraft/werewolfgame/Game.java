@@ -464,7 +464,7 @@ public class Game {
     }
 
     private void onVote() {
-        if (this.votedPlayers.size() >= this.getJoinedPlayers().size()) {
+        if (this.votedPlayers.size() >= this.getWPlayers().values().stream().map(wPlayer -> !wPlayer.isDied()).toArray().length) {
             votingState.cancelTask();
             stopVote();
         }
