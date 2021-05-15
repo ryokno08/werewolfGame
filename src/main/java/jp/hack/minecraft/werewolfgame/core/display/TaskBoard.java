@@ -21,7 +21,7 @@ public class TaskBoard extends Scoreboard {
     public void resetAll() {
         Game game = ((GameConfigurator) plugin).getGame();
         for (int i = 0; i < game.getNumberOfTasks(); i++) {
-            super.getScores().put(TASK + i, i);
+            super.getScores().put(TASK + i, 1);
         }
         for (Player player : game.getJoinedPlayers()) {
             super.setPlayer(player);
@@ -32,7 +32,7 @@ public class TaskBoard extends Scoreboard {
         Game game = ((GameConfigurator)plugin).getGame();
         WPlayer wPlayer = game.getWPlayer(player.getUniqueId());
         List<Task> tasks = wPlayer.getTasks();
-        org.bukkit.scoreboard.Scoreboard playerTaskBoard = player.getScoreboard();
+        org.bukkit.scoreboard.Scoreboard playerTaskBoard = super.getEachBoards().get(player.getUniqueId());
 
         for (int i=0; i<tasks.size(); i++) {
             if (! playerTaskBoard.getScores(TASK + i).isEmpty()) {

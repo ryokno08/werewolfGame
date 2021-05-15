@@ -46,6 +46,10 @@ public class Scoreboard {
         return scores;
     }
 
+    public Map<UUID, org.bukkit.scoreboard.Scoreboard> getEachBoards() {
+        return eachBoards;
+    }
+
     public void removeScore(Player player, String entry) {
         eachBoards.get(player.getUniqueId()).resetScores(entry);
     }

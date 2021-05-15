@@ -16,7 +16,7 @@ public class Messages {
         messages.put("004", "の死体が発見されました");
         messages.put("005", "あなたは%sです");
         messages.put("006", "誰も追放されませんでした");
-        messages.put("007", "死体の発見者：");
+        messages.put("007", "死体の発見者：%s");
         messages.put("008", "リポートされました");
         messages.put("009", "%d番目のタスク状況をtrueに変更しました");
 
@@ -43,10 +43,6 @@ public class Messages {
 
     public static String message(String code, Object... args) {
         if (_instance.messages.containsKey(code)) return ChatColor.GREEN + String.format(_instance.messages.get(code), args);
-        return error("001");
-    }
-    public static String message(String code) {
-        if (_instance.messages.containsKey(code)) return ChatColor.GREEN + _instance.messages.get(code);
         return error("001");
     }
 

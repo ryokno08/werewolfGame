@@ -50,10 +50,7 @@ public class DisplayManager {
     public void allMakeSound(Sound sound, SoundCategory soundCategory, float volume, float pitch) {
         game.getJoinedPlayers().forEach(player -> player.playSound(player.getLocation(), sound, soundCategory, volume, pitch));
     }
-    public void allSendMessage(String code, String arg) {
-        game.getJoinedPlayers().forEach(p->p.sendMessage(Messages.message(code) + arg));
-    }
-    public void allSendMessage(String code, Object... args) {
+    public void allSendMessage(String code, Object args) {
         game.getJoinedPlayers().forEach(p->p.sendMessage(Messages.message(code, args)));
     }
     public void allSendMessage(String code) {

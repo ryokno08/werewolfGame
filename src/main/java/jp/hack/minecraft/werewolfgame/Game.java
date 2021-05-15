@@ -396,7 +396,7 @@ public class Game {
         WPlayer reportedWPlayer = getWPlayer(reportedPlayer.getUniqueId());
 
         reportedWPlayer.setReport(true);
-        displayManager.allSendTitle(ChatColor.GREEN + Messages.message("008"), reportedPlayer.getDisplayName());
+        displayManager.allSendTitle(ChatColor.GREEN + Messages.message("008", reportedPlayer.getDisplayName()));
         displayManager.allMakeSound(Sound.ENTITY_LIGHTNING_THUNDER, SoundCategory.MASTER, (float) 1.0, (float) 1.0);
         changeState(meetingState);
     }
@@ -405,8 +405,8 @@ public class Game {
         cadavers.values().forEach(Cadaver::removeBlock);
         cadavers.clear();
 
-        displayManager.allSendTitle(ChatColor.BOLD.toString() + ChatColor.RED.toString() + diedPlayer.getDisplayName(), Messages.message("004"));
-        displayManager.allSendMessage("007" + reportedPlayer.getDisplayName());
+        displayManager.allSendTitle(ChatColor.BOLD.toString() + ChatColor.RED.toString() + Messages.message("004", diedPlayer.getDisplayName()));
+        displayManager.allSendMessage("007", reportedPlayer.getDisplayName());
         displayManager.allMakeSound(Sound.ENTITY_ZOMBIE_VILLAGER_AMBIENT, SoundCategory.MASTER, (float) 1.0, (float) 0.3);
         changeState(meetingState);
     }
@@ -600,7 +600,7 @@ public class Game {
     public void ejectPlayer(UUID uuid) {
         Player player = plugin.getServer().getPlayer(uuid);
         displayManager.allSendMessage("002", player.getDisplayName());
-        displayManager.log(Messages.message("002") + player.getDisplayName());
+        displayManager.log(Messages.message("002", player.getDisplayName()));
 
         // player.setGameMode(GameMode.SPECTATOR);
         WPlayer wPlayer = getWPlayer(player.getUniqueId());
