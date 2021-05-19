@@ -1,7 +1,6 @@
 package jp.hack.minecraft.werewolfgame.core.state;
 
 import jp.hack.minecraft.werewolfgame.Game;
-import jp.hack.minecraft.werewolfgame.core.display.DisplayManager;
 import jp.hack.minecraft.werewolfgame.core.task.TaskManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -24,9 +23,13 @@ public class PlayingState extends GameState {
     @Override
     public void onActive() {
         super.onActive();
-        plugin.getLogger().info("PlayingStateに切り替わりました");
+        game.getDisplayManager().log("PlayingStateに切り替わりました");
 
-        game.getJoinedPlayers().forEach(player -> player.teleport(game.getMeetingPos()));
+        game.getJoinedPlayers().forEach(player -> {
+            player.teleport(game.getMeetingPos());
+            game.getDisplayManager().resetAllInventory();
+        });
+        game.getTaskBoard().register();
     }
 
     @Override
@@ -35,6 +38,13 @@ public class PlayingState extends GameState {
 
         TaskManager taskManager = game.getTaskManager();
         taskManager.taskBarUpdate();
+
+        game.getJoinedPlayers().forEach(player -> {
+            player.getInventory().clear();
+            game.getDisplayManager().resetColorArmor(player);
+        });
+
+        game.getTaskBoard().unregister();
     }
 
     @Override

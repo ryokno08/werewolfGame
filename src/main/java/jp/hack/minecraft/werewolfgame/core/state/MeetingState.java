@@ -32,9 +32,9 @@ public class MeetingState extends GameState {
     @Override
     public void onActive() {
         super.onActive();
-        // ((GameConfigurator)plugin).getGame().nextStates.add(((GameConfigurator)plugin).getGame().votingState);
-
         game.getDisplayManager().log("MeetingStateに切り替わりました");
+
+        game.getVoteBoard().register();
         // 設定などからロードする、単位は秒
         final int meetingLength = 15;
 
@@ -57,7 +57,7 @@ public class MeetingState extends GameState {
             p.teleport(loc);
         }
 
-        game.getJoinedPlayers().forEach(player -> player.sendTitle(Messages.message("001"), "", 10, 20, 10));
+        game.getDisplayManager().allSendTitle(Messages.message("001"));
         if (task == null) {
             task = new BukkitRunnable() {
                 int counter = 0;
@@ -84,14 +84,18 @@ public class MeetingState extends GameState {
     @Override
     public void onInactive() {
         super.onInactive();
-        task.cancel();
+        if (task != null) {
+            if (!task.isCancelled()) task.cancel();
+        }
         task = null;
     }
 
     @Override
     public void onEnd() {
         super.onEnd();
-        task.cancel();
+        if (task != null) {
+            if (!task.isCancelled()) task.cancel();
+        }
         task = null;
     }
 }

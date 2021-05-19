@@ -7,6 +7,7 @@ import jp.hack.minecraft.werewolfgame.core.WPlayer;
 import jp.hack.minecraft.werewolfgame.core.gamerule.PlayerKill;
 import jp.hack.minecraft.werewolfgame.core.state.PlayingState;
 import jp.hack.minecraft.werewolfgame.core.state.VotingState;
+import jp.hack.minecraft.werewolfgame.util.Messages;
 import me.mattstudios.mfgui.gui.components.ItemBuilder;
 import me.mattstudios.mfgui.gui.guis.Gui;
 import me.mattstudios.mfgui.gui.guis.GuiItem;
@@ -51,22 +52,20 @@ public class GameEventManager implements Listener {
         this.game = ((GameConfigurator) this.plugin).getGame();
 
         if (game == null) return;
-        if (!game.wasStarted()) return;
+        if (game.wasStarted()) return;
 
         Player player = event.getPlayer();
-        WPlayer wPlayer = game.getWPlayer(player.getUniqueId());
+        if (game.addWPlayer(player).equals(Game.ErrorJudge.WPLAYERS_FULL)) {
+            player.sendMessage(Messages.message("game.fullPlayers"));
+        }
 
         BukkitScheduler scheduler = plugin.getServer().getScheduler();
         scheduler.scheduleSyncDelayedTask(plugin, () -> {
             // デフォルト値の設定
             // if(lobbyLocation == null)  lobbyLocation = new Location(player.getWorld(),182,5,-134);
             if (game.getLobbyPos() != null) player.teleport(game.getLobbyPos());
+            player.setGameMode(GameMode.ADVENTURE);
 
-            if (wPlayer.isDied()) {
-                game.getDisplayManager().invisible(player);
-                game.getDisplayManager().takeOffArmor(player);
-                game.getDisplayManager().showDeath(player, "because of you");
-            }
         }, 1);
     }
 
@@ -125,13 +124,17 @@ public class GameEventManager implements Listener {
 
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event) {
+        Player player = event.getPlayer();
         this.game = ((GameConfigurator) this.plugin).getGame();
 
         if (game == null) return;
         if (!game.wasStarted()) return;
 
-        Player player = event.getPlayer();
+        game.getDisplayManager().clearInventory(player);
+        game.getDisplayManager().clearEffect(player);
         game.removePlayer(player);
+
+        player.setGameMode(GameMode.SPECTATOR);
 
         game.confirmGame();
     }

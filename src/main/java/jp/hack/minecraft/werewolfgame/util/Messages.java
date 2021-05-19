@@ -13,17 +13,23 @@ public class Messages {
         messages.put("001", "議論開始");
         messages.put("002", "%sが追放されました");
         messages.put("003", "ゲーム開始まで%d秒");
-        messages.put("004", "%sの死体が発見されました");
+        messages.put("004", "の死体が発見されました");
         messages.put("005", "あなたは%sです");
         messages.put("006", "誰も追放されませんでした");
         messages.put("007", "死体の発見者：%s");
         messages.put("008", "リポートされました");
         messages.put("009", "%d番目のタスク状況をtrueに変更しました");
+        messages.put("you.voted", "%sに投票しました");
+        messages.put("you.skipped", "スキップに投票しました");
+        messages.put("other.voted", "%sが%sに投票しました");
+        messages.put("other.skipped", "%sがスキップに投票しました");
+        messages.put("vote.end", "投票が終わりました");
 
-        errors.put("you.notPlayer", "あなたはプレイヤーではないため実行できません。早くサーバーに入って");
+        errors.put("you.notPlayer", "あなたはプレイヤーではないため実行できません。早くサーバーに入って！");
         errors.put("you.notJoinYet", "あなたはゲームに参加していないため、実行できません");
         errors.put("you.notClueMate", "あなたはクルーメイトではないため、タスクはできません");
-        errors.put("you.alreadyReported", "リポートは一回のみすることができます");
+        errors.put("you.alreadyReported", "すでにリポートを消費しているため、リポートできません");
+        errors.put("you.alreadyVoted", "すでに投票をしているため、投票できません");
         errors.put("you.cannotCommandNow", "このコマンドは現在実行できません");
         errors.put("you.disturbImposter", "インポスターの邪魔になっています！速やかに退去してください");
 
@@ -33,6 +39,7 @@ public class Messages {
         errors.put("game.nullData", "%sがNULLです");
         errors.put("game.noData", "%sの設定がありません");
         errors.put("game.noPlayers", "プレイヤーがいません");
+        errors.put("game.fullPlayers", "プレイヤーが満員です");
 
         errors.put("command.noArgument","%sが入力されていません");
         errors.put("command.illegalArgument","正しい引数を入力してください");

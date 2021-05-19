@@ -15,15 +15,21 @@ public class TaskBoard extends Scoreboard {
 
     public TaskBoard(JavaPlugin plugin) {
         super(plugin, "TaskList", DisplaySlot.SIDEBAR);
+        resetAll();
     }
 
-    public void resetAll() {
+    @Override
+    public void register(){
+        super.register();
+
+        Game game = ((GameConfigurator) plugin).getGame();
+        setPlayers(game.getJoinedPlayers());
+    }
+
+    private void resetAll() {
         Game game = ((GameConfigurator) plugin).getGame();
         for (int i = 0; i < game.getNumberOfTasks(); i++) {
             super.getScores().put(TASK + i, 1);
-        }
-        for (Player player : game.getJoinedPlayers()) {
-            super.setPlayer(player);
         }
     }
 

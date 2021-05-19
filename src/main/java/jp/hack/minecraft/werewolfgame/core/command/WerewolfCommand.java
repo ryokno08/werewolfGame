@@ -15,6 +15,7 @@ public class WerewolfCommand extends CommandMaster {
         addSubCommand(new HelpCommand(this.manager)); // サブコマンドの追加 この場合 /werewolf help を追加したことになる
         addSubCommand(new SetLobbyCommand(this.manager));
         addSubCommand(new SetMeetingCommand(this.manager));
+        addSubCommand(new ColorCommand(this.manager));
         addSubCommand(new CompleteCommand(this.manager));
         addSubCommand(new StartCommand(this.manager));
         addSubCommand(new StopCommand(this.manager));

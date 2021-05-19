@@ -2,7 +2,7 @@ package jp.hack.minecraft.werewolfgame.core.state;
 
 import jp.hack.minecraft.werewolfgame.Game;
 import jp.hack.minecraft.werewolfgame.core.WPlayer;
-import jp.hack.minecraft.werewolfgame.core.display.WPlayerInventory;
+import jp.hack.minecraft.werewolfgame.core.display.DefaultInventory;
 import jp.hack.minecraft.werewolfgame.util.Messages;
 import org.bukkit.GameMode;
 import org.bukkit.Sound;
@@ -46,6 +46,8 @@ public class LobbyState extends GameState {
     public void onInactive() {
         super.onInactive();
 
+        game.resetScoreboard();
+
         for (Player player : game.getJoinedPlayers()) {
             player.playSound(player.getLocation(), Sound.ENTITY_ZOMBIE_VILLAGER_AMBIENT, SoundCategory.MASTER, (float) 1.0, (float) 0.3);
             player.setGameMode(GameMode.ADVENTURE);
@@ -54,10 +56,10 @@ public class LobbyState extends GameState {
             WPlayer wPlayer = game.getWPlayer(player.getUniqueId());
             if (wPlayer.getRole().isImposter()) {
                 game.getDisplayManager().youAreImposter(player);
-                game.getDisplayManager().resetInventory(player, WPlayerInventory.WPlayerInventoryType.IMPOSTER_INV);
+                game.getDisplayManager().resetInventory(player, DefaultInventory.InventoryType.IMPOSTER_INV);
             } else {
                 game.getDisplayManager().youAreClueMate(player);
-                game.getDisplayManager().resetInventory(player, WPlayerInventory.WPlayerInventoryType.CLUE_INV);
+                game.getDisplayManager().resetInventory(player, DefaultInventory.InventoryType.CLUE_INV);
             }
         }
     }

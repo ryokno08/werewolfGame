@@ -1,7 +1,9 @@
 package jp.hack.minecraft.werewolfgame.core.command.werewolf;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 import jp.hack.minecraft.werewolfgame.Game;
@@ -47,21 +49,20 @@ public class ColorCommand extends CommandMaster {
         }
 
         if (args.length < 2) {
-            sender.sendMessage(Messages.error("command.noArgument", "タスクの数字"));
+            sender.sendMessage(Messages.error("command.noArgument", "カラー"));
             return true;
         }
 
-        Color color;
+        String colorName;
         try {
-            color = Colors.values().values().stream().filter(v->v.toString().equals(args[1])).findFirst().get();
-        } catch (NullPointerException e) {
+            colorName = Colors.values().keySet().stream().filter(v->v.equals(args[1])).findFirst().get();
+        } catch (NullPointerException | NoSuchElementException e) {
             sender.sendMessage(Messages.error("command.illegalArgument"));
-            e.printStackTrace();
             return true;
         }
 
         Player player = (Player) sender;
-        game.getDisplayManager().changeWPlayerColor(player, args[1], color);
+        game.changePlayerColor(player, colorName);
         sender.sendMessage(ChatColor.GREEN + "色を変更しました");
         return true;
 
@@ -70,6 +71,6 @@ public class ColorCommand extends CommandMaster {
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
         // return subCommands.keySet().stream().filter(s -> s.startsWith(args[0])).collect(Collectors.toList());
-        return Colors.values().values().stream().map(Color::toString).collect(Collectors.toList());
+        return new ArrayList<>(Colors.values().keySet());
     }
 }

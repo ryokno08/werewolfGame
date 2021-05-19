@@ -4,6 +4,8 @@ import jp.hack.minecraft.werewolfgame.core.command.CommandManager;
 import jp.hack.minecraft.werewolfgame.core.command.WerewolfCommand;
 import jp.hack.minecraft.werewolfgame.logic.GameEventManager;
 import jp.hack.minecraft.werewolfgame.util.LocationConfiguration;
+import org.bukkit.Difficulty;
+import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -25,15 +27,17 @@ public final class Main extends JavaPlugin implements GameConfigurator {
         super.onEnable();
         getServer().getPluginManager().registerEvents(new GameEventManager(this), this); // イベントはここに統一
 
-
 //        configuration = new LocationConfiguration(new File(getDataFolder(), "config.yml"));
         if (configuration == null)
             configuration = new LocationConfiguration(this);
         configuration.load();
 
-        if (game == null)
+        if (game == null) {
             game = new Game(this, configuration);
-        //game.initialize();
+            game.initialize();
+        }
+
+        game.getLobbyPos().getWorld().setDifficulty(Difficulty.PEACEFUL);
 
         players = new ArrayList<>();
         if (commandManager == null) {

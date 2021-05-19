@@ -9,7 +9,6 @@ import java.util.UUID;
 
 public class WPlayer {
     private final UUID uuid;
-    private UUID votedPlayerUUID;
     private Color color;
     private String colorName;
     private Role role;
@@ -18,6 +17,7 @@ public class WPlayer {
     private Boolean killing = false;
     private Boolean died = false;
     private Boolean report = false;
+    private Boolean voted = false;
 
 
     public WPlayer(UUID uuid) {
@@ -66,14 +66,6 @@ public class WPlayer {
         this.tasks = tasks;
     }
 
-    public UUID getVotedPlayerUUID() {
-        return votedPlayerUUID;
-    }
-
-    public void setVotedPlayerUUID(UUID votedPlayerUUID) {
-        this.votedPlayerUUID = votedPlayerUUID;
-    }
-
     public Boolean isKilling() {
         return killing;
     }
@@ -96,5 +88,13 @@ public class WPlayer {
 
     public void setReport(Boolean report) {
         this.report = report;
+    }
+
+    public Boolean wasVoted() {
+        return voted;
+    }
+
+    public void setVoted(Boolean voted) {
+        this.voted = voted;
     }
 }

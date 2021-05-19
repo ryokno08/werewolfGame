@@ -2,11 +2,8 @@ package jp.hack.minecraft.werewolfgame.core.gamerule;
 
 import jp.hack.minecraft.werewolfgame.Game;
 import jp.hack.minecraft.werewolfgame.GameConfigurator;
-import jp.hack.minecraft.werewolfgame.core.Cadaver;
 import jp.hack.minecraft.werewolfgame.core.WPlayer;
-import org.bukkit.GameMode;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -34,7 +31,7 @@ public class PlayerKill {
         attacker.spawnParticle(Particle.REDSTONE, attacker.getLocation(), 30, 2.0, 3.0, 2.0);
         game.getDisplayManager().showDeath(entity, "By " + attacker.getDisplayName());
 
-        game.playerDied(entity);
+        game.killPlayer(entity, false);
 
         wAttacker.setKilling(true);
         wEntity.setKilling(true);

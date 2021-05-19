@@ -69,9 +69,9 @@ public class GuiLogic {
         // heads = new ArrayList<>();
         ItemBuilder skipBuilder = ItemBuilder.from(skipItem);
         gui.setItem(26, skipBuilder.asGuiItem(e -> {
+            game.getDisplayManager().log("clicked: skip");
             e.setCancelled(true);
-            game.voteToSkip(e.getWhoClicked().getUniqueId());
-            game.getVotingBoard().getScores().put(e.getWhoClicked().getName(), 1);
+            game.voteToSkip((Player) e.getWhoClicked());
         }));
         List<GuiItem> heads = loadHeads();
         for (int i = 0; i < heads.size(); i++) {
@@ -85,9 +85,8 @@ public class GuiLogic {
         List<GuiItem> heads = new ArrayList<>();
         game.getWPlayers().values().stream()
                 .filter(wPlayer -> !wPlayer.isDied())
-                .map(wPlayer -> plugin.getServer().getPlayer(wPlayer.getUuid()))
+                .map(wPlayer -> game.getPlayer(wPlayer.getUuid()))
                 .forEach(headPlayer -> {
-                    UUID uuid = headPlayer.getUniqueId();
 
                     ItemStack skullStack = new ItemStack(Material.SKULL_ITEM, 1, (short) 3);
                     SkullMeta skull = (SkullMeta) skullStack.getItemMeta();
@@ -98,9 +97,9 @@ public class GuiLogic {
                     ItemBuilder skullBuilder = ItemBuilder.from(skullStack);
                     heads.add(
                             skullBuilder.asGuiItem(e -> {
+                                game.getDisplayManager().log("clicked: "+e.getWhoClicked().getName());
                                 e.setCancelled(true);
-                                game.voteToPlayer(e.getWhoClicked().getUniqueId(), uuid);
-                                game.getVotingBoard().getScores().put(e.getWhoClicked().getName(), 1);
+                                game.voteToPlayer((Player) e.getWhoClicked(), headPlayer);
                                 e.getWhoClicked().closeInventory();
                             })
                     );

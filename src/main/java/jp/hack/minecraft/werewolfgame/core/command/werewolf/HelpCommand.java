@@ -31,6 +31,7 @@ public class HelpCommand extends CommandMaster {
         sender.sendMessage(ChatColor.GREEN+"----- 共通コマンド -----");
         sender.sendMessage("・/werewolf help   : このメニューを開く");
         sender.sendMessage("・/werewolf report : プレイヤーを召集する");
+        sender.sendMessage("・/werewolf color <color> : 服の色を変える");
         sender.sendMessage("・/werewolf vote <name/skip>  : プレイヤーに投票する／スキップする");
         return true;
     }

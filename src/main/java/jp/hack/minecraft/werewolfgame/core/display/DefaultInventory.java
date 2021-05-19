@@ -14,11 +14,11 @@ import org.bukkit.inventory.meta.LeatherArmorMeta;
 
 import java.util.*;
 
-public class WPlayerInventory {
+public class DefaultInventory {
     private final Map<Integer, ItemStack> clueInv = new HashMap<>();
     private final Map<Integer, ItemStack> imposterInv = new HashMap<>();
 
-    public WPlayerInventory(ItemStack report, ItemStack kill) {
+    public DefaultInventory(ItemStack report, ItemStack kill) {
 
         clueInv.put(0, new ItemStack(report));
 
@@ -27,7 +27,7 @@ public class WPlayerInventory {
 
     }
 
-    public enum WPlayerInventoryType {
+    public enum InventoryType {
         CLUE_INV,
         IMPOSTER_INV
     }
