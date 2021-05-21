@@ -558,8 +558,7 @@ public class Game {
         }
 
         displayManager.allSendGreenMessage("vote.end");
-        displayManager.resetAllInventory();
-
+        
     }
 
 //    private void checkVoteStop(){

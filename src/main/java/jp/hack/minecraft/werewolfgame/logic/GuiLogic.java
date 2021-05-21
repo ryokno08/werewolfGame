@@ -69,9 +69,10 @@ public class GuiLogic {
         // heads = new ArrayList<>();
         ItemBuilder skipBuilder = ItemBuilder.from(skipItem);
         gui.setItem(26, skipBuilder.asGuiItem(e -> {
-            game.getDisplayManager().log("clicked: skip");
             e.setCancelled(true);
-            game.voteToSkip((Player) e.getWhoClicked());
+            Player player = (Player) e.getWhoClicked();
+            game.voteToSkip(player);
+            closeInventory(player);
         }));
         List<GuiItem> heads = loadHeads();
         for (int i = 0; i < heads.size(); i++) {
@@ -97,13 +98,19 @@ public class GuiLogic {
                     ItemBuilder skullBuilder = ItemBuilder.from(skullStack);
                     heads.add(
                             skullBuilder.asGuiItem(e -> {
-                                game.getDisplayManager().log("clicked: "+e.getWhoClicked().getName());
                                 e.setCancelled(true);
-                                game.voteToPlayer((Player) e.getWhoClicked(), headPlayer);
-                                e.getWhoClicked().closeInventory();
+                                Player player = (Player) e.getWhoClicked();
+                                game.voteToPlayer(player, headPlayer);
+                                closeInventory(player);
                             })
                     );
                 });
         return heads;
+    }
+
+    private void closeInventory(Player player) {
+        player.closeInventory();
+        player.getInventory().clear();
+        game.getDisplayManager().resetColorArmor(player);
     }
 }
