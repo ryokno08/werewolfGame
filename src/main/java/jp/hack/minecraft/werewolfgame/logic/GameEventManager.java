@@ -130,7 +130,7 @@ public class GameEventManager implements Listener {
         if (game == null) return;
         if (!game.wasStarted()) return;
 
-        game.getDisplayManager().clearInventory(player);
+        player.getInventory().clear();
         game.getDisplayManager().clearEffect(player);
         game.removePlayer(player);
 

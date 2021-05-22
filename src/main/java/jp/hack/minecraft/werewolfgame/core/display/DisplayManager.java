@@ -185,18 +185,17 @@ public class DisplayManager {
     public void resetColorArmor(Player player) {
         WPlayer wPlayer = game.getWPlayer(player.getUniqueId());
 
-        ItemStack[] armor = defaultInventory.getColoredArmors(wPlayer.getColor());
-        player.getInventory().setArmorContents(armor);
+        if (!wPlayer.isDied()) {
+            ItemStack[] armor = defaultInventory.getColoredArmors(wPlayer.getColor());
+            player.getInventory().setArmorContents(armor);
+        }
     }
 
     public void takeOffArmor(Player player) {
         player.getInventory().setArmorContents(null);
     }
-    public void clearInventory(Player player) {
-        player.getInventory().clear();
-    }
     public void clear(Player player) {
-        clearInventory(player);
+        player.getInventory().clear();
         clearEffect(player);
     }
 

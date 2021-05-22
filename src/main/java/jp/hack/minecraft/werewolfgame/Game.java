@@ -18,9 +18,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.*;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class Game {
     private final JavaPlugin plugin;
@@ -43,7 +41,7 @@ public class Game {
 
     private final Map<UUID, WPlayer> wPlayers = new HashMap<>();
     private final Map<UUID, Cadaver> cadavers = new HashMap<>();
-    private final Map<String, UUID> colors = new HashMap<>();
+    private final Map<String, UUID> colorUuidMap = new HashMap<>();
     private List<Player> joinedPlayers = new ArrayList<>();
     private DisplayManager displayManager;
     private TaskManager taskManager;
@@ -110,8 +108,8 @@ public class Game {
         return cadavers;
     }
 
-    public Map<String, UUID> getColors() {
-        return colors;
+    public Map<String, UUID> getColorUuidMap() {
+        return colorUuidMap;
     }
 
     public List<Player> getJoinedPlayers() {
@@ -420,12 +418,12 @@ public class Game {
     public ErrorJudge addWPlayer(Player player) {
         if (wPlayers.containsKey(player.getUniqueId())) return ErrorJudge.NONE;
         WPlayer wPlayer = new WPlayer(player.getUniqueId());
-        Optional<String> firstValue = Colors.values().keySet().stream().filter(c1 -> colors.keySet().stream().noneMatch(c1::equals)).findFirst();
+        Optional<String> colorOptional = Colors.values().keySet().stream().filter(c1 -> colorUuidMap.keySet().stream().noneMatch(c1::equals)).findFirst();
 
-        if (firstValue.isPresent()) {
-            String color = firstValue.get();
-            wPlayer.setColor(color, Colors.values().get(color));
-            colors.put(color, player.getUniqueId());
+        if (colorOptional.isPresent()) {
+            String colorName = colorOptional.get();
+            wPlayer.setColor(colorName, Colors.values().get(colorName));
+            colorUuidMap.put(colorName, player.getUniqueId());
             wPlayers.put(player.getUniqueId(), wPlayer);
             displayManager.resetColorArmor(player);
         } else {
@@ -443,16 +441,20 @@ public class Game {
 
     public void changePlayerColor(Player player, String colorName) {
         if (!Colors.values().containsKey(colorName)) return;
-        WPlayer wPlayer = getWPlayer(player.getUniqueId());
-        if (colors.containsKey(colorName)) {
-            UUID swapUUID = colors.get(colorName);
-            colors.replace(colorName, player.getUniqueId());
-            colors.put(wPlayer.getColorName(), swapUUID);
+
+        WPlayer changer = getWPlayer(player.getUniqueId());
+        WPlayer swapper = getWPlayer(colorUuidMap.get(colorName));
+
+        if (colorUuidMap.containsKey(colorName)) {
+            colorUuidMap.replace(colorName, player.getUniqueId());
+            colorUuidMap.put(changer.getColorName(), swapper.getUuid());
         } else {
-            colors.remove(wPlayer.getColorName());
-            colors.put(colorName, player.getUniqueId());
+            colorUuidMap.remove(changer.getColorName());
+            colorUuidMap.put(colorName, player.getUniqueId());
         }
-        wPlayer.setColor(colorName, Colors.values().get(colorName));
+
+        swapper.setColor(changer.getColorName(), changer.getColor());
+        changer.setColor(colorName, Colors.values().get(colorName));
 
         displayManager.resetColorArmor(player);
     }
@@ -462,7 +464,7 @@ public class Game {
 
         wPlayer.setDied(true);
         displayManager.invisible(player);
-        displayManager.clearInventory(player);
+        player.getInventory().clear();
         if (!isEjected) createCadaver(player);
     }
 
