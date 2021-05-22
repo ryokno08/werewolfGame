@@ -422,16 +422,13 @@ public class Game {
         WPlayer wPlayer = new WPlayer(player.getUniqueId());
         Stream<String> noneMatchStream = Colors.values().keySet().stream().filter(c1 -> colors.keySet().stream().noneMatch(c1::equals));
 
-        AtomicReference<ErrorJudge> errorJudge = new AtomicReference<>(ErrorJudge.NONE);
-        noneMatchStream.findFirst().ifPresentOrElse(o-> {
-            wPlayer.setColor(o, Colors.values().get(o));
-            colors.put(o, player.getUniqueId());
-            wPlayers.put(player.getUniqueId(), wPlayer);
-            displayManager.resetColorArmor(player);
-        }, () -> {
-            errorJudge.set(ErrorJudge.WPLAYERS_FULL);
-        });
-        return errorJudge.get();
+        String o = noneMatchStream.findFirst().get();
+        wPlayer.setColor(o, Colors.values().get(o));
+        colors.put(o, player.getUniqueId());
+        wPlayers.put(player.getUniqueId(), wPlayer);
+        displayManager.resetColorArmor(player);
+
+        return ErrorJudge.NONE;
     }
 
     public void removePlayer(Player player) {
