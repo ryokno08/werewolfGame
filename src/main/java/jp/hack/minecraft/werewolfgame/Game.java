@@ -420,13 +420,17 @@ public class Game {
     public ErrorJudge addWPlayer(Player player) {
         if (wPlayers.containsKey(player.getUniqueId())) return ErrorJudge.NONE;
         WPlayer wPlayer = new WPlayer(player.getUniqueId());
-        Stream<String> noneMatchStream = Colors.values().keySet().stream().filter(c1 -> colors.keySet().stream().noneMatch(c1::equals));
+        Optional<String> firstValue = Colors.values().keySet().stream().filter(c1 -> colors.keySet().stream().noneMatch(c1::equals)).findFirst();
 
-        String o = noneMatchStream.findFirst().get();
-        wPlayer.setColor(o, Colors.values().get(o));
-        colors.put(o, player.getUniqueId());
-        wPlayers.put(player.getUniqueId(), wPlayer);
-        displayManager.resetColorArmor(player);
+        if (firstValue.isPresent()) {
+            String color = firstValue.get();
+            wPlayer.setColor(color, Colors.values().get(color));
+            colors.put(color, player.getUniqueId());
+            wPlayers.put(player.getUniqueId(), wPlayer);
+            displayManager.resetColorArmor(player);
+        } else {
+            return ErrorJudge.WPLAYERS_FULL;
+        }
 
         return ErrorJudge.NONE;
     }
@@ -527,7 +531,7 @@ public class Game {
     }
 
     private void confirmVote() {
-        if (getWPlayers().values().stream().allMatch(WPlayer::wasVoted)) {
+        if (getWPlayers().values().stream().filter(wp -> !wp.isDied()).allMatch(WPlayer::wasVoted)) {
             resultVote();
         }
     }
