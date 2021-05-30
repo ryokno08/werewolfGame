@@ -40,10 +40,10 @@ public class MeetingState extends GameState {
 
         // 設定などからロードする、ロビーにてレポートするときの半径、単位はブロック
         final float robbyRadius = 3;
-        List<Player> players = game.getWPlayers().values().stream()
-                .filter(wPlayer -> !wPlayer.isDied())
-                .map(wPlayer -> plugin.getServer().getPlayer(wPlayer.getUuid()))
+        List<Player> players = game.getJoinedPlayers().stream()
+                .filter(player -> !game.getWPlayer(player.getUniqueId()).isDied())
                 .collect(Collectors.toList());
+
         for (int i = 0; i < players.size(); i++) {
             double rad = (2 * Math.PI / (float) players.size()) * i;
             Player p = players.get(i);

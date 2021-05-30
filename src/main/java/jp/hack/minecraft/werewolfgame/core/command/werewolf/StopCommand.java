@@ -29,7 +29,9 @@ public class StopCommand extends CommandMaster {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         Game game = ((GameConfigurator) manager.plugin).getGame();
-        game.gameStop();
+        if (game.wasStarted()) {
+            game.gameStop();
+        }
         return true;
     }
 

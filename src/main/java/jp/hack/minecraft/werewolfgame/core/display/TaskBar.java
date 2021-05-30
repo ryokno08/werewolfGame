@@ -30,7 +30,7 @@ public class TaskBar {
         taskBar.setVisible(visible);
     }
 
-    public void setTask(float percent) {
+    public void setProgress(float percent) {
         taskBar.setProgress(percent);
     }
 }

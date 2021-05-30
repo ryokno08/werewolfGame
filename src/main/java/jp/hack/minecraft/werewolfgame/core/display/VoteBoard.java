@@ -29,7 +29,7 @@ public class VoteBoard {
         objective = scoreboard.registerNewObjective(name, "dummy");
     }
 
-    private void resetAll() {
+    private void reset() {
         Game game = ((GameConfigurator) plugin).getGame();
 
         scores.clear();
@@ -41,18 +41,23 @@ public class VoteBoard {
         update();
     }
 
-    public void vote() {
+    public void voteUpdate() {
         scores.put(SKIP_KEY, scores.getOrDefault(SKIP_KEY, 0) + 1);
 
         update();
     }
 
-    public void vote(UUID uuid) {
+    public void voteUpdate(UUID uuid) {
         Game game = ((GameConfigurator) plugin).getGame();
         String key = ChatColor.RED.toString() + game.getPlayer(uuid).getDisplayName().toString();
         scores.put(key, scores.getOrDefault(key, 0) + 1);
 
         update();
+    }
+
+    private void setAllPlayer() {
+        Game game = ((GameConfigurator) plugin).getGame();
+        game.getJoinedPlayers().forEach(player -> player.setScoreboard(scoreboard));
     }
 
     private void update() {
@@ -62,17 +67,12 @@ public class VoteBoard {
         });
     }
 
-    private void setAllPlayer() {
-        Game game = ((GameConfigurator) plugin).getGame();
-        game.getJoinedPlayers().forEach(player -> player.setScoreboard(scoreboard));
-    }
-
     public void disable() {
         scoreboard.getObjective(name).unregister();
     }
 
     public void register() {
-        resetAll();
+        reset();
         scoreboard.getObjective(name).setDisplaySlot(slot);
         setAllPlayer();
     }

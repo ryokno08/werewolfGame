@@ -70,8 +70,7 @@ public class VotingState extends GameState {
         task = null;
 
         game.getJoinedPlayers().forEach(player -> {
-            player.getInventory().clear();
-            game.getDisplayManager().resetColorArmor(player);
+            game.getDisplayManager().clearWithoutArmor(player);
         });
 
         game.getVoteBoard().unregister();

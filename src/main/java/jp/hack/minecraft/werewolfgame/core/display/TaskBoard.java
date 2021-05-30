@@ -2,53 +2,72 @@ package jp.hack.minecraft.werewolfgame.core.display;
 
 import jp.hack.minecraft.werewolfgame.Game;
 import jp.hack.minecraft.werewolfgame.GameConfigurator;
-import jp.hack.minecraft.werewolfgame.core.WPlayer;
 import jp.hack.minecraft.werewolfgame.core.task.Task;
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scoreboard.DisplaySlot;
+import org.bukkit.scoreboard.Objective;
+import org.bukkit.scoreboard.Scoreboard;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
-public class TaskBoard extends Scoreboard {
+public class TaskBoard {
+    private final JavaPlugin plugin;
+    private final String name;
+    private final DisplaySlot slot;
+    private final Scoreboard scoreboard;
+    private final Objective objective;
+    private final Map<String, Integer> scores = new HashMap<>();
     private final String TASK = "Task";
 
     public TaskBoard(JavaPlugin plugin) {
-        super(plugin, "TaskList", DisplaySlot.SIDEBAR);
-        resetAll();
+        this.plugin = plugin;
+        scoreboard = plugin.getServer().getScoreboardManager().getNewScoreboard();
+        name = "TaskList";
+        slot = DisplaySlot.SIDEBAR;
+        objective = scoreboard.registerNewObjective(name, "dummy");
     }
 
-    @Override
+    public void taskUpdate() {
+        Game game = ((GameConfigurator) plugin).getGame();
+
+        scores.clear();
+        List<Task> remainTasks = game.getTasks().stream().filter(task -> !task.isFinished()).collect(Collectors.toList());
+        for (Task remainTask : remainTasks) {
+            scores.put(TASK + remainTask.getTaskNo(), 1);
+        }
+
+        update();
+    }
+
+    private void setAllPlayer() {
+        Game game = ((GameConfigurator) plugin).getGame();
+        game.getJoinedPlayers().forEach(player -> player.setScoreboard(scoreboard));
+    }
+
+    public void update() {
+        scores.forEach((key, value) -> {
+            scoreboard.resetScores(key);
+            scoreboard.getObjective(name).getScore(key).setScore(value);
+        });
+    }
+
+    public void disable() {
+        objective.unregister();
+    }
+
     public void register(){
-        super.register();
+        System.out.println(objective);
+        System.out.println(slot);
 
-        Game game = ((GameConfigurator) plugin).getGame();
-        setPlayers(game.getJoinedPlayers());
+        objective.setDisplaySlot(slot);
+        setAllPlayer();
+        taskUpdate();
+
+        scores.forEach((k, v) -> System.out.println("k:"+k+", v:"+v));
     }
 
-    private void resetAll() {
-        Game game = ((GameConfigurator) plugin).getGame();
-        for (int i = 0; i < game.getNumberOfTasks(); i++) {
-            super.getScores().put(TASK + i, 1);
-        }
-    }
-
-    public void update(Player player) {
-        Game game = ((GameConfigurator)plugin).getGame();
-        WPlayer wPlayer = game.getWPlayer(player.getUniqueId());
-        List<Task> tasks = wPlayer.getTasks();
-        org.bukkit.scoreboard.Scoreboard playerTaskBoard = super.getEachBoards().get(player.getUniqueId());
-
-        for (int i=0; i<tasks.size(); i++) {
-            if (! playerTaskBoard.getScores(TASK + i).isEmpty()) {
-                if (tasks.get(i).isFinished()) {
-                    playerTaskBoard.resetScores(TASK + i);
-                }
-            }
-        }
-    }
-
-    public void removeAt(Player player, int index) {
-        super.removeScore(player, TASK + index);
+    public void unregister() {
+        scoreboard.clearSlot(slot);
     }
 }

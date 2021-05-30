@@ -1,11 +1,13 @@
 package jp.hack.minecraft.werewolfgame.core.display;
 
 import jp.hack.minecraft.werewolfgame.Game;
+import jp.hack.minecraft.werewolfgame.core.Colors;
 import jp.hack.minecraft.werewolfgame.core.WPlayer;
 import jp.hack.minecraft.werewolfgame.util.Messages;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.*;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
@@ -80,7 +82,7 @@ public class DisplayManager {
     public void sendMessage(Player player, String code, Object... args) {
         player.sendMessage(Messages.message(code, args));
     }
-    public void sendErrorMessage(Player player, String code, Object... args) {
+    public void sendErrorMessage(CommandSender player, String code, Object... args) {
         player.sendMessage(Messages.error(code, args));
     }
     public void allSendActionBarMessage(String text) {
@@ -112,12 +114,12 @@ public class DisplayManager {
         taskBar.setVisible(visible);
     }
 
-    public void setTask(float percent) {
-        taskBar.setTask(percent);
+    public void setProgress(float percent) {
+        taskBar.setProgress(percent);
     }
 
-    public void addTaskBar(Player player) {
-        taskBar.addPlayer(player);
+    public void allAddTaskBar() {
+        game.getJoinedPlayers().forEach(taskBar::addPlayer);
     }
 
     public void youAreImposter(Player player) {
@@ -153,6 +155,8 @@ public class DisplayManager {
 
     public void resetInventory(Player player, DefaultInventory.InventoryType inventoryType) {
         if (player == null || inventoryType == null) return;
+        WPlayer wPlayer = game.getWPlayer(player.getUniqueId());
+        if (wPlayer.isDied()) return;
 
         player.getInventory().clear();
         Map<Integer, ItemStack> itemStackMap = new HashMap<>();
@@ -184,22 +188,27 @@ public class DisplayManager {
 
     public void resetColorArmor(Player player) {
         WPlayer wPlayer = game.getWPlayer(player.getUniqueId());
+        if (wPlayer.isDied()) return;
 
-        if (!wPlayer.isDied()) {
-            ItemStack[] armor = defaultInventory.getColoredArmors(wPlayer.getColor());
-            player.getInventory().setArmorContents(armor);
-        }
+        ItemStack[] armor = defaultInventory.getColoredArmors(Colors.values().get(wPlayer.getColorName()));
+        player.getInventory().setArmorContents(armor);
     }
 
     public void takeOffArmor(Player player) {
         player.getInventory().setArmorContents(null);
+        player.updateInventory();
     }
-    public void clear(Player player) {
-        player.getInventory().clear();
+    public void clearStorage(Player player) {
+        player.getInventory().setStorageContents(null);
+        player.updateInventory();
+    }
+
+    public void clearWithoutArmor(Player player) {
+        clearStorage(player);
         clearEffect(player);
     }
 
-    public void updateTaskBoard(Player player) {
-        game.getTaskBoard().update(player);
+    public void updateTaskBoard() {
+        game.getTaskBoard().update();
     }
 }

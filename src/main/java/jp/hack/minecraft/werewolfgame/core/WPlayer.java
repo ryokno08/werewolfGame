@@ -9,10 +9,8 @@ import java.util.UUID;
 
 public class WPlayer {
     private final UUID uuid;
-    private Color color;
     private String colorName;
     private Role role;
-    private List<Task> tasks = new ArrayList<>();
 
     private Boolean killing = false;
     private Boolean died = false;
@@ -41,29 +39,12 @@ public class WPlayer {
         this.role = role;
     }
 
-    public Color getColor() {
-        return color;
-    }
-
-    public void setColor(String colorName, Color color) {
+    public void setColor(String colorName) {
         this.colorName = colorName;
-        this.color = color;
     }
 
     public String getColorName() {
         return colorName;
-    }
-
-    public void clearTasks() {
-        tasks.clear();
-    }
-
-    public List<Task> getTasks() {
-        return tasks;
-    }
-
-    public void setTasks(List<Task> tasks) {
-        this.tasks = tasks;
     }
 
     public Boolean isKilling() {

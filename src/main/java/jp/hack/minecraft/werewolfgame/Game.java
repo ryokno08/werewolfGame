@@ -4,6 +4,7 @@ import jp.hack.minecraft.werewolfgame.core.Cadaver;
 import jp.hack.minecraft.werewolfgame.core.Colors;
 import jp.hack.minecraft.werewolfgame.core.Role;
 import jp.hack.minecraft.werewolfgame.core.display.*;
+import jp.hack.minecraft.werewolfgame.core.task.Task;
 import jp.hack.minecraft.werewolfgame.core.task.TaskManager;
 import jp.hack.minecraft.werewolfgame.core.WPlayer;
 import jp.hack.minecraft.werewolfgame.core.state.*;
@@ -50,7 +51,7 @@ public class Game {
 
     private Boolean wasStarted = false;
     private int numberOfImposter = 1;
-    private int numberOfTasks = 3;
+    private int numberOfTasks = 2;
     private int limitOfVoting = 60;
     private double reportDistance = 5.0;
     private Location lobbyPos;
@@ -66,6 +67,8 @@ public class Game {
     private VotingState votingState;
     private GameState currentState;
 
+    private int remainTasks = numberOfTasks;
+    private List<Task> tasks = new ArrayList<>();
     private GuiLogic guiLogic;
 
     // UUIDは投票者のもの Stringは投票先のUUIDもしくは"Skip"が入る
@@ -217,6 +220,22 @@ public class Game {
         return currentState.canMove();
     }
 
+    public int getRemainTasks() {
+        return remainTasks;
+    }
+
+    public void setRemainTasks(int remainTasks) {
+        this.remainTasks = remainTasks;
+    }
+
+    public List<Task> getTasks() {
+        return tasks;
+    }
+
+    public void setTasks(List<Task> tasks) {
+        this.tasks = tasks;
+    }
+
     public DisplayManager getDisplayManager() {
         return displayManager;
     }
@@ -296,14 +315,9 @@ public class Game {
         ErrorJudge resetJudge = allReset();
         if (!resetJudge.equals(ErrorJudge.NONE)) return resetJudge;
 
-        displayManager.setTaskBarVisible(false);
-        taskManager.setSumOfTask(numberOfTasks * (wPlayers.size() - numberOfImposter));
+        taskManager.setTasks();
         taskManager.taskBarUpdate();
-        joinedPlayers.forEach(player -> {
-            WPlayer wPlayer = getWPlayer(player.getUniqueId());
-            displayManager.addTaskBar(player);
-            taskManager.setTasks(wPlayer);
-        });
+        displayManager.allAddTaskBar();
 
         currentState = lobbyState;
         currentState.onActive();
@@ -318,8 +332,6 @@ public class Game {
         if (taskBoard != null) taskBoard.disable();
         if (voteBoard != null) voteBoard.disable();
         if (!cadavers.isEmpty()) resetCadaver();
-        if (currentState != null) currentState.onEnd();
-        currentState = null;
         reloadConfig();
         resetManagers();
         resetWPlayers();
@@ -369,7 +381,10 @@ public class Game {
         if (displayManager == null || taskManager == null) return false;
 
         joinedPlayers = new ArrayList<>(plugin.getServer().getOnlinePlayers());
-        Map<String, Color> colors = new HashMap<>(Colors.values());
+        Map<String, Color> colors = new HashMap<>(Colors.values()).entrySet()
+                .stream()
+                .filter(o -> !colorUuidMap.containsKey(o.getKey()))
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
         for (Player player : joinedPlayers) {
             if (addWPlayer(player).equals(ErrorJudge.WPLAYERS_FULL)) break;
@@ -379,12 +394,12 @@ public class Game {
 
                 int random = new Random().nextInt(colors.size());
                 Map.Entry<String, Color> color = new ArrayList<>(colors.entrySet()).get(random);
-                wPlayer.setColor(color.getKey(), color.getValue());
+                wPlayer.setColor(color.getKey());
                 colors.remove(color.getKey());
+                displayManager.resetColorArmor(player);
             }
 
-            player.getInventory().clear();
-            displayManager.resetColorArmor(player);
+            displayManager.clearWithoutArmor(player);
         }
 
         setJoinedPlayers();
@@ -408,7 +423,6 @@ public class Game {
 
             WPlayer wPlayer = getWPlayer(selectedPlayer.getUniqueId());
             wPlayer.setRole(Role.IMPOSTER);
-            wPlayer.clearTasks();
         }
 
         return true;
@@ -416,13 +430,14 @@ public class Game {
     }
 
     public ErrorJudge addWPlayer(Player player) {
+
         if (wPlayers.containsKey(player.getUniqueId())) return ErrorJudge.NONE;
         WPlayer wPlayer = new WPlayer(player.getUniqueId());
         Optional<String> colorOptional = Colors.values().keySet().stream().filter(c1 -> colorUuidMap.keySet().stream().noneMatch(c1::equals)).findFirst();
 
         if (colorOptional.isPresent()) {
             String colorName = colorOptional.get();
-            wPlayer.setColor(colorName, Colors.values().get(colorName));
+            wPlayer.setColor(colorName);
             colorUuidMap.put(colorName, player.getUniqueId());
             wPlayers.put(player.getUniqueId(), wPlayer);
             displayManager.resetColorArmor(player);
@@ -443,19 +458,20 @@ public class Game {
         if (!Colors.values().containsKey(colorName)) return;
 
         WPlayer changer = getWPlayer(player.getUniqueId());
-        WPlayer swapper = getWPlayer(colorUuidMap.get(colorName));
 
         if (colorUuidMap.containsKey(colorName)) {
+            WPlayer swapper = getWPlayer(colorUuidMap.get(colorName));
             colorUuidMap.replace(colorName, player.getUniqueId());
             colorUuidMap.put(changer.getColorName(), swapper.getUuid());
+
+            swapper.setColor(changer.getColorName());
+            displayManager.resetColorArmor(getPlayer(swapper.getUuid()));
         } else {
             colorUuidMap.remove(changer.getColorName());
             colorUuidMap.put(colorName, player.getUniqueId());
         }
 
-        swapper.setColor(changer.getColorName(), changer.getColor());
-        changer.setColor(colorName, Colors.values().get(colorName));
-
+        changer.setColor(colorName);
         displayManager.resetColorArmor(player);
     }
 
@@ -511,7 +527,7 @@ public class Game {
             wPlayer.setVoted(true);
             votedPlayers.put(voter.getUniqueId(), target.getUniqueId());
             displayManager.allSendVoteMessage(voter, target);
-            voteBoard.vote(target.getUniqueId());
+            voteBoard.voteUpdate(target.getUniqueId());
             confirmVote();
         } else {
             displayManager.sendErrorMessage(voter, "you.alreadyVoted");
@@ -525,7 +541,7 @@ public class Game {
             wPlayer.setVoted(true);
             skippedPlayers.add(voter.getUniqueId());
             displayManager.allSendSkipMessage(voter);
-            voteBoard.vote();
+            voteBoard.voteUpdate();
             confirmVote();
         } else {
             displayManager.sendErrorMessage(voter, "you.alreadyVoted");
@@ -564,43 +580,11 @@ public class Game {
         
     }
 
-//    private void checkVoteStop(){
-//        if()
-//    }
-//    private void stopVote() {
-//        Map<String, Integer> VotingResult = new HashMap<>();
-//        votedPlayers.forEach((uuid, ans) -> VotingResult.put(ans, VotingResult.getOrDefault(ans, 0) + 1));
-//
-//        List<Map.Entry<String, Integer>> SortedResults = new ArrayList<>(VotingResult.entrySet());
-//        SortedResults.sort((obj1, obj2) -> obj2.getValue().compareTo(obj1.getValue()));
-//
-//        if (VotingResult.getOrDefault("Skip", 0)
-//                > plugin.getServer().getOnlinePlayers().size() / 2) {
-//            if (SortedResults.size() < 2) {
-//                if (SortedResults.get(0).getKey().equals("Skip")) {
-//                    game.voteSkipped();
-//                } else {
-//                    game.ejectPlayer(UUID.fromString(SortedResults.get(0).getKey()));
-//                }
-//            } else if (!SortedResults.get(0).getValue().equals(SortedResults.get(1).getValue())) {
-//                if (SortedResults.get(0).getKey().equals("Skip")) {
-//                    game.voteSkipped();
-//                } else {
-//                    game.ejectPlayer(UUID.fromString(SortedResults.get(0).getKey()));
-//                }
-//            }
-//        }
-//
-//
-//        game.changeState(game.getPlayingState());
-//        this.cancel();
-//    }
-
     private WinnerJudge confirmTask() {
+        int numberOfClue = getWPlayers().size() - getNumberOfImposter();
         int finishedTask = taskManager.getFinishedTask();
-        int maxTask = taskManager.getSumOfTask();
 
-        if (maxTask == finishedTask) {
+        if ((numberOfTasks * numberOfClue) <= finishedTask) {
             return WinnerJudge.CLUE_WIN;
         }
         return WinnerJudge.NONE;
@@ -680,10 +664,12 @@ public class Game {
 
     public void gameStop() {
         displayManager.log("ゲームが終了しました");
+        if (currentState != null) currentState.onEnd();
+        currentState = null;
         wasStarted = false;
 
         joinedPlayers.forEach(p -> {
-            displayManager.clear(p);
+            displayManager.clearWithoutArmor(p);
             p.setGameMode(GameMode.ADVENTURE);
             p.teleport(getLobbyPos());
         });

@@ -2,8 +2,10 @@ package jp.hack.minecraft.werewolfgame.core.command.werewolf;
 
 import jp.hack.minecraft.werewolfgame.Game;
 import jp.hack.minecraft.werewolfgame.GameConfigurator;
+import jp.hack.minecraft.werewolfgame.core.WPlayer;
 import jp.hack.minecraft.werewolfgame.core.command.CommandManager;
 import jp.hack.minecraft.werewolfgame.core.command.CommandMaster;
+import jp.hack.minecraft.werewolfgame.core.display.DisplayManager;
 import jp.hack.minecraft.werewolfgame.util.Messages;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -32,23 +34,29 @@ public class CompleteCommand extends CommandMaster {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         manager.plugin.getLogger().info("completeコマンドが実行されました");
+        Game game = ((GameConfigurator) manager.plugin).getGame();
+        DisplayManager displayManager = game.getDisplayManager();
         if (!(sender instanceof Player)) {
-            sender.sendMessage(Messages.error("you.notPlayer"));
+            displayManager.sendErrorMessage(sender, "you.notPlayer");
             return true;
         }
 
-        Game game = ((GameConfigurator) manager.plugin).getGame();
         Player player = (Player) sender;
+        WPlayer wPlayer = game.getWPlayer(player.getUniqueId());
         if (!game.wasStarted()) {
-            sender.sendMessage(Messages.error("game.notStartYet"));
+            displayManager.sendErrorMessage(player, "game.notStartYet");
             return true;
         }
-        if(!game.getWPlayers().containsKey(player.getUniqueId())) {
-            sender.sendMessage(Messages.error("you.notJoinYet"));
+        if(!game.getWPlayers().containsKey(wPlayer.getUuid())) {
+            displayManager.sendErrorMessage(player, "you.notJoinYet");
             return true;
         }
         if (args.length < 2) {
-            sender.sendMessage(Messages.error("command.noArgument", "タスクの数字"));
+            displayManager.sendErrorMessage(player, "command.noArgument", "タスクの数字");
+            return true;
+        }
+        if (wPlayer.getRole().isImposter()) {
+            displayManager.sendErrorMessage(player, "you.notClueMate");
             return true;
         }
 
@@ -57,7 +65,10 @@ public class CompleteCommand extends CommandMaster {
             no = Integer.parseInt(args[1]);
         } catch (NumberFormatException e) {
             sender.sendMessage(Messages.error("command.illegalArgument"));
-            e.printStackTrace();
+            return true;
+        }
+        if (no > game.getTasks().size() - 1 || no < 0) {
+            displayManager.sendErrorMessage(player, "command.undefinedTask");
             return true;
         }
 

@@ -37,8 +37,6 @@ public final class Main extends JavaPlugin implements GameConfigurator {
             game.initialize();
         }
 
-        game.getLobbyPos().getWorld().setDifficulty(Difficulty.PEACEFUL);
-
         players = new ArrayList<>();
         if (commandManager == null) {
             commandManager = new CommandManager(this);
@@ -56,7 +54,9 @@ public final class Main extends JavaPlugin implements GameConfigurator {
             this.configuration.save();
         }
 
-        game.gameStop();
+        if (game.wasStarted()) {
+            game.gameStop();
+        }
     }
 
     @Override

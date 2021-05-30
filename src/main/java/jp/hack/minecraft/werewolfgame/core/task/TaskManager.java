@@ -3,8 +3,6 @@ package jp.hack.minecraft.werewolfgame.core.task;
 import jp.hack.minecraft.werewolfgame.Game;
 import jp.hack.minecraft.werewolfgame.core.WPlayer;
 import jp.hack.minecraft.werewolfgame.core.display.DisplayManager;
-import org.bukkit.ChatColor;
-import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -13,32 +11,17 @@ import java.util.List;
 public class TaskManager {
 
     private final Game game;
-    private int sumOfTask;
     private int finishedTask = 0;
 
     public TaskManager(Game game) {
         this.game = game;
     }
 
-    public int getSumOfTask() {
-        return sumOfTask;
-    }
-
-    public void setSumOfTask(int sumOfTask) {
-        if (sumOfTask <= 0) {
-            this.sumOfTask = 1;
-        } else {
-            this.sumOfTask = sumOfTask;
-        }
-    }
-
     private void updateFinishedTask() {
         int count = 0;
-        for (WPlayer wPlayer : game.getWPlayers().values()) {
-            for (Task task : wPlayer.getTasks()) {
-                if (task.isFinished()) {
-                    count++;
-                }
+        for (Task task : game.getTasks()) {
+            if (task.isFinished()) {
+                count++;
             }
         }
         finishedTask = count;
@@ -47,58 +30,48 @@ public class TaskManager {
     public void onTaskFinished(Player player, int no) {
 
         DisplayManager manager = game.getDisplayManager();
-        WPlayer wPlayer = game.getWPlayer(player.getUniqueId());
 
-        if (wPlayer.getRole().isImposter()) {
-            manager.sendErrorMessage(player, "you.notClueMate");
-            return;
-        }
-        List<Task> taskList = wPlayer.getTasks();
-
-        if (no > taskList.size() - 1 || no < 0) {
-            manager.sendErrorMessage(player, "command.undefinedTask");
-            return;
-        }
-        taskList.get(no).finished();
+        game.getTasks().get(no).finished();
         manager.sendMessage(player, "009", no);
 
         updateFinishedTask();
-        manager.updateTaskBoard(player);
-        if ( wPlayer.getTasks().stream().allMatch(Task::isFinished) && wPlayer.isDied() ) {
-            player.setGameMode(GameMode.SPECTATOR);
-        }
+        manager.updateTaskBoard();
+        taskBarUpdate();
+        
+        game.getTaskBoard().update();
         game.confirmGame();
 
     }
 
     public void taskBarUpdate() {
 
+        int numberOfTasks = game.getNumberOfTasks();
         DisplayManager manager = game.getDisplayManager();
-        float progress = (float) finishedTask / (float) sumOfTask;
-        if (sumOfTask == 0) {
-            manager.setTask((float) 1.0);
-            return;
-        }
+
+        float progress = (float) finishedTask / (float) numberOfTasks;
         if (progress < 0.0) {
-            manager.setTask((float) 0.0);
+            manager.setProgress((float) 0.0);
             return;
         } else if (progress > 1.0) {
-            manager.setTask((float) 1.0);
+            manager.setProgress((float) 1.0);
             return;
         }
-        manager.setTask(progress);
+        manager.setProgress(progress);
 
     }
 
-    public void setTasks(WPlayer wPlayer) {
-        int numberOfTask = game.getNumberOfTasks();
+    public void setTasks() {
 
-        wPlayer.clearTasks();
+        int numberOfClue = game.getWPlayers().size() - game.getNumberOfImposter();
+        int numberOfTasks = game.getNumberOfTasks();
+
+        game.getTasks().clear();
         List<Task> taskList = new ArrayList<>();
-        for (int i = 0; i < numberOfTask; i++) {
+        for (int i=0; i<numberOfClue * numberOfTasks; i++) {
             taskList.add(new Task(i));
         }
-        wPlayer.setTasks(taskList);
+        game.setTasks(taskList);
+
     }
 
     public int getFinishedTask() {
