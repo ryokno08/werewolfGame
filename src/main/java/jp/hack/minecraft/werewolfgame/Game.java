@@ -221,10 +221,11 @@ public class Game {
     public void addTaskPos(int no, Location location) {
         if (tasksPos.size() <= no) {
             this.tasksPos.add(location);
+            configuration.setLocationData("task" + ( this.tasksPos.size() - 1 ) , location);
         } else {
             this.tasksPos.set(no, location);
+            configuration.setLocationData("task" + no, location);
         }
-        configuration.setLocationData("task" + no, location);
         configuration.save();
     }
 
