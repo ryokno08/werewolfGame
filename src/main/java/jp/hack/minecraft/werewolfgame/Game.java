@@ -57,9 +57,9 @@ public class Game {
     private double reportDistance = 5.0;
     private Location lobbyPos;
     private Location meetingPos;
+    private List<Location> tasksPos;
     private final ItemStack itemForKill = new ItemStack(Material.IRON_SWORD);
     private final ItemStack itemForReport = new ItemStack(Material.COMPASS);
-
 
     //ゲームの初期状態はロビーでスタート
     private LobbyState lobbyState;
@@ -68,7 +68,6 @@ public class Game {
     private VotingState votingState;
     private GameState currentState;
 
-    private int remainTasks = numberOfTasks;
     private List<Task> tasks = new ArrayList<>();
     private GuiLogic guiLogic;
 
@@ -104,12 +103,11 @@ public class Game {
         return wPlayers.get(uuid);
     }
 
-    public Cadaver createCadaver(Player player) {
+    public void createCadaver(Player player) {
         UUID uuid = player.getUniqueId();
 
         Cadaver cadaver = new Cadaver(player, getWPlayer(uuid));
         cadavers.put(uuid, cadaver);
-        return cadaver;
     }
 
     public Map<UUID, Cadaver> getCadavers() {
@@ -208,6 +206,28 @@ public class Game {
         configuration.save();
     }
 
+    public List<Location> getTasksPos() {
+        return tasksPos;
+    }
+
+    public void setTasksPos(List<Location> tasksPos) {
+        this.tasksPos = tasksPos;
+        for (int i=0; i<tasksPos.size(); i++) {
+            configuration.setLocationData("task" + i, tasksPos.get(i));
+        }
+        configuration.save();
+    }
+
+    public void addTaskPos(int no, Location location) {
+        if (tasksPos.size() <= no) {
+            this.tasksPos.add(location);
+        } else {
+            this.tasksPos.set(no, location);
+        }
+        configuration.setLocationData("task" + no, location);
+        configuration.save();
+    }
+
     public ItemStack getItemForKill() {
         final String SWORD_NAME = ChatColor.RED + "KILL";
 
@@ -240,14 +260,6 @@ public class Game {
 
     public Boolean canMove() {
         return currentState.canMove();
-    }
-
-    public int getRemainTasks() {
-        return remainTasks;
-    }
-
-    public void setRemainTasks(int remainTasks) {
-        this.remainTasks = remainTasks;
     }
 
     public List<Task> getTasks() {
@@ -374,7 +386,13 @@ public class Game {
 
         lobbyPos = configuration.getLocationData("lobby");
         meetingPos = configuration.getLocationData("meeting");
-        return (meetingPos != null && lobbyPos != null);
+        String task = "task";
+
+        tasksPos = new ArrayList<>();
+        for (int i=0; configuration.containKey(task + i); i++) {
+            tasksPos.add(configuration.getLocationData(task + i));
+        }
+        return (meetingPos != null && lobbyPos != null && tasksPos != null);
 
     }
 
@@ -438,7 +456,6 @@ public class Game {
 
     private Boolean setImposters() {
 
-        /*
         if (wPlayers.isEmpty()) return false;
 
         List<Player> players = new ArrayList<>(this.joinedPlayers);
@@ -450,7 +467,6 @@ public class Game {
             WPlayer wPlayer = getWPlayer(selectedPlayer.getUniqueId());
             wPlayer.setRole(Role.IMPOSTER);
         }
-        */
 
         return true;
     }
@@ -529,8 +545,12 @@ public class Game {
 
     }
 
-    public void doTask(Player player) {
-
+    public void doTask(Player player, int no) {
+        if (getTasksPos().size() < no) {
+            player.teleport(getTasksPos().get(0));
+        } else {
+            player.teleport(getTasksPos().get(no));
+        }
     }
 
     public void report(Player reportedPlayer) {

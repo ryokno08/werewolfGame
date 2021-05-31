@@ -19,6 +19,10 @@ public class Messages {
         messages.put("007", "死体の発見者：%s");
         messages.put("008", "リポートされました");
         messages.put("009", "%d番目のタスク状況をtrueに変更しました");
+
+        messages.put("you.fakeTask", "タスクをするふりをしています...");
+        messages.put("you.doTask", "タスクをしてください");
+
         messages.put("you.voted", "%sに投票しました");
         messages.put("you.skipped", "スキップに投票しました");
         messages.put("other.voted", "%sが%sに投票しました");
