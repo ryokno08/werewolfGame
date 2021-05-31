@@ -81,9 +81,7 @@ public class GuiLogic {
 
     private List<GuiItem> loadHeads() {
         List<GuiItem> heads = new ArrayList<>();
-        game.getWPlayers().values().stream()
-                .filter(wPlayer -> !wPlayer.isDied())
-                .map(wPlayer -> game.getPlayer(wPlayer.getUuid()))
+        game.getAlivePlayer()
                 .forEach(headPlayer -> {
 
                     ItemStack skullStack = new ItemStack(Material.SKULL_ITEM, 1, (short) 3);

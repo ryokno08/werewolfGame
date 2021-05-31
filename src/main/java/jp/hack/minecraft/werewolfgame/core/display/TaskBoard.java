@@ -61,6 +61,13 @@ public class TaskBoard {
         });
     }
 
+    public void update() {
+        scores.forEach((key, value) -> {
+            scoreboard.resetScores(key);
+            objective.getScore(key).setScore(value);
+        });
+    }
+
     public void disable() {
         objective.unregister();
     }

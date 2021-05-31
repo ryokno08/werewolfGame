@@ -36,11 +36,7 @@ public class VotingState extends GameState {
         game.setSkippedPlayers(new ArrayList<>());
 
         game.getDisplayManager().allSendTitle("投票開始");
-        game.getJoinedPlayers().stream()
-                .filter(p->!game.getWPlayer(p.getUniqueId()).isDied())
-                .forEach(player -> {
-                    player.getInventory().addItem(game.getGuiLogic().getItem());
-                });
+        game.getAlivePlayer().forEach(player -> player.getInventory().addItem(game.getGuiLogic().getItem()));
 
         if (task == null) {
             task = new BukkitRunnable() {

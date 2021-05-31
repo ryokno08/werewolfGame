@@ -56,7 +56,7 @@ public class ColorCommand extends CommandMaster {
         String colorName;
         try {
             colorName = Colors.values().keySet().stream().filter(v->v.equals(args[1])).findFirst().get();
-        } catch (NullPointerException | NoSuchElementException e) {
+        } catch (NoSuchElementException e) {
             sender.sendMessage(Messages.error("command.illegalArgument"));
             return true;
         }

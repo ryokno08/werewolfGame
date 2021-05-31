@@ -11,21 +11,20 @@ import org.bukkit.Location;
 import org.bukkit.command.BlockCommandSender;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.List;
 
-public class CompleteCommand extends CommandMaster {
+public class TaskCommand extends CommandMaster {
 
-    public CompleteCommand(CommandManager manager) {
+    public TaskCommand(CommandManager manager) {
         super(manager);
     }
 
     @Override
     public String getName() {
-        return "complete";
+        return "task";
     }
 
     @Override
@@ -35,7 +34,7 @@ public class CompleteCommand extends CommandMaster {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        manager.plugin.getLogger().info("completeコマンドが実行されました");
+        manager.plugin.getLogger().info("taskコマンドが実行されました");
         Game game = ((GameConfigurator) manager.plugin).getGame();
         DisplayManager displayManager = game.getDisplayManager();
         if (!game.wasStarted()) {
@@ -65,11 +64,6 @@ public class CompleteCommand extends CommandMaster {
             displayManager.sendErrorMessage(player, "command.noArgument", "タスクの数字");
             return true;
         }
-        if (wPlayer.getRole().isImposter()) {
-            displayManager.sendErrorMessage(player, "you.notClueMate");
-            return true;
-        }
-
         int no = -1;
         try {
             no = Integer.parseInt(args[1]);
@@ -81,8 +75,11 @@ public class CompleteCommand extends CommandMaster {
             displayManager.sendErrorMessage(player, "command.undefinedTask");
             return true;
         }
-
-        game.taskCompleted(player, no);
+        if (wPlayer.getRole().isImposter()) {
+            game.placeScapegoat(player);
+            return true;
+        }
+        game.doTask(player);
         return true;
     }
 

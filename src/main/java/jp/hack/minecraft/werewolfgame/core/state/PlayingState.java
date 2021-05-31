@@ -26,7 +26,6 @@ public class PlayingState extends GameState {
         game.getDisplayManager().log("PlayingStateに切り替わりました");
 
         game.getDisplayManager().setTaskBarVisible(true);
-
         game.getJoinedPlayers().forEach(player -> {
             player.teleport(game.getMeetingPos());
             game.getDisplayManager().resetAllInventory();
@@ -38,10 +37,7 @@ public class PlayingState extends GameState {
     public void onInactive() {
         super.onInactive();
 
-        game.getJoinedPlayers().forEach(player -> {
-            game.getDisplayManager().clearWithoutArmor(player);
-        });
-
+        game.getJoinedPlayers().forEach(player -> game.getDisplayManager().clearWithoutArmor(player));
         game.getTaskBoard().unregister();
     }
 

@@ -1,18 +1,16 @@
 package jp.hack.minecraft.werewolfgame;
 
-import jp.hack.minecraft.werewolfgame.core.Cadaver;
-import jp.hack.minecraft.werewolfgame.core.Colors;
-import jp.hack.minecraft.werewolfgame.core.Role;
+import jp.hack.minecraft.werewolfgame.core.*;
 import jp.hack.minecraft.werewolfgame.core.display.*;
 import jp.hack.minecraft.werewolfgame.core.task.Task;
 import jp.hack.minecraft.werewolfgame.core.task.TaskManager;
-import jp.hack.minecraft.werewolfgame.core.WPlayer;
 import jp.hack.minecraft.werewolfgame.core.state.*;
 import jp.hack.minecraft.werewolfgame.logic.GameDirector;
 import jp.hack.minecraft.werewolfgame.logic.GuiLogic;
 import jp.hack.minecraft.werewolfgame.util.LocationConfiguration;
 import jp.hack.minecraft.werewolfgame.util.Messages;
 import org.bukkit.*;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -44,6 +42,7 @@ public class Game {
 
     private final Map<UUID, WPlayer> wPlayers = new HashMap<>();
     private final Map<UUID, Cadaver> cadavers = new HashMap<>();
+    private final Map<UUID, Scapegoat> scapegoats = new HashMap<>();
     private final Map<String, UUID> colorUuidMap = new HashMap<>();
     private List<Player> joinedPlayers = new ArrayList<>();
     private DisplayManager displayManager;
@@ -131,6 +130,23 @@ public class Game {
                 .filter(p->p.getUniqueId().equals(uuid))
                 .findFirst()
                 .orElse(null);
+    }
+
+    public Player getNearPlayer(Location location) {
+        Map<UUID, Double> distanceMap = getAlivePlayer().stream().collect(Collectors.toMap(Entity::getUniqueId, p -> location.distance(p.getLocation())));
+        return getPlayer(
+                distanceMap.entrySet().stream()
+                        .sorted(Map.Entry.comparingByValue())
+                        .collect(Collectors.toList())
+                        .get(0)
+                        .getKey()
+        );
+    }
+
+    public List<Player> getAlivePlayer() {
+        return getJoinedPlayers().stream()
+                .filter(player -> !getWPlayer(player.getUniqueId()).isDied())
+                .collect(Collectors.toList());
     }
 
     public void setJoinedPlayers() {
@@ -422,6 +438,7 @@ public class Game {
 
     private Boolean setImposters() {
 
+        /*
         if (wPlayers.isEmpty()) return false;
 
         List<Player> players = new ArrayList<>(this.joinedPlayers);
@@ -433,9 +450,9 @@ public class Game {
             WPlayer wPlayer = getWPlayer(selectedPlayer.getUniqueId());
             wPlayer.setRole(Role.IMPOSTER);
         }
+        */
 
         return true;
-
     }
 
     public ErrorJudge addWPlayer(Player player) {
@@ -504,6 +521,18 @@ public class Game {
         }
     }
 
+    public void placeScapegoat(Player player) { //タスクをしている身代わりを置く
+
+    }
+
+    public void removeScapegoat(Player player) { //身代わりを消す
+
+    }
+
+    public void doTask(Player player) {
+
+    }
+
     public void report(Player reportedPlayer) {
         removeAllCadavers();
 
@@ -558,7 +587,7 @@ public class Game {
     }
 
     private void confirmVote() {
-        if (getWPlayers().values().stream().filter(wp -> !wp.isDied()).allMatch(WPlayer::wasVoted)) {
+        if (getAlivePlayer().stream().map(p -> getWPlayer(p.getUniqueId())).allMatch(WPlayer::wasVoted)) {
             resultVote();
         }
     }
@@ -600,8 +629,8 @@ public class Game {
     }
 
     private WinnerJudge confirmNoOfPlayers() {
-        int clueMateRemains = wPlayers.values().stream().filter(p -> !p.getRole().isImposter() && !p.isDied()).collect(Collectors.toSet()).size();
-        int impostorRemains = wPlayers.values().stream().filter(p -> p.getRole().isImposter() && !p.isDied()).collect(Collectors.toSet()).size();
+        int clueMateRemains = (int) getAlivePlayer().stream().filter(p -> !getWPlayer(p.getUniqueId()).getRole().isImposter()).count();
+        int impostorRemains = (int) getAlivePlayer().stream().filter(p -> getWPlayer(p.getUniqueId()).getRole().isImposter()).count();
 
         if (clueMateRemains <= impostorRemains) {
             return WinnerJudge.IMPOSTER_WIN;

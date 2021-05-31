@@ -15,6 +15,7 @@ import org.bukkit.potion.PotionEffectType;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 public class DisplayManager {
     private final Game game;
@@ -177,8 +178,9 @@ public class DisplayManager {
     }
 
     public void resetAllInventory() {
-        game.getJoinedPlayers().forEach(player -> {
-            if (game.getPlayerRole(player.getUniqueId()).isImposter()) {
+        game.getAlivePlayer().forEach(player -> {
+            UUID uuid = player.getUniqueId();
+            if (game.getPlayerRole(uuid).isImposter()) {
                 resetInventory(player, DefaultInventory.InventoryType.IMPOSTER_INV);
             } else {
                 resetInventory(player, DefaultInventory.InventoryType.CLUE_INV);
@@ -187,10 +189,8 @@ public class DisplayManager {
     }
 
     public void resetColorArmor(Player player) {
-        WPlayer wPlayer = game.getWPlayer(player.getUniqueId());
-        if (wPlayer.isDied()) return;
-
-        ItemStack[] armor = defaultInventory.getColoredArmors(Colors.values().get(wPlayer.getColorName()));
+        String colorName = game.getWPlayer(player.getUniqueId()).getColorName();
+        ItemStack[] armor = defaultInventory.getColoredArmors(Colors.values().get(colorName));
         player.getInventory().setArmorContents(armor);
     }
 
@@ -209,6 +209,6 @@ public class DisplayManager {
     }
 
     public void updateTaskBoard() {
-        game.getTaskBoard().addScores();
+        game.getTaskBoard().update();
     }
 }

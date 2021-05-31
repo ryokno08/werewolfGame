@@ -73,8 +73,7 @@ public class LobbyState extends GameState {
                 task = null;
                 return;
             }
-            for (Player p : game.getJoinedPlayers())
-                p.sendTitle(Messages.message("003", limit - counter), "", 0, 20, 0);
+            game.getJoinedPlayers().forEach(p -> p.sendTitle(Messages.message("003", limit - counter), "", 0, 20, 0));
             counter++;
             task = new MyRunTask().runTaskLater(plugin, 20);
         }
