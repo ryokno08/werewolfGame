@@ -8,6 +8,7 @@ import jp.hack.minecraft.werewolfgame.core.task.Task;
 import jp.hack.minecraft.werewolfgame.core.task.TaskManager;
 import jp.hack.minecraft.werewolfgame.core.WPlayer;
 import jp.hack.minecraft.werewolfgame.core.state.*;
+import jp.hack.minecraft.werewolfgame.logic.GameDirector;
 import jp.hack.minecraft.werewolfgame.logic.GuiLogic;
 import jp.hack.minecraft.werewolfgame.util.LocationConfiguration;
 import jp.hack.minecraft.werewolfgame.util.Messages;
@@ -24,6 +25,7 @@ import java.util.stream.Collectors;
 public class Game {
     private final JavaPlugin plugin;
     private final LocationConfiguration configuration;
+    private final GameDirector gameDirector;
 
     public enum ErrorJudge {
         CONFIG_NULL,
@@ -81,6 +83,10 @@ public class Game {
 
     public JavaPlugin getPlugin() {
         return plugin;
+    }
+
+    public GameDirector getGameLogic() {
+        return gameDirector;
     }
 
     public Boolean wasStarted() {
@@ -305,6 +311,7 @@ public class Game {
     Game(JavaPlugin plugin, LocationConfiguration configuration) {
         this.plugin = plugin;
         this.configuration = configuration;
+        this.gameDirector = new GameDirector(plugin);
     }
 
     // gameStart、meetingStartはコマンドが来たとき呼び出す
@@ -363,8 +370,10 @@ public class Game {
     }
 
     public void resetScoreboard() {
+
         voteBoard = new VoteBoard(plugin);
         taskBoard = new TaskBoard(plugin);
+
     }
 
     private void resetStates() {
@@ -663,6 +672,7 @@ public class Game {
     }
 
     public void gameStop() {
+        if (!wasStarted) return;
         displayManager.log("ゲームが終了しました");
         if (currentState != null) currentState.onEnd();
         currentState = null;

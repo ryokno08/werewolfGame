@@ -54,9 +54,7 @@ public final class Main extends JavaPlugin implements GameConfigurator {
             this.configuration.save();
         }
 
-        if (game.wasStarted()) {
-            game.gameStop();
-        }
+        game.gameStop();
     }
 
     @Override

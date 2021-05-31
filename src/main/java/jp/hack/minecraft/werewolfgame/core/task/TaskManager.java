@@ -1,7 +1,6 @@
 package jp.hack.minecraft.werewolfgame.core.task;
 
 import jp.hack.minecraft.werewolfgame.Game;
-import jp.hack.minecraft.werewolfgame.core.WPlayer;
 import jp.hack.minecraft.werewolfgame.core.display.DisplayManager;
 import org.bukkit.entity.Player;
 
@@ -38,7 +37,7 @@ public class TaskManager {
         manager.updateTaskBoard();
         taskBarUpdate();
         
-        game.getTaskBoard().update();
+        game.getTaskBoard().addScores();
         game.confirmGame();
 
     }

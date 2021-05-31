@@ -7,13 +7,15 @@ import jp.hack.minecraft.werewolfgame.core.command.CommandManager;
 import jp.hack.minecraft.werewolfgame.core.command.CommandMaster;
 import jp.hack.minecraft.werewolfgame.core.display.DisplayManager;
 import jp.hack.minecraft.werewolfgame.util.Messages;
-import org.bukkit.ChatColor;
+import org.bukkit.Location;
+import org.bukkit.command.BlockCommandSender;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class CompleteCommand extends CommandMaster {
 
@@ -36,17 +38,29 @@ public class CompleteCommand extends CommandMaster {
         manager.plugin.getLogger().info("completeコマンドが実行されました");
         Game game = ((GameConfigurator) manager.plugin).getGame();
         DisplayManager displayManager = game.getDisplayManager();
-        if (!(sender instanceof Player)) {
-            displayManager.sendErrorMessage(sender, "you.notPlayer");
+        if (!game.wasStarted()) {
+            displayManager.sendErrorMessage(sender, "game.notStartYet");
             return true;
         }
 
-        Player player = (Player) sender;
-        WPlayer wPlayer = game.getWPlayer(player.getUniqueId());
-        if (!game.wasStarted()) {
-            displayManager.sendErrorMessage(player, "game.notStartYet");
-            return true;
+        Player player;
+
+        if (!(sender instanceof Player)) {
+            if (sender instanceof BlockCommandSender) {
+                Location commandBlockLocation = ((BlockCommandSender) sender).getBlock().getLocation();
+                Map<UUID, Double> distanceMap = game.getJoinedPlayers().stream().collect(Collectors.toMap(Entity::getUniqueId, p->commandBlockLocation.distance(p.getLocation())));
+                player = game.getPlayer(distanceMap.entrySet().stream()
+                        .sorted(Map.Entry.comparingByValue())
+                        .collect(Collectors.toList())
+                        .get(0).getKey());
+            } else {
+                displayManager.sendErrorMessage(sender, "you.notPlayer");
+                return true;
+            }
+        } else {
+            player = (Player) sender;
         }
+        WPlayer wPlayer = game.getWPlayer(player.getUniqueId());
         if(!game.getWPlayers().containsKey(wPlayer.getUuid())) {
             displayManager.sendErrorMessage(player, "you.notJoinYet");
             return true;

@@ -209,6 +209,6 @@ public class DisplayManager {
     }
 
     public void updateTaskBoard() {
-        game.getTaskBoard().update();
+        game.getTaskBoard().addScores();
     }
 }

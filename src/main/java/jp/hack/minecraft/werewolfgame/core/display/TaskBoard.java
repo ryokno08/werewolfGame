@@ -31,13 +31,16 @@ public class TaskBoard {
     public void taskUpdate() {
         Game game = ((GameConfigurator) plugin).getGame();
 
-        scores.clear();
-        List<Task> remainTasks = game.getTasks().stream().filter(task -> !task.isFinished()).collect(Collectors.toList());
+        clearScores();
+
+        List<Task> tasks = game.getTasks();
+        List<Task> remainTasks = tasks.stream().filter(task -> !task.isFinished()).collect(Collectors.toList());
+
         for (Task remainTask : remainTasks) {
             scores.put(TASK + remainTask.getTaskNo(), 1);
         }
 
-        update();
+        addScores();
     }
 
     private void setAllPlayer() {
@@ -45,9 +48,15 @@ public class TaskBoard {
         game.getJoinedPlayers().forEach(player -> player.setScoreboard(scoreboard));
     }
 
-    public void update() {
+    public void clearScores() {
         scores.forEach((key, value) -> {
             scoreboard.resetScores(key);
+        });
+        scores.clear();
+    }
+
+    public void addScores() {
+        scores.forEach((key, value) -> {
             scoreboard.getObjective(name).getScore(key).setScore(value);
         });
     }
@@ -56,15 +65,10 @@ public class TaskBoard {
         objective.unregister();
     }
 
-    public void register(){
-        System.out.println(objective);
-        System.out.println(slot);
-
+    public void register() {
         objective.setDisplaySlot(slot);
         setAllPlayer();
         taskUpdate();
-
-        scores.forEach((k, v) -> System.out.println("k:"+k+", v:"+v));
     }
 
     public void unregister() {

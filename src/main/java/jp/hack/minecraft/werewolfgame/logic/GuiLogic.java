@@ -54,10 +54,7 @@ public class GuiLogic {
         if (game == null) return;
         if (!game.wasStarted()) return;
         if (game.getWPlayer(player.getUniqueId()).isDied()) return;
-
-        if (!clickedItem.getItemMeta().getDisplayName().equals(item.getItemMeta().getDisplayName())) {
-            return;
-        }
+        if (!clickedItem.getItemMeta().getDisplayName().equals(item.getItemMeta().getDisplayName())) return;
 
         initGui().open(player);
     }
@@ -72,7 +69,7 @@ public class GuiLogic {
             e.setCancelled(true);
             Player player = (Player) e.getWhoClicked();
             game.voteToSkip(player);
-            closeInventory(player);
+            player.closeInventory();
         }));
         List<GuiItem> heads = loadHeads();
         for (int i = 0; i < heads.size(); i++) {
@@ -101,16 +98,10 @@ public class GuiLogic {
                                 e.setCancelled(true);
                                 Player player = (Player) e.getWhoClicked();
                                 game.voteToPlayer(player, headPlayer);
-                                closeInventory(player);
+                                player.closeInventory();
                             })
                     );
                 });
         return heads;
-    }
-
-    private void closeInventory(Player player) {
-        player.closeInventory();
-        player.getInventory().clear();
-        game.getDisplayManager().resetColorArmor(player);
     }
 }
