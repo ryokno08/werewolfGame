@@ -9,11 +9,15 @@ import jp.hack.minecraft.werewolfgame.logic.GameDirector;
 import jp.hack.minecraft.werewolfgame.logic.GuiLogic;
 import jp.hack.minecraft.werewolfgame.util.LocationConfiguration;
 import jp.hack.minecraft.werewolfgame.util.Messages;
+import me.mattstudios.mfgui.gui.components.ItemBuilder;
 import org.bukkit.*;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -277,6 +281,27 @@ public class Game {
 
     public TaskManager getTaskManager() {
         return taskManager;
+    }
+
+
+    public void startTask(Player player, int no) {
+        World world = player.getWorld();
+
+        ArmorStand armorStand = (ArmorStand) world.spawnEntity(player.getLocation(), EntityType.ARMOR_STAND);
+        armorStand.setBasePlate(false);
+        armorStand.setVisible(false);
+
+        ItemStack skullStack = new ItemStack(Material.SKULL_ITEM, 1, (short) 3);
+        SkullMeta skullMeta = (SkullMeta) skullStack.getItemMeta();
+        skullMeta.setOwningPlayer(player);
+        skullStack.setItemMeta(skullMeta);
+        armorStand.setHelmet(skullStack);
+
+        WPlayer wPlayer = getWPlayer(player.getUniqueId());
+        // armorStand.setHelmet(player.getInventory().getHelmet());
+        armorStand.setChestplate(player.getInventory().getChestplate());
+        armorStand.setLeggings(player.getInventory().getLeggings());
+        armorStand.setBoots(player.getInventory().getBoots());
     }
 
     public void taskCompleted(Player player, int no) {

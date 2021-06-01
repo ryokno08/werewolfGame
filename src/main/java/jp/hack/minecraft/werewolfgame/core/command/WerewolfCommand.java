@@ -23,6 +23,7 @@ public class WerewolfCommand extends CommandMaster {
         addSubCommand(new StopCommand(this.manager));
         addSubCommand(new ReportCommand(this.manager));
         addSubCommand(new MakeCadaverCommand(this.manager));
+        addSubCommand(new StartTaskCommand(this.manager));
     }
 
     @Override
