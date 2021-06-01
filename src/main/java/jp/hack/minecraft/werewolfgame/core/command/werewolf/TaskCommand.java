@@ -7,6 +7,7 @@ import jp.hack.minecraft.werewolfgame.core.command.CommandManager;
 import jp.hack.minecraft.werewolfgame.core.command.CommandMaster;
 import jp.hack.minecraft.werewolfgame.core.display.DisplayManager;
 import jp.hack.minecraft.werewolfgame.util.Messages;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.command.BlockCommandSender;
 import org.bukkit.command.Command;
@@ -75,8 +76,9 @@ public class TaskCommand extends CommandMaster {
             displayManager.sendErrorMessage(player, "command.undefinedTask");
             return true;
         }
+
+        game.placeScapegoat(player);
         if (wPlayer.getRole().isImposter()) {
-            game.placeScapegoat(player);
             displayManager.sendGreenMessage(player, "you.fakeTask");
             return true;
         }
