@@ -284,6 +284,8 @@ public class Game {
     }
 
     public void taskCompleted(Player player, int no) {
+        player.teleport(scapegoats.get(player.getUniqueId()).getArmorStand());
+        removeScapegoat(player);
         taskManager.onTaskFinished(player, no);
     }
 
