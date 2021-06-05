@@ -77,11 +77,6 @@ public class TaskCommand extends CommandMaster {
             return true;
         }
 
-        game.placeScapegoat(player);
-        if (wPlayer.getRole().isImposter()) {
-            displayManager.sendGreenMessage(player, "you.fakeTask");
-            return true;
-        }
         game.doTask(player, no);
         displayManager.sendGreenMessage(player, "you.doTask");
         return true;

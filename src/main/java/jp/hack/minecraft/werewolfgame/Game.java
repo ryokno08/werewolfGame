@@ -556,6 +556,13 @@ public class Game {
     }
 
     public void doTask(Player player, int no) {
+        WPlayer wPlayer = getWPlayer(player.getUniqueId());
+        placeScapegoat(player);
+        if (wPlayer.getRole().isImposter()) {
+            displayManager.sendGreenMessage(player, "you.fakeTask");
+            return;
+        }
+
         if (getTasksPos().size() < no) {
             player.teleport(getTasksPos().get(0));
         } else {
