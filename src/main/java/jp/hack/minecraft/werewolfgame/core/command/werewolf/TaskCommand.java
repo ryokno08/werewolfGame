@@ -44,7 +44,6 @@ public class TaskCommand extends CommandMaster {
         }
 
         Player player;
-
         if (!(sender instanceof Player)) {
             if (sender instanceof BlockCommandSender) {
                 Location commandBlockLocation = ((BlockCommandSender) sender).getBlock().getLocation();
@@ -56,8 +55,8 @@ public class TaskCommand extends CommandMaster {
         } else {
             player = (Player) sender;
         }
-        WPlayer wPlayer = game.getWPlayer(player.getUniqueId());
-        if(!game.getWPlayers().containsKey(wPlayer.getUuid())) {
+
+        if(!game.getWPlayers().containsKey(player.getUniqueId())) {
             displayManager.sendErrorMessage(player, "you.notJoinYet");
             return true;
         }
@@ -74,6 +73,10 @@ public class TaskCommand extends CommandMaster {
         }
         if (no > game.getTasks().size() - 1 || no < 0) {
             displayManager.sendErrorMessage(player, "command.undefinedTask");
+            return true;
+        }
+        if (game.getProcessor().containsKey(no)) {
+            displayManager.sendErrorMessage(player, "other.processing");
             return true;
         }
 

@@ -6,7 +6,7 @@ public class WPlayer {
     private final UUID uuid;
     private String colorName;
 
-    private Boolean isKilling = false;
+    private Boolean canMove = true;
     private Boolean wasDied = false;
     private Boolean wasReported = false;
     private Boolean wasVoted = false;
@@ -37,12 +37,12 @@ public class WPlayer {
         return colorName;
     }
 
-    public Boolean isKilling() {
-        return isKilling;
+    public Boolean canMove() {
+        return canMove;
     }
 
-    public void setIsKilling(Boolean isKilling) {
-        this.isKilling = isKilling;
+    public void setCanMove(Boolean canMove) {
+        this.canMove = canMove;
     }
 
     public Boolean wasDied() {

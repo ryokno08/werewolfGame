@@ -23,6 +23,7 @@ public class Messages {
         messages.put("you.fakeTask", "タスクをするふりをしています...");
         messages.put("you.doTask", "タスクをしてください");
 
+        //投票
         messages.put("you.voted", "%sに投票しました");
         messages.put("you.skipped", "スキップに投票しました");
         messages.put("other.voted", "%sが%sに投票しました");
@@ -37,6 +38,8 @@ public class Messages {
         errors.put("you.cannotCommandNow", "このコマンドは現在実行できません");
         errors.put("you.disturbImposter", "インポスターの邪魔になっています！速やかに退去してください");
         errors.put("you.coolingTime", "キルクールタイムがあけていません");
+
+        errors.put("other.processing", "他のプレイヤーがタスクをしているため、タスクができません");
 
         errors.put("game.notStartYet", "まだゲームは始まっていません");
         errors.put("game.alreadyStarted", "すでにゲームは始まっています");

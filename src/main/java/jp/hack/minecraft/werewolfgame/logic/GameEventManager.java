@@ -2,11 +2,11 @@ package jp.hack.minecraft.werewolfgame.logic;
 
 import jp.hack.minecraft.werewolfgame.Game;
 import jp.hack.minecraft.werewolfgame.GameConfigurator;
-import jp.hack.minecraft.werewolfgame.core.Imposter;
 import jp.hack.minecraft.werewolfgame.core.WPlayer;
 import jp.hack.minecraft.werewolfgame.core.state.PlayingState;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -65,14 +65,16 @@ public class GameEventManager implements Listener {
 
     @EventHandler
     public void onPlayerMove(PlayerMoveEvent e) {
+        Location from = e.getFrom();
+        Location to = e.getTo();
+        if (from.getX() == to.getX() && from.getZ() == to.getZ() && from.getY() == to.getY()) return;
+
         this.game = ((GameConfigurator) this.plugin).getGame();
         if (game == null) return;
         if (!game.wasStarted()) return;
         if (game.getWPlayer(e.getPlayer().getUniqueId()).wasDied()) return;
-        if (e.getFrom().getX() == e.getTo().getX() && e.getFrom().getZ() == e.getTo().getZ()) return;
-        if (!game.canMove()) e.setCancelled(true);
         WPlayer wPlayer = game.getWPlayer(e.getPlayer().getUniqueId());
-        if (!wPlayer.isKilling()) return;
+        if (game.canMove() && wPlayer.canMove()) return;
         e.setCancelled(true);
     }
 
@@ -111,27 +113,34 @@ public class GameEventManager implements Listener {
     }
 
     @EventHandler
-    public void onPlayerItemAction(PlayerInteractEvent e) {
+    public void onPlayerInteract(PlayerInteractEvent e) {
+        e.setCancelled(true);
+        this.game = ((GameConfigurator) this.plugin).getGame();
+        if (game == null) return;
+        if (!game.wasStarted()) return;
+
+        Player player = e.getPlayer();
+        if (player.getGameMode() == GameMode.SPECTATOR) {
+            if (game.getWPlayer(player.getUniqueId()).wasDied()) return;
+            game.getGameDirector().onSpectatorInteract(player);
+        } else {
+            if (game.getWPlayer(e.getPlayer().getUniqueId()).wasDied()) return;
+            Action action = e.getAction();
+            if (!(action.equals(Action.RIGHT_CLICK_AIR) || action.equals(Action.RIGHT_CLICK_BLOCK))) return;
+            game.getGameDirector().onPlayerInteract(e);
+        }
+    }
+
+    @EventHandler
+    public void onPlayerInteractEntity(PlayerInteractEntityEvent e) {
         this.game = ((GameConfigurator) this.plugin).getGame();
         if (game == null) return;
         if (!game.wasStarted()) return;
         if (game.getWPlayer(e.getPlayer().getUniqueId()).wasDied()) return;
-
-        Action action = e.getAction();
-        if (!(action.equals(Action.RIGHT_CLICK_AIR) || action.equals(Action.RIGHT_CLICK_BLOCK))) return;
-
-        game.getGameDirector().onPlayerItemAction(e);
-    }
-
-    @EventHandler
-    public void onPlayerSpectatingInteract(PlayerInteractEntityEvent e) {
-        this.game = ((GameConfigurator) this.plugin).getGame();
-        if (game == null) return;
-        if (!game.wasStarted()) return;
         Player player = e.getPlayer();
         if (!player.getGameMode().equals( GameMode.SPECTATOR )) return;
         if (game.getWPlayer(player.getUniqueId()).wasDied()) return;
-        e.setCancelled(true);
+        game.getGameDirector().onSpectatorInteract(player);
     }
 
 }

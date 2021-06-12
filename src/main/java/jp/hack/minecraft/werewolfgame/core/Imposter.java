@@ -64,7 +64,7 @@ public class Imposter extends WPlayer {
                 game.getDisplayManager().sendActionBarMessage(game.getPlayer(getUuid()), "");
                 this.cancel();
             } else {
-                game.getDisplayManager().sendActionBarMessage(game.getPlayer(getUuid()), "キルクールタイム " + ChatColor.RED.toString() + (coolTime - count) + " 秒");
+                game.getDisplayManager().sendActionBarMessage(game.getPlayer(getUuid()), "キルクールタイム " + ChatColor.RED.toString() + (coolTime - count) + ChatColor.RESET.toString() + " 秒");
                 count++;
                 coolDown = new CoolDown(game).runTaskLater(game.getPlugin(), 20);
             }

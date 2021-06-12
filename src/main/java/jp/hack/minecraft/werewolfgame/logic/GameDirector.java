@@ -74,26 +74,32 @@ public class GameDirector {
         game.killPlayer(entity, false);
         imposter.setCoolDown(game);
 
-        imposter.setIsKilling(true);
-        target.setIsKilling(true);
+        imposter.setCanMove(false);
+        target.setCanMove(false);
         game.confirmGame();
         System.out.println("[!KILL]" + attacker.getDisplayName() + " killed " + entity.getDisplayName());
 
         new BukkitRunnable() {
             @Override
             public void run() {
-                imposter.setIsKilling(false);
-                target.setIsKilling(false);
+                imposter.setCanMove(true);
+                target.setCanMove(true);
             }
         }.runTaskLater(plugin, 10);
     }
 
-    public void onPlayerItemAction(PlayerInteractEvent e) {
+    public void onPlayerInteract(PlayerInteractEvent e) {
         Game game = ((GameConfigurator) plugin).getGame();
 
         Player player = e.getPlayer();
-        ItemStack itemInHand = player.getInventory().getItemInMainHand();
+        WPlayer wPlayer = game.getWPlayer(player.getUniqueId());
+        if (wPlayer.wasDied()) return;
+        if (player.getGameMode() == GameMode.SPECTATOR) {
+            player.setGameMode(GameMode.ADVENTURE);
+            return;
+        }
 
+        ItemStack itemInHand = player.getInventory().getItemInMainHand();
         if (game.getCurrentState() instanceof VotingState) {
             if (itemInHand.getType() != game.getGuiLogic().getItem().getType()) return;
             game.getGuiLogic().OpenGUI(player, itemInHand);
@@ -106,12 +112,22 @@ public class GameDirector {
 
         Location playerLoc = player.getLocation();
         game.getCadavers().values().stream().filter(o -> {
-            Location cadaverLoc = o.getCadaverBlock().getLocation();
+            Location cadaverLoc = o.getArmorStand().getLocation();
             return cadaverLoc.distance(playerLoc) <= game.getReportDistance();
         }).findFirst().ifPresent(o -> game.report(player, o.getPlayer()));
     }
 
     public void onPlayerInteractEntity(PlayerInteractEntityEvent e) {
-        Game game = ((GameConfigurator) this.plugin).getGame();
+        e.setCancelled(true);
     }
+
+    public void onSpectatorInteract(Player player) {
+        Game game = ((GameConfigurator) this.plugin).getGame();
+
+        player.setGameMode(GameMode.ADVENTURE);
+        WPlayer wPlayer = game.getWPlayer(player.getUniqueId());
+        wPlayer.setCanMove(true);
+        game.cleanTask(player);
+    }
+
 }

@@ -67,7 +67,7 @@ public class LobbyState extends GameState {
 
         @Override
         public void run() {
-            System.out.println(counter);
+            System.out.println("ゲーム開始まで " + counter + " 秒");
             if (counter >= limit) {
                 game.changeState(game.getPlayingState());
                 task = null;

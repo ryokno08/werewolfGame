@@ -43,7 +43,7 @@ public class Game {
     private final Map<UUID, WPlayer> wPlayers = new HashMap<>();
     private final Map<UUID, Cadaver> cadavers = new HashMap<>();
     private final Map<UUID, Scapegoat> scapegoats = new HashMap<>();
-    private final Map<String, UUID> colorUuidMap = new HashMap<>();
+    private final Map<String, UUID> playerColorMap = new HashMap<>();
     private List<Player> joinedPlayers = new ArrayList<>();
     private DisplayManager displayManager;
     private TaskManager taskManager;
@@ -70,6 +70,7 @@ public class Game {
     private GameState currentState;
 
     private List<Task> tasks = new ArrayList<>();
+    private Map<UUID, Integer> processor = new HashMap<>();
     private GuiLogic guiLogic;
 
     // UUIDは投票者のもの Stringは投票先のUUIDもしくは"Skip"が入る
@@ -107,7 +108,8 @@ public class Game {
     public void createCadaver(Player player) {
         UUID uuid = player.getUniqueId();
 
-        Cadaver cadaver = new Cadaver(player, getWPlayer(uuid));
+        Cadaver cadaver = new Cadaver(player);
+        cadaver.spawnBlood(this);
         cadavers.put(uuid, cadaver);
     }
 
@@ -115,8 +117,12 @@ public class Game {
         return cadavers;
     }
 
-    public Map<String, UUID> getColorUuidMap() {
-        return colorUuidMap;
+    public Map<UUID, Scapegoat> getScapegoats() {
+        return scapegoats;
+    }
+
+    public Map<String, UUID> getPlayerColorMap() {
+        return playerColorMap;
     }
 
     public List<Player> getJoinedPlayers() {
@@ -279,18 +285,20 @@ public class Game {
         this.tasks = tasks;
     }
 
+    public Map<UUID, Integer> getProcessor() {
+        return processor;
+    }
+
+    public void setProcessor(Map<UUID, Integer> processor) {
+        this.processor = processor;
+    }
+
     public DisplayManager getDisplayManager() {
         return displayManager;
     }
 
     public TaskManager getTaskManager() {
         return taskManager;
-    }
-
-    public void taskCompleted(Player player, int no) {
-        player.teleport(scapegoats.get(player.getUniqueId()).getArmorStand());
-        removeScapegoat(player);
-        taskManager.onTaskFinished(player, no);
     }
 
     public void setCurrentState(GameState currentState) {
@@ -378,6 +386,7 @@ public class Game {
         if (taskBoard != null) taskBoard.disable();
         if (voteBoard != null) voteBoard.disable();
         if (!cadavers.isEmpty()) resetCadaver();
+        if (!scapegoats.isEmpty()) resetScapegoat();
         reloadConfig();
         resetManagers();
         resetWPlayers();
@@ -437,7 +446,7 @@ public class Game {
         joinedPlayers = new ArrayList<>(plugin.getServer().getOnlinePlayers());
         Map<String, Color> colors = new HashMap<>(Colors.values()).entrySet()
                 .stream()
-                .filter(o -> !colorUuidMap.containsKey(o.getKey()))
+                .filter(o -> !playerColorMap.containsKey(o.getKey()))
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
         for (Player player : joinedPlayers) {
@@ -464,8 +473,13 @@ public class Game {
     }
 
     private void resetCadaver() {
-        cadavers.values().forEach(Cadaver::removeBlock);
+        cadavers.values().forEach(Cadaver::destroy);
         cadavers.clear();
+    }
+
+    private void resetScapegoat() {
+        scapegoats.values().forEach(Scapegoat::destroy);
+        scapegoats.clear();
     }
 
     private Boolean setImposters() {
@@ -489,12 +503,12 @@ public class Game {
 
         if (wPlayers.containsKey(player.getUniqueId())) return ErrorJudge.NONE;
         WPlayer wPlayer = new WPlayer(player.getUniqueId());
-        Optional<String> colorOptional = Colors.values().keySet().stream().filter(c1 -> colorUuidMap.keySet().stream().noneMatch(c1::equals)).findFirst();
+        Optional<String> colorOptional = Colors.values().keySet().stream().filter(c1 -> playerColorMap.keySet().stream().noneMatch(c1::equals)).findFirst();
 
         if (colorOptional.isPresent()) {
             String colorName = colorOptional.get();
             wPlayer.setColorName(colorName);
-            colorUuidMap.put(colorName, player.getUniqueId());
+            playerColorMap.put(colorName, player.getUniqueId());
             wPlayers.put(player.getUniqueId(), wPlayer);
             displayManager.resetColorArmor(player);
         } else {
@@ -515,16 +529,16 @@ public class Game {
 
         WPlayer changer = getWPlayer(player.getUniqueId());
 
-        if (colorUuidMap.containsKey(colorName)) {
-            WPlayer swapper = getWPlayer(colorUuidMap.get(colorName));
-            colorUuidMap.replace(colorName, player.getUniqueId());
-            colorUuidMap.put(changer.getColorName(), swapper.getUuid());
+        if (playerColorMap.containsKey(colorName)) {
+            WPlayer swapper = getWPlayer(playerColorMap.get(colorName));
+            playerColorMap.replace(colorName, player.getUniqueId());
+            playerColorMap.put(changer.getColorName(), swapper.getUuid());
 
             swapper.setColorName(changer.getColorName());
             displayManager.resetColorArmor(getPlayer(swapper.getUuid()));
         } else {
-            colorUuidMap.remove(changer.getColorName());
-            colorUuidMap.put(colorName, player.getUniqueId());
+            playerColorMap.remove(changer.getColorName());
+            playerColorMap.put(colorName, player.getUniqueId());
         }
 
         changer.setColorName(colorName);
@@ -561,30 +575,66 @@ public class Game {
         }
     }
 
+    public Boolean containsScapegoat(UUID uuid) {
+        return scapegoats.containsKey(uuid);
+    }
+
     public void placeScapegoat(Player player) { //タスクをしている身代わりを置く
+        UUID uuid = player.getUniqueId();
+        if (containsScapegoat(uuid)) removeScapegoat(uuid);
         Scapegoat scapegoat = new Scapegoat(player);
         scapegoats.put(player.getUniqueId(), scapegoat);
     }
 
-    public void removeScapegoat(Player player) { //身代わりを消す
-        UUID uuid = player.getUniqueId();
+    public void removeScapegoat(UUID uuid) { //身代わりを消す
+        if (!containsScapegoat(uuid)) return;
         scapegoats.get(uuid).destroy();
         scapegoats.remove(uuid);
     }
 
-    public void doTask(Player player, int no) {
+    public void teleportAtScapegoat(Player player) {
+        UUID uuid = player.getUniqueId();
+        if (!containsScapegoat(uuid)) return;
+        player.teleport(scapegoats.get(uuid).getArmorStand());
+    }
+
+    public void taskCompleted(Player player, int no) {
+        cleanTask(player);
+        taskManager.onTaskFinished(player, no);
+    }
+
+    public void cleanTask(Player player) {
         WPlayer wPlayer = getWPlayer(player.getUniqueId());
+        processor.remove(wPlayer.getUuid());
+        removeScapegoat(wPlayer.getUuid());
+        teleportAtScapegoat(player);
+    }
+
+    public void doTask(Player player, int no) {
+        UUID uuid = player.getUniqueId();
+        WPlayer wPlayer = getWPlayer(uuid);
+
         placeScapegoat(player);
+        processor.put(uuid, no);
         if (wPlayer.isImposter()) {
-            displayManager.sendGreenMessage(player, "you.fakeTask");
+            fakeTask(player);
             return;
         }
 
+        //ゲーム完成後,、このif文は削除してエラーが起きないようにしてください
         if (getTasksPos().size() < no) {
             player.teleport(getTasksPos().get(0));
         } else {
             player.teleport(getTasksPos().get(no));
         }
+    }
+
+    public void fakeTask(Player player) {
+        displayManager.sendGreenMessage(player, "you.fakeTask");
+        player.setGameMode(GameMode.SPECTATOR);
+        player.teleport(player.getLocation().add(0, 1, 0));
+        WPlayer wPlayer = getWPlayer(player.getUniqueId());
+        wPlayer.setCanMove(false);
     }
 
     public void report(Player reportedPlayer) {
@@ -608,7 +658,7 @@ public class Game {
     }
 
     public void removeAllCadavers() {
-        cadavers.values().forEach(Cadaver::removeBlock);
+        cadavers.values().forEach(Cadaver::destroy);
         cadavers.clear();
     }
 

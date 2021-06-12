@@ -1,48 +1,71 @@
 package jp.hack.minecraft.werewolfgame.core;
 
+import jp.hack.minecraft.werewolfgame.Game;
 import org.bukkit.*;
-import org.bukkit.block.Block;
-import org.bukkit.block.Skull;
+import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.material.Dye;
-import org.bukkit.material.Wool;
-
-import java.util.UUID;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitTask;
+import org.bukkit.util.EulerAngle;
 
 public class Cadaver {
-    private Player player;
-    private Block cadaverBlock;
-    private Block woolBlock;
+    private final Player player;
+    private final Location location;
+    private final ArmorStand armorStand;
+    private BukkitTask task;
 
-    public Cadaver(Player player, WPlayer wPlayer) {
+    public Cadaver(Player player) {
         this.player = player;
-        cadaverBlock = player.getLocation().add(0,1,0).getBlock();
-        woolBlock = player.getLocation().getBlock();
+        location = player.getLocation();
 
-        Wool wool = new Wool();
-        wool.setColor(DyeColor.valueOf(wPlayer.getColorName()));
-        woolBlock.setType(Material.WOOL);
-        woolBlock.setData(wool.getColor().getWoolData());
+        armorStand = (ArmorStand) player.getWorld().spawnEntity(player.getLocation().add(0.0d, -0.5d, 0.0d), EntityType.ARMOR_STAND);
+        armorStand.setBasePlate(false);
+        armorStand.setGravity(false);
+        armorStand.setVisible(false);
+        armorStand.setLeftLegPose(new EulerAngle(1.55d, 9d, 0d));
+        armorStand.setRightLegPose(new EulerAngle(1.55d, -9d, 0d));
 
-        cadaverBlock.setType(Material.SKULL);
+        armorStand.setChestplate(player.getInventory().getChestplate());
+        armorStand.setLeggings(player.getInventory().getLeggings());
+        armorStand.setBoots(player.getInventory().getBoots());
+    }
 
-        Skull skull = (Skull) cadaverBlock.getState();
-        skull.setSkullType(SkullType.PLAYER);
-        skull.setOwningPlayer(player);
-        skull.update();
+    public void spawnBlood(Game game) {
+        task = new BloodParticle(game).runTask(game.getPlugin());
+    }
+
+    public void clearBlood() {
+        if (task != null) task.cancel();
     }
 
     public Player getPlayer() {
         return player;
     }
 
-    public Block getCadaverBlock() {
-        return cadaverBlock;
+    public Location getLocation() {
+        return location;
     }
 
-    public void removeBlock() {
-        cadaverBlock.setType(Material.AIR);
-        woolBlock.setType(Material.AIR);
+    public ArmorStand getArmorStand() {
+        return armorStand;
+    }
+
+    public void destroy() {
+        armorStand.remove();
+        clearBlood();
+    }
+
+    public class BloodParticle extends BukkitRunnable {
+        private Game game;
+        public BloodParticle(Game game) {
+            this.game = game;
+        }
+
+        @Override
+        public void run() {
+            player.getWorld().spawnParticle(Particle.DRIP_LAVA, getLocation().getX(), getLocation().getY() + 1.0, getLocation().getZ(), 4, 0.15d, 0.10d, 0.15d);
+            task = new BloodParticle(game).runTaskLater(game.getPlugin(), 60);
+        }
     }
 }
