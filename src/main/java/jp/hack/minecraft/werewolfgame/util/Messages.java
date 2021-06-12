@@ -36,6 +36,7 @@ public class Messages {
         errors.put("you.alreadyVoted", "すでに投票をしているため、投票できません");
         errors.put("you.cannotCommandNow", "このコマンドは現在実行できません");
         errors.put("you.disturbImposter", "インポスターの邪魔になっています！速やかに退去してください");
+        errors.put("you.coolingTime", "キルクールタイムがあけていません");
 
         errors.put("game.notStartYet", "まだゲームは始まっていません");
         errors.put("game.alreadyStarted", "すでにゲームは始まっています");

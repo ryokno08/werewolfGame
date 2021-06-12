@@ -54,7 +54,7 @@ public class ReportCommand extends CommandMaster {
             return true;
         }
 
-        if (wPlayer.getReport()) {
+        if (wPlayer.wasReported()) {
             sender.sendMessage(Messages.error("you.alreadyReported"));
             return true;
         } else {

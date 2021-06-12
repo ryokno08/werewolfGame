@@ -2,7 +2,7 @@ package jp.hack.minecraft.werewolfgame.logic;
 
 import jp.hack.minecraft.werewolfgame.Game;
 import jp.hack.minecraft.werewolfgame.GameConfigurator;
-import jp.hack.minecraft.werewolfgame.core.Role;
+import jp.hack.minecraft.werewolfgame.core.Imposter;
 import jp.hack.minecraft.werewolfgame.core.WPlayer;
 import jp.hack.minecraft.werewolfgame.core.state.PlayingState;
 import jp.hack.minecraft.werewolfgame.core.state.VotingState;
@@ -12,6 +12,7 @@ import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemStack;
@@ -48,41 +49,43 @@ public class GameDirector {
         Player entity = (Player) e.getEntity();
 
         WPlayer wAttacker = game.getWPlayer(attacker.getUniqueId());
-        WPlayer wEntity = game.getWPlayer(entity.getUniqueId());
+        WPlayer target = game.getWPlayer(entity.getUniqueId());
 
-        if (wAttacker.isDied()) return;
-        if (wEntity.isDied()) {
+        if (wAttacker.wasDied()) return;
+        if (target.wasDied()) {
             game.getDisplayManager().sendErrorMessage(entity, "you.disturbImposter");
             return;
         }
+        if (target.isImposter()) return;
+        if (!wAttacker.isImposter()) return;
+        if (!attacker.getInventory().getItemInMainHand().getType().equals(game.getItemForKill().getType())) return;
 
-        if (Role.CLUE_MATE.equals(game.getPlayerRole(entity.getUniqueId()))) {
-            if (Role.IMPOSTER.equals(game.getPlayerRole(attacker.getUniqueId()))) {
-                if (attacker.getInventory().getItemInMainHand().getType().equals(game.getItemForKill().getType())) {
-
-                    Location entityLocation = entity.getLocation();
-                    attacker.teleport(entityLocation.add(0, 0.5, 0));
-                    attacker.spawnParticle(Particle.REDSTONE, attacker.getLocation(), 30, 2.0, 3.0, 2.0);
-                    game.getDisplayManager().showDeath(entity, "By " + attacker.getDisplayName());
-
-                    game.killPlayer(entity, false);
-
-                    wAttacker.setKilling(true);
-                    wEntity.setKilling(true);
-
-                    new BukkitRunnable() {
-                        @Override
-                        public void run() {
-                            wAttacker.setKilling(false);
-                            wEntity.setKilling(false);
-                        }
-                    }.runTaskLater(plugin, 10);
-
-                    game.confirmGame();
-                    System.out.println("[!KILL]" + attacker.getDisplayName() + " killed " + entity.getDisplayName());
-                }
-            }
+        Imposter imposter = (Imposter) wAttacker;
+        if (!imposter.canKill()) {
+            game.getDisplayManager().sendErrorMessage(attacker, "you.coolingTime");
+            return;
         }
+
+        Location entityLocation = entity.getLocation();
+        attacker.teleport(entityLocation);
+        attacker.spawnParticle(Particle.REDSTONE, attacker.getLocation(), 30, 2.0, 3.0, 2.0);
+        game.getDisplayManager().showDeath(entity, "By " + attacker.getDisplayName());
+
+        game.killPlayer(entity, false);
+        imposter.setCoolDown(game);
+
+        imposter.setIsKilling(true);
+        target.setIsKilling(true);
+        game.confirmGame();
+        System.out.println("[!KILL]" + attacker.getDisplayName() + " killed " + entity.getDisplayName());
+
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                imposter.setIsKilling(false);
+                target.setIsKilling(false);
+            }
+        }.runTaskLater(plugin, 10);
     }
 
     public void onPlayerItemAction(PlayerInteractEvent e) {
@@ -106,5 +109,9 @@ public class GameDirector {
             Location cadaverLoc = o.getCadaverBlock().getLocation();
             return cadaverLoc.distance(playerLoc) <= game.getReportDistance();
         }).findFirst().ifPresent(o -> game.report(player, o.getPlayer()));
+    }
+
+    public void onPlayerInteractEntity(PlayerInteractEntityEvent e) {
+        Game game = ((GameConfigurator) this.plugin).getGame();
     }
 }

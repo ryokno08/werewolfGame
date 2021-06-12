@@ -53,7 +53,7 @@ public class GuiLogic {
     public void OpenGUI(Player player, ItemStack clickedItem) {
         if (game == null) return;
         if (!game.wasStarted()) return;
-        if (game.getWPlayer(player.getUniqueId()).isDied()) return;
+        if (game.getWPlayer(player.getUniqueId()).wasDied()) return;
         if (!clickedItem.getItemMeta().getDisplayName().equals(item.getItemMeta().getDisplayName())) return;
 
         initGui().open(player);

@@ -53,7 +53,7 @@ public class LobbyState extends GameState {
             player.setGameMode(GameMode.ADVENTURE);
 
             WPlayer wPlayer = game.getWPlayer(player.getUniqueId());
-            if (wPlayer.getRole().isImposter()) {
+            if (wPlayer.isImposter()) {
                 game.getDisplayManager().youAreImposter(player);
             } else {
                 game.getDisplayManager().youAreClueMate(player);

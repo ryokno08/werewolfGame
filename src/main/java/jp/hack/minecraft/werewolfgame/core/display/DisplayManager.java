@@ -90,6 +90,10 @@ public class DisplayManager {
         TextComponent component = new TextComponent(text);
         game.getJoinedPlayers().forEach(p -> p.spigot().sendMessage(ChatMessageType.ACTION_BAR, component));
     }
+    public void sendActionBarMessage(Player player, String text) {
+        TextComponent component = new TextComponent(text);
+        player.spigot().sendMessage(ChatMessageType.ACTION_BAR, component);
+    }
     public void allSendTitle(String title) {
         game.getJoinedPlayers().forEach(player -> {
             player.sendTitle(title, "", 10, 2*20, 10);
@@ -139,13 +143,13 @@ public class DisplayManager {
         for (Player player : game.getJoinedPlayers()) {
             WPlayer wPlayer = game.getWPlayer(player.getUniqueId());
             if (clueWin) {
-                if (wPlayer.getRole().isImposter()) {
+                if (wPlayer.isImposter()) {
                     sendTitle(player, DEFEAT_MESSAGE, CLUE_MATE_MESSAGE+"の勝利");
                 } else {
                     sendTitle(player, VICTORY_MESSAGE, CLUE_MATE_MESSAGE+"の勝利");
                 }
             } else {
-                if (wPlayer.getRole().isImposter()) {
+                if (wPlayer.isImposter()) {
                     sendTitle(player, VICTORY_MESSAGE, IMPOSTER_MESSAGE+"の勝利");
                 } else {
                     sendTitle(player, DEFEAT_MESSAGE, IMPOSTER_MESSAGE+"の勝利");
@@ -157,7 +161,7 @@ public class DisplayManager {
     public void resetInventory(Player player, DefaultInventory.InventoryType inventoryType) {
         if (player == null || inventoryType == null) return;
         WPlayer wPlayer = game.getWPlayer(player.getUniqueId());
-        if (wPlayer.isDied()) return;
+        if (wPlayer.wasDied()) return;
 
         player.getInventory().clear();
         Map<Integer, ItemStack> itemStackMap = new HashMap<>();
@@ -180,7 +184,7 @@ public class DisplayManager {
     public void resetAllInventory() {
         game.getAlivePlayer().forEach(player -> {
             UUID uuid = player.getUniqueId();
-            if (game.getPlayerRole(uuid).isImposter()) {
+            if (game.getWPlayer(uuid).isImposter()) {
                 resetInventory(player, DefaultInventory.InventoryType.IMPOSTER_INV);
             } else {
                 resetInventory(player, DefaultInventory.InventoryType.CLUE_INV);

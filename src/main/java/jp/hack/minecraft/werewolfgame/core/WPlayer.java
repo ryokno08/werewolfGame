@@ -1,45 +1,35 @@
 package jp.hack.minecraft.werewolfgame.core;
 
-import jp.hack.minecraft.werewolfgame.core.task.Task;
-import org.bukkit.Color;
-
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 public class WPlayer {
     private final UUID uuid;
     private String colorName;
-    private Role role;
 
-    private Boolean killing = false;
-    private Boolean died = false;
-    private Boolean report = false;
-    private Boolean voted = false;
+    private Boolean isKilling = false;
+    private Boolean wasDied = false;
+    private Boolean wasReported = false;
+    private Boolean wasVoted = false;
 
 
     public WPlayer(UUID uuid) {
-        this(uuid, Role.CLUE_MATE);
+        this.uuid = uuid;
     }
 
-    public WPlayer(UUID uuid, Role role) {
-        this.uuid = uuid;
-        this.role = role;
+    public WPlayer(WPlayer wPlayer) {
+        this(wPlayer.getUuid());
+
+        setColorName(wPlayer.getColorName());
+        setWasDied(wPlayer.wasDied());
+        setWasReported(wPlayer.wasReported());
+        setWasVoted(wPlayer.wasVoted());
     }
 
     public UUID getUuid() {
         return uuid;
     }
 
-    public Role getRole() {
-        return role;
-    }
-
-    public void setRole(Role role) {
-        this.role = role;
-    }
-
-    public void setColor(String colorName) {
+    public void setColorName(String colorName) {
         this.colorName = colorName;
     }
 
@@ -48,34 +38,38 @@ public class WPlayer {
     }
 
     public Boolean isKilling() {
-        return killing;
+        return isKilling;
     }
 
-    public void setKilling(Boolean killing) {
-        this.killing = killing;
+    public void setIsKilling(Boolean isKilling) {
+        this.isKilling = isKilling;
     }
 
-    public Boolean isDied() {
-        return died;
+    public Boolean wasDied() {
+        return wasDied;
     }
 
-    public void setDied(Boolean died) {
-        this.died = died;
+    public void setWasDied(Boolean wasDied) {
+        this.wasDied = wasDied;
     }
 
-    public Boolean getReport() {
-        return report;
+    public Boolean wasReported() {
+        return wasReported;
     }
 
-    public void setReport(Boolean report) {
-        this.report = report;
+    public void setWasReported(Boolean wasReported) {
+        this.wasReported = wasReported;
     }
 
     public Boolean wasVoted() {
-        return voted;
+        return wasVoted;
     }
 
-    public void setVoted(Boolean voted) {
-        this.voted = voted;
+    public void setWasVoted(Boolean wasVoted) {
+        this.wasVoted = wasVoted;
+    }
+
+    public Boolean isImposter() {
+        return (this instanceof Imposter);
     }
 }

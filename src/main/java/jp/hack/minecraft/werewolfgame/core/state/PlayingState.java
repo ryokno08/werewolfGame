@@ -1,7 +1,6 @@
 package jp.hack.minecraft.werewolfgame.core.state;
 
 import jp.hack.minecraft.werewolfgame.Game;
-import jp.hack.minecraft.werewolfgame.core.task.TaskManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class PlayingState extends GameState {
@@ -31,6 +30,7 @@ public class PlayingState extends GameState {
             game.getDisplayManager().resetAllInventory();
         });
         game.getTaskBoard().register();
+        game.setCoolTime();
     }
 
     @Override
@@ -39,6 +39,7 @@ public class PlayingState extends GameState {
 
         game.getJoinedPlayers().forEach(player -> game.getDisplayManager().clearWithoutArmor(player));
         game.getTaskBoard().unregister();
+        game.clearCoolTime();
     }
 
     @Override

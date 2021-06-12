@@ -9,15 +9,11 @@ import jp.hack.minecraft.werewolfgame.logic.GameDirector;
 import jp.hack.minecraft.werewolfgame.logic.GuiLogic;
 import jp.hack.minecraft.werewolfgame.util.LocationConfiguration;
 import jp.hack.minecraft.werewolfgame.util.Messages;
-import me.mattstudios.mfgui.gui.components.ItemBuilder;
 import org.bukkit.*;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.ArmorStand;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -57,6 +53,7 @@ public class Game {
     private Boolean wasStarted = false;
     private int numberOfImposter = 1;
     private int numberOfTasks = 2;
+    private int coolTimeOfKilling = 10;
     private int limitOfVoting = 60;
     private double reportDistance = 5.0;
     private Location lobbyPos;
@@ -87,7 +84,7 @@ public class Game {
         return plugin;
     }
 
-    public GameDirector getGameLogic() {
+    public GameDirector getGameDirector() {
         return gameDirector;
     }
 
@@ -147,7 +144,14 @@ public class Game {
 
     public List<Player> getAlivePlayer() {
         return getJoinedPlayers().stream()
-                .filter(player -> !getWPlayer(player.getUniqueId()).isDied())
+                .filter(player -> !getWPlayer(player.getUniqueId()).wasDied())
+                .collect(Collectors.toList());
+    }
+
+    public List<Imposter> getImposters() {
+        return getJoinedPlayers().stream()
+                .filter(player -> getWPlayer(player.getUniqueId()).isImposter())
+                .map(player -> (Imposter) getWPlayer(player.getUniqueId()))
                 .collect(Collectors.toList());
     }
 
@@ -172,6 +176,14 @@ public class Game {
 
     public void setNumberOfTasks(int numberOfTasks) {
         this.numberOfTasks = numberOfTasks;
+    }
+
+    public int getCoolTimeOfKilling() {
+        return coolTimeOfKilling;
+    }
+
+    public void setCoolTimeOfKilling(int coolTimeOfKilling) {
+        this.coolTimeOfKilling = coolTimeOfKilling;
     }
 
     public int getLimitOfVoting() {
@@ -249,14 +261,6 @@ public class Game {
         itemMeta.setDisplayName(COMPASS_NAME);
         itemForReport.setItemMeta(itemMeta);
         return itemForReport;
-    }
-
-    public Role getPlayerRole(UUID uuid) {
-        return getWPlayer(uuid).getRole();
-    }
-
-    public void setPlayerRole(UUID uuid, Role role) {
-        getWPlayer(uuid).setRole(role);
     }
 
     public Boolean canSpeak() {
@@ -444,9 +448,12 @@ public class Game {
 
                 int random = new Random().nextInt(colors.size());
                 Map.Entry<String, Color> color = new ArrayList<>(colors.entrySet()).get(random);
-                wPlayer.setColor(color.getKey());
+                wPlayer.setColorName(color.getKey());
                 colors.remove(color.getKey());
                 displayManager.resetColorArmor(player);
+            } else {
+                WPlayer wPlayer = wPlayers.get(player.getUniqueId());
+                if (wPlayer.isImposter()) wPlayers.put(player.getUniqueId(), new WPlayer(wPlayer));
             }
 
             displayManager.clearWithoutArmor(player);
@@ -472,7 +479,7 @@ public class Game {
             players.remove(selectedPlayer);
 
             WPlayer wPlayer = getWPlayer(selectedPlayer.getUniqueId());
-            wPlayer.setRole(Role.IMPOSTER);
+            wPlayers.put(wPlayer.getUuid(), new Imposter(wPlayer));
         }
 
         return true;
@@ -486,7 +493,7 @@ public class Game {
 
         if (colorOptional.isPresent()) {
             String colorName = colorOptional.get();
-            wPlayer.setColor(colorName);
+            wPlayer.setColorName(colorName);
             colorUuidMap.put(colorName, player.getUniqueId());
             wPlayers.put(player.getUniqueId(), wPlayer);
             displayManager.resetColorArmor(player);
@@ -513,21 +520,31 @@ public class Game {
             colorUuidMap.replace(colorName, player.getUniqueId());
             colorUuidMap.put(changer.getColorName(), swapper.getUuid());
 
-            swapper.setColor(changer.getColorName());
+            swapper.setColorName(changer.getColorName());
             displayManager.resetColorArmor(getPlayer(swapper.getUuid()));
         } else {
             colorUuidMap.remove(changer.getColorName());
             colorUuidMap.put(colorName, player.getUniqueId());
         }
 
-        changer.setColor(colorName);
+        changer.setColorName(colorName);
         displayManager.resetColorArmor(player);
+    }
+
+    public void setCoolTime() {
+        System.out.println("getImposters(): "+getImposters().stream().map(WPlayer::getUuid).toString());
+        getImposters().forEach(imposter -> imposter.setCoolDown(this));
+    }
+
+    public void clearCoolTime() {
+        getImposters().forEach(Imposter::clearCoolDown);
+
     }
 
     public void killPlayer(Player player, Boolean isEjected) {
         WPlayer wPlayer = getWPlayer(player.getUniqueId());
 
-        wPlayer.setDied(true);
+        wPlayer.setWasDied(true);
         displayManager.invisible(player);
         player.getInventory().clear();
         if (!isEjected) createCadaver(player);
@@ -558,7 +575,7 @@ public class Game {
     public void doTask(Player player, int no) {
         WPlayer wPlayer = getWPlayer(player.getUniqueId());
         placeScapegoat(player);
-        if (wPlayer.getRole().isImposter()) {
+        if (wPlayer.isImposter()) {
             displayManager.sendGreenMessage(player, "you.fakeTask");
             return;
         }
@@ -575,7 +592,7 @@ public class Game {
 
         WPlayer reportedWPlayer = getWPlayer(reportedPlayer.getUniqueId());
 
-        reportedWPlayer.setReport(true);
+        reportedWPlayer.setWasReported(true);
         displayManager.allSendTitle(ChatColor.GREEN + Messages.message("008", reportedPlayer.getDisplayName().toString()));
         displayManager.allMakeSound(Sound.ENTITY_LIGHTNING_THUNDER, SoundCategory.MASTER, (float) 1.0, (float) 1.0);
         changeState(meetingState);
@@ -599,7 +616,7 @@ public class Game {
         if (currentState != votingState) return;
         WPlayer wPlayer = getWPlayer(voter.getUniqueId());
         if (!wPlayer.wasVoted()) {
-            wPlayer.setVoted(true);
+            wPlayer.setWasVoted(true);
             votedPlayers.put(voter.getUniqueId(), target.getUniqueId());
             displayManager.allSendVoteMessage(voter, target);
             voteBoard.voteUpdate(target.getUniqueId());
@@ -613,7 +630,7 @@ public class Game {
         if (currentState != votingState) return;
         WPlayer wPlayer = getWPlayer(voter.getUniqueId());
         if (!wPlayer.wasVoted()) {
-            wPlayer.setVoted(true);
+            wPlayer.setWasVoted(true);
             skippedPlayers.add(voter.getUniqueId());
             displayManager.allSendSkipMessage(voter);
             voteBoard.voteUpdate();
@@ -666,8 +683,8 @@ public class Game {
     }
 
     private WinnerJudge confirmNoOfPlayers() {
-        int clueMateRemains = (int) getAlivePlayer().stream().filter(p -> !getWPlayer(p.getUniqueId()).getRole().isImposter()).count();
-        int impostorRemains = (int) getAlivePlayer().stream().filter(p -> getWPlayer(p.getUniqueId()).getRole().isImposter()).count();
+        int clueMateRemains = (int) getAlivePlayer().stream().filter(p -> !getWPlayer(p.getUniqueId()).isImposter()).count();
+        int impostorRemains = (int) getAlivePlayer().stream().filter(p -> getWPlayer(p.getUniqueId()).isImposter()).count();
 
         if (clueMateRemains <= impostorRemains) {
             return WinnerJudge.IMPOSTER_WIN;
@@ -721,7 +738,7 @@ public class Game {
 
         killPlayer(player, true);
 
-        getWPlayers().values().forEach(wPlayer -> wPlayer.setVoted(false));
+        getWPlayers().values().forEach(wPlayer -> wPlayer.setWasVoted(false));
         confirmGame();
 
         if (wasStarted) {
@@ -733,7 +750,7 @@ public class Game {
         displayManager.allSendMessage("006");
         displayManager.log(Messages.message("006"));
 
-        getWPlayers().values().forEach(wPlayer -> wPlayer.setVoted(false));
+        getWPlayers().values().forEach(wPlayer -> wPlayer.setWasVoted(false));
         changeState(getPlayingState());
     }
 

@@ -2,6 +2,8 @@ package jp.hack.minecraft.werewolfgame.logic;
 
 import jp.hack.minecraft.werewolfgame.Game;
 import jp.hack.minecraft.werewolfgame.GameConfigurator;
+import jp.hack.minecraft.werewolfgame.core.Imposter;
+import jp.hack.minecraft.werewolfgame.core.WPlayer;
 import jp.hack.minecraft.werewolfgame.core.state.PlayingState;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
@@ -29,7 +31,7 @@ public class GameEventManager implements Listener {
         if (game == null) return;
         if (game.wasStarted()) return;
 
-        game.getGameLogic().onPlayerJoin(e);
+        game.getGameDirector().onPlayerJoin(e);
     }
 
 
@@ -66,10 +68,12 @@ public class GameEventManager implements Listener {
         this.game = ((GameConfigurator) this.plugin).getGame();
         if (game == null) return;
         if (!game.wasStarted()) return;
-        if (game.getWPlayer(e.getPlayer().getUniqueId()).isDied()) return;
+        if (game.getWPlayer(e.getPlayer().getUniqueId()).wasDied()) return;
         if (e.getFrom().getX() == e.getTo().getX() && e.getFrom().getZ() == e.getTo().getZ()) return;
         if (!game.canMove()) e.setCancelled(true);
-        if (game.getWPlayer(e.getPlayer().getUniqueId()).isKilling()) e.setCancelled(true);
+        WPlayer wPlayer = game.getWPlayer(e.getPlayer().getUniqueId());
+        if (!wPlayer.isKilling()) return;
+        e.setCancelled(true);
     }
 
     @EventHandler
@@ -103,7 +107,7 @@ public class GameEventManager implements Listener {
         if (!(game.getCurrentState() instanceof PlayingState)) return;
         if (!(e.getDamager() instanceof Player && e.getEntity() instanceof Player)) return;
 
-        game.getGameLogic().onPlayerAttack(e);
+        game.getGameDirector().onPlayerAttack(e);
     }
 
     @EventHandler
@@ -111,12 +115,23 @@ public class GameEventManager implements Listener {
         this.game = ((GameConfigurator) this.plugin).getGame();
         if (game == null) return;
         if (!game.wasStarted()) return;
-        if (game.getWPlayer(e.getPlayer().getUniqueId()).isDied()) return;
+        if (game.getWPlayer(e.getPlayer().getUniqueId()).wasDied()) return;
 
         Action action = e.getAction();
         if (!(action.equals(Action.RIGHT_CLICK_AIR) || action.equals(Action.RIGHT_CLICK_BLOCK))) return;
 
-        game.getGameLogic().onPlayerItemAction(e);
+        game.getGameDirector().onPlayerItemAction(e);
+    }
+
+    @EventHandler
+    public void onPlayerSpectatingInteract(PlayerInteractEntityEvent e) {
+        this.game = ((GameConfigurator) this.plugin).getGame();
+        if (game == null) return;
+        if (!game.wasStarted()) return;
+        Player player = e.getPlayer();
+        if (!player.getGameMode().equals( GameMode.SPECTATOR )) return;
+        if (game.getWPlayer(player.getUniqueId()).wasDied()) return;
+        e.setCancelled(true);
     }
 
 }

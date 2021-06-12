@@ -65,7 +65,7 @@ public class CompleteCommand extends CommandMaster {
             displayManager.sendErrorMessage(player, "command.noArgument", "タスクの数字");
             return true;
         }
-        if (wPlayer.getRole().isImposter()) {
+        if (wPlayer.isImposter()) {
             displayManager.sendErrorMessage(player, "you.notClueMate");
             return true;
         }

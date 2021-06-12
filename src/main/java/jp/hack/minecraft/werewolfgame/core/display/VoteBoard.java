@@ -34,7 +34,7 @@ public class VoteBoard {
 
         scores.clear();
         game.getJoinedPlayers().stream()
-                .filter(player -> !game.getWPlayer(player.getUniqueId()).isDied())
+                .filter(player -> !game.getWPlayer(player.getUniqueId()).wasDied())
                 .forEach(player -> scores.put(ChatColor.RED.toString() + player.getDisplayName().toString(), 0));
         scores.put(SKIP_KEY, 0);
 
