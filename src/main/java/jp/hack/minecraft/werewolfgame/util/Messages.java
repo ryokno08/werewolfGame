@@ -38,6 +38,7 @@ public class Messages {
         errors.put("you.cannotCommandNow", "このコマンドは現在実行できません");
         errors.put("you.disturbImposter", "インポスターの邪魔になっています！速やかに退去してください");
         errors.put("you.coolingTime", "キルクールタイムがあけていません");
+        errors.put("you.tooFarFromButton", "場所が遠すぎるためタスクができません");
 
         errors.put("other.processing", "他のプレイヤーがタスクをしているため、タスクができません");
 

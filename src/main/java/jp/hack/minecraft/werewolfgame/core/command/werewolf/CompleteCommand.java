@@ -49,6 +49,10 @@ public class CompleteCommand extends CommandMaster {
             if (sender instanceof BlockCommandSender) {
                 Location commandBlockLocation = ((BlockCommandSender) sender).getBlock().getLocation();
                 player = game.getNearPlayer(commandBlockLocation);
+                if (4 <= commandBlockLocation.distance(player.getLocation())) {
+                    displayManager.sendErrorMessage(player, "you.tooFarFromButton");
+                    return true;
+                }
             } else {
                 displayManager.sendErrorMessage(sender, "you.notPlayer");
                 return true;
