@@ -64,7 +64,7 @@ public class Cadaver {
 
         @Override
         public void run() {
-            player.getWorld().spawnParticle(Particle.DRIP_LAVA, getLocation().getX(), getLocation().getY() + 1.0, getLocation().getZ(), 4, 0.15d, 0.10d, 0.15d);
+            player.getWorld().spawnParticle(Particle.DRIP_LAVA, getLocation().getX(), getLocation().getY() + 1.0, getLocation().getZ(), 20, 0.10d, 0.10d, 0.10d);
             task = new BloodParticle(game).runTaskLater(game.getPlugin(), 60);
         }
     }

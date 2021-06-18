@@ -68,7 +68,7 @@ public class GameDirector {
 
         Location entityLocation = entity.getLocation();
         attacker.teleport(entityLocation);
-        attacker.spawnParticle(Particle.REDSTONE, attacker.getLocation(), 30, 2.0, 3.0, 2.0);
+        attacker.getWorld().spawnParticle(Particle.PORTAL, entityLocation, 30);
         game.getDisplayManager().showDeath(entity, "By " + attacker.getDisplayName());
 
         game.killPlayer(entity, false);
@@ -118,7 +118,7 @@ public class GameDirector {
     }
 
     public void onPlayerInteractEntity(PlayerInteractEntityEvent e) {
-        e.setCancelled(true);
+
     }
 
     public void onSpectatorInteract(Player player) {

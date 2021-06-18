@@ -37,7 +37,7 @@ public class PlayingState extends GameState {
     public void onInactive() {
         super.onInactive();
 
-        game.getJoinedPlayers().forEach(player -> game.getDisplayManager().clearWithoutArmor(player));
+        game.getAlivePlayer().forEach(player -> game.getDisplayManager().clearWithoutArmor(player));
         game.getTaskBoard().unregister();
         game.clearCoolTime();
     }

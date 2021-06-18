@@ -560,8 +560,8 @@ public class Game {
 
         wPlayer.setWasDied(true);
         displayManager.invisible(player);
-        player.getInventory().clear();
         if (!isEjected) createCadaver(player);
+        player.getInventory().clear();
     }
 
     public void changeState(GameState state) {

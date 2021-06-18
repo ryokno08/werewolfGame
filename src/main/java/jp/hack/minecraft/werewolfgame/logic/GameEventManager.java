@@ -14,6 +14,8 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityPickupItemEvent;
+import org.bukkit.event.inventory.InventoryMoveItemEvent;
+import org.bukkit.event.inventory.InventoryPickupItemEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -114,10 +116,10 @@ public class GameEventManager implements Listener {
 
     @EventHandler
     public void onPlayerInteract(PlayerInteractEvent e) {
-        e.setCancelled(true);
         this.game = ((GameConfigurator) this.plugin).getGame();
         if (game == null) return;
         if (!game.wasStarted()) return;
+        e.setCancelled(true);
 
         Player player = e.getPlayer();
         if (player.getGameMode() == GameMode.SPECTATOR) {
@@ -136,11 +138,39 @@ public class GameEventManager implements Listener {
         this.game = ((GameConfigurator) this.plugin).getGame();
         if (game == null) return;
         if (!game.wasStarted()) return;
+        e.setCancelled(true);
         if (game.getWPlayer(e.getPlayer().getUniqueId()).wasDied()) return;
         Player player = e.getPlayer();
         if (!player.getGameMode().equals( GameMode.SPECTATOR )) return;
         if (game.getWPlayer(player.getUniqueId()).wasDied()) return;
         game.getGameDirector().onSpectatorInteract(player);
+    }
+
+    @EventHandler
+    public void onPlayerInteractAtEntity(PlayerInteractAtEntityEvent e) {
+        System.out.println(e.getEventName());
+        this.game = ((GameConfigurator) this.plugin).getGame();
+        if (game == null) return;
+        if (!game.wasStarted()) return;
+        e.setCancelled(true);
+    }
+    
+    @EventHandler
+    public void onInventoryMoveItem(InventoryMoveItemEvent e) {
+        System.out.println(e.getEventName());
+        this.game = ((GameConfigurator) this.plugin).getGame();
+        if (game == null) return;
+        if (!game.wasStarted()) return;
+        e.setCancelled(true);
+    }
+
+    @EventHandler
+    public void onInventoryPickupItem(InventoryPickupItemEvent e) {
+        System.out.println(e.getEventName());
+        this.game = ((GameConfigurator) this.plugin).getGame();
+        if (game == null) return;
+        if (!game.wasStarted()) return;
+        e.setCancelled(true);
     }
 
 }
