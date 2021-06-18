@@ -7,6 +7,9 @@ import jp.hack.minecraft.werewolfgame.core.state.PlayingState;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
+import org.bukkit.block.Block;
+import org.bukkit.block.CommandBlock;
+import org.bukkit.command.Command;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -17,6 +20,7 @@ import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.inventory.InventoryMoveItemEvent;
 import org.bukkit.event.inventory.InventoryPickupItemEvent;
 import org.bukkit.event.player.*;
+import org.bukkit.material.Button;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class GameEventManager implements Listener {
@@ -116,16 +120,27 @@ public class GameEventManager implements Listener {
 
     @EventHandler
     public void onPlayerInteract(PlayerInteractEvent e) {
+        System.out.println(e.getEventName());
         this.game = ((GameConfigurator) this.plugin).getGame();
         if (game == null) return;
         if (!game.wasStarted()) return;
-        e.setCancelled(true);
 
         Player player = e.getPlayer();
         if (player.getGameMode() == GameMode.SPECTATOR) {
-            if (game.getWPlayer(player.getUniqueId()).wasDied()) return;
-            game.getGameDirector().onSpectatorInteract(player);
+            /*
+            if (game.getWPlayer(player.getUniqueId()).wasDied()) {
+             */
+                game.getGameDirector().onSpectatorInteract(e);
+                /*
+            } else {
+                game.getGameDirector().onSpectatorInteract(player);
+                return;
+            }
+
+                 */
         } else {
+            if (e.getClickedBlock().getState().getData() instanceof Button) return;
+            e.setCancelled(true);
             if (game.getWPlayer(e.getPlayer().getUniqueId()).wasDied()) return;
             Action action = e.getAction();
             if (!(action.equals(Action.RIGHT_CLICK_AIR) || action.equals(Action.RIGHT_CLICK_BLOCK))) return;
@@ -135,6 +150,7 @@ public class GameEventManager implements Listener {
 
     @EventHandler
     public void onPlayerInteractEntity(PlayerInteractEntityEvent e) {
+        System.out.println(e.getEventName());
         this.game = ((GameConfigurator) this.plugin).getGame();
         if (game == null) return;
         if (!game.wasStarted()) return;

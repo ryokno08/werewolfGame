@@ -10,12 +10,17 @@ import jp.hack.minecraft.werewolfgame.util.Messages;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Particle;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.material.Button;
+import org.bukkit.material.MaterialData;
+import org.bukkit.material.Redstone;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitScheduler;
@@ -115,6 +120,7 @@ public class GameDirector {
             Location cadaverLoc = o.getArmorStand().getLocation();
             return cadaverLoc.distance(playerLoc) <= game.getReportDistance();
         }).findFirst().ifPresent(o -> game.report(player, o.getPlayer()));
+        e.setCancelled(true);
     }
 
     public void onPlayerInteractEntity(PlayerInteractEntityEvent e) {
@@ -128,6 +134,23 @@ public class GameDirector {
         WPlayer wPlayer = game.getWPlayer(player.getUniqueId());
         wPlayer.setCanMove(true);
         game.cleanTask(player);
+    }
+
+    public void onSpectatorInteract(PlayerInteractEvent e) {
+        Block block = e.getClickedBlock();
+        if (!(block.getState().getData() instanceof Button)) return;
+        Button button = (Button) block.getState().getData();
+        button.setPowered(true);
+        block.setData(button.getData());
+        block.getState().update();
+        block.getRelative(button.getAttachedFace()).getState().update();
+        plugin.getServer().getScheduler().runTaskLater(plugin, () ->
+        {
+            button.setPowered(false);
+            block.setData(button.getData());
+            block.getState().update();
+            block.getRelative(button.getAttachedFace()).getState().update();
+        } , 20);
     }
 
 }
