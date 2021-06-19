@@ -611,8 +611,8 @@ public class Game {
     public void cleanTask(Player player) {
         WPlayer wPlayer = getWPlayer(player.getUniqueId());
         processor.remove(wPlayer.getUuid());
-        removeScapegoat(wPlayer.getUuid());
         teleportAtScapegoat(player);
+        removeScapegoat(wPlayer.getUuid());
     }
 
     public void doTask(Player player, int no) {
