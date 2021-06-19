@@ -132,7 +132,7 @@ public class Game {
     public Player getPlayer(UUID uuid) {
         return joinedPlayers
                 .stream()
-                .filter(p->p.getUniqueId().equals(uuid))
+                .filter(p -> p.getUniqueId().equals(uuid))
                 .findFirst()
                 .orElse(null);
     }
@@ -164,7 +164,7 @@ public class Game {
     public void setJoinedPlayers() {
         joinedPlayers = new ArrayList<>(plugin.getServer().getOnlinePlayers())
                 .stream()
-                .filter(o->wPlayers.containsKey(o.getUniqueId()))
+                .filter(o -> wPlayers.containsKey(o.getUniqueId()))
                 .collect(Collectors.toList());
     }
 
@@ -234,7 +234,7 @@ public class Game {
 
     public void setTasksPos(List<Location> tasksPos) {
         this.tasksPos = tasksPos;
-        for (int i=0; i<tasksPos.size(); i++) {
+        for (int i = 0; i < tasksPos.size(); i++) {
             configuration.setLocationData("task" + i, tasksPos.get(i));
         }
         configuration.save();
@@ -243,7 +243,7 @@ public class Game {
     public void addTaskPos(int no, Location location) {
         if (tasksPos.size() <= no) {
             this.tasksPos.add(location);
-            configuration.setLocationData("task" + ( this.tasksPos.size() - 1 ) , location);
+            configuration.setLocationData("task" + (this.tasksPos.size() - 1), location);
         } else {
             this.tasksPos.set(no, location);
             configuration.setLocationData("task" + no, location);
@@ -409,7 +409,7 @@ public class Game {
         String task = "task";
 
         tasksPos = new ArrayList<>();
-        for (int i=0; configuration.containKey(task + i); i++) {
+        for (int i = 0; configuration.containKey(task + i); i++) {
             tasksPos.add(configuration.getLocationData(task + i));
         }
         return (meetingPos != null && lobbyPos != null && tasksPos != null);
@@ -546,7 +546,7 @@ public class Game {
     }
 
     public void setCoolTime() {
-        System.out.println("getImposters(): "+getImposters().stream().map(WPlayer::getUuid).toString());
+        System.out.println("getImposters(): " + getImposters().stream().map(WPlayer::getUuid).toString());
         getImposters().forEach(imposter -> imposter.setCoolDown(this));
     }
 
@@ -558,6 +558,11 @@ public class Game {
     public void killPlayer(Player player, Boolean isEjected) {
         WPlayer wPlayer = getWPlayer(player.getUniqueId());
 
+        if (getScapegoats().containsKey(player.getUniqueId())) {
+            Scapegoat scapegoat = getScapegoats().get(player.getUniqueId());
+            player.teleport(scapegoat.getArmorStand().getLocation());
+            scapegoat.destroy();
+        }
         wPlayer.setWasDied(true);
         displayManager.invisible(player);
         if (!isEjected) createCadaver(player);
@@ -719,7 +724,7 @@ public class Game {
         }
 
         displayManager.allSendGreenMessage("vote.end");
-        
+
     }
 
     private WinnerJudge confirmTask() {

@@ -3,6 +3,7 @@ package jp.hack.minecraft.werewolfgame.logic;
 import jp.hack.minecraft.werewolfgame.Game;
 import jp.hack.minecraft.werewolfgame.GameConfigurator;
 import jp.hack.minecraft.werewolfgame.core.Imposter;
+import jp.hack.minecraft.werewolfgame.core.Scapegoat;
 import jp.hack.minecraft.werewolfgame.core.WPlayer;
 import jp.hack.minecraft.werewolfgame.core.state.PlayingState;
 import jp.hack.minecraft.werewolfgame.core.state.VotingState;
@@ -24,6 +25,9 @@ import org.bukkit.material.Redstone;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitScheduler;
+
+import java.util.Optional;
+import java.util.UUID;
 
 public class GameDirector {
     private final JavaPlugin plugin;
@@ -51,7 +55,21 @@ public class GameDirector {
         Game game = ((GameConfigurator) plugin).getGame();
 
         Player attacker = (Player) e.getDamager();
-        Player entity = (Player) e.getEntity();
+        Player entity;
+        Location entityLocation;
+
+        Optional<Scapegoat> damagedScapegoat = game.getScapegoats().values().stream()
+                .filter(scapegoat -> scapegoat.getArmorStand().getUniqueId() == e.getEntity().getUniqueId())
+                .findFirst();
+        if (damagedScapegoat.isPresent()) {
+            Scapegoat scapegoat = damagedScapegoat.get();
+            UUID uuid = scapegoat.getPlayerUuid();
+            entity = plugin.getServer().getPlayer(uuid);
+            entityLocation = scapegoat.getArmorStand().getLocation();
+        } else {
+            entity = (Player) e.getEntity();
+            entityLocation = entity.getLocation();
+        }
 
         WPlayer wAttacker = game.getWPlayer(attacker.getUniqueId());
         WPlayer target = game.getWPlayer(entity.getUniqueId());
@@ -70,8 +88,6 @@ public class GameDirector {
             game.getDisplayManager().sendErrorMessage(attacker, "you.coolingTime");
             return;
         }
-
-        Location entityLocation = entity.getLocation();
         attacker.teleport(entityLocation);
         attacker.getWorld().spawnParticle(Particle.PORTAL, entityLocation, 30);
         game.getDisplayManager().showDeath(entity, "By " + attacker.getDisplayName());
@@ -150,7 +166,7 @@ public class GameDirector {
             block.setData(button.getData());
             block.getState().update();
             block.getRelative(button.getAttachedFace()).getState().update();
-        } , 20);
+        }, 20);
     }
 
 }

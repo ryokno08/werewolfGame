@@ -6,6 +6,7 @@ import jp.hack.minecraft.werewolfgame.core.WPlayer;
 import jp.hack.minecraft.werewolfgame.core.state.PlayingState;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
+import org.bukkit.entity.ArmorStand;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.CommandBlock;
@@ -113,7 +114,8 @@ public class GameEventManager implements Listener {
         e.setCancelled(true);
 
         if (!(game.getCurrentState() instanceof PlayingState)) return;
-        if (!(e.getDamager() instanceof Player && e.getEntity() instanceof Player)) return;
+        if (!(e.getDamager() instanceof Player && (e.getEntity() instanceof Player || e.getEntity() instanceof ArmorStand)))
+            return;
 
         game.getGameDirector().onPlayerAttack(e);
     }
@@ -157,7 +159,7 @@ public class GameEventManager implements Listener {
         e.setCancelled(true);
         if (game.getWPlayer(e.getPlayer().getUniqueId()).wasDied()) return;
         Player player = e.getPlayer();
-        if (!player.getGameMode().equals( GameMode.SPECTATOR )) return;
+        if (!player.getGameMode().equals(GameMode.SPECTATOR)) return;
         if (game.getWPlayer(player.getUniqueId()).wasDied()) return;
         game.getGameDirector().onSpectatorInteract(player);
     }
@@ -170,7 +172,7 @@ public class GameEventManager implements Listener {
         if (!game.wasStarted()) return;
         e.setCancelled(true);
     }
-    
+
     @EventHandler
     public void onInventoryMoveItem(InventoryMoveItemEvent e) {
         System.out.println(e.getEventName());
